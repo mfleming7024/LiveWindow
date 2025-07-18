@@ -33,15 +33,12 @@ angular.module('liveWindowApp')
             isRemoteControlled = false;
         });
         
-        var images = [
+		var images = [
+			{ name: 'Default Image Left', path: 'images/default-left.png' },
+			{ name: 'Default Image Right', path: 'images/default-right.png' },
             { name: 'Demo Image 1', path: 'images/demo1.svg' },
-            { name: 'Demo Image 2', path: 'images/demo2.svg' },
-            { name: 'Demo Image 3', path: 'images/demo3.svg' },
-            { name: 'Demo Image 4', path: 'images/demo4.svg' },
             { name: 'Landscape 1', path: 'images/landscape1.svg' },
-            { name: 'Landscape 2', path: 'images/landscape2.svg' },
-            { name: 'Abstract 1', path: 'images/abstract1.svg' },
-            { name: 'Abstract 2', path: 'images/abstract2.svg' }
+            { name: 'Abstract 1', path: 'images/abstract1.svg' }
         ];
         
         var animations = [

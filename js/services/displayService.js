@@ -45,12 +45,12 @@ angular.module('liveWindowApp')
         ];
         
         var animations = [
-            { name: 'Waves', path: 'animations/waves.html' },
-            { name: 'Particles', path: 'animations/particles.html' },
-            { name: 'Geometric', path: 'animations/geometric.html' },
-            { name: 'Fluid', path: 'animations/fluid.html' },
-            { name: 'Matrix', path: 'animations/matrix.html' },
-            { name: 'Spiral', path: 'animations/spiral.html' }
+            { name: 'Mystical Energies', path: 'animations/waves.html', preview: 'thumbnails/waves-preview.svg' },
+            { name: 'Spell Casting', path: 'animations/particles.html', preview: 'thumbnails/particles-preview.svg' },
+            { name: 'Elemental Crystals', path: 'animations/geometric.html', preview: 'thumbnails/geometric-preview.svg' },
+            { name: 'Portal Vortex', path: 'animations/spiral.html', preview: 'thumbnails/spiral-preview.svg' },
+            { name: 'Ancient Tome', path: 'animations/matrix.html', preview: 'thumbnails/matrix-preview.svg' },
+            { name: 'Mystical Mists', path: 'animations/fluid.html', preview: 'thumbnails/fluid-preview.svg' }
         ];
         
         return {

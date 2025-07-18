@@ -290,6 +290,41 @@ body, html {
     margin-left: 10px;
 }
 
+/* Main Display Responsive */
+@media (max-width: 768px) {
+    /* Stack displays vertically on mobile */
+    .main-display {
+        flex-direction: column;
+    }
+    
+    .display-half {
+        width: 100%;
+        height: 50%;
+    }
+    
+    .nav-bar {
+        top: 10px;
+        right: 10px;
+    }
+    
+    .nav-bar .btn {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-bar {
+        top: 5px;
+        right: 5px;
+    }
+    
+    .nav-bar .btn {
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+}
+
 /* Responsive adjustments for vertical 1440p monitors */
 @media (min-height: 1440px) {
     .edit-header h1 {
@@ -307,5 +342,188 @@ body, html {
     
     .media-grid {
         grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+}
+
+/* Responsive adjustments for tablets */
+@media (max-width: 1024px) {
+    .edit-content {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 20px;
+    }
+    
+    .edit-header {
+        padding: 15px;
+    }
+    
+    .edit-header h1 {
+        font-size: 2rem;
+    }
+    
+    .control-section {
+        padding: 20px;
+    }
+    
+    .media-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 10px;
+    }
+    
+    .controls-grid {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+    
+    .btn {
+        padding: 10px 15px;
+        font-size: 13px;
+    }
+    
+    .timing-controls input[type="number"] {
+        width: 80px;
+    }
+}
+
+/* Responsive adjustments for mobile devices */
+@media (max-width: 768px) {
+    .edit-header {
+        padding: 10px;
+    }
+    
+    .edit-header h1 {
+        font-size: 1.5rem;
+        margin-bottom: 5px;
+    }
+    
+    .edit-header p {
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+    }
+    
+    .edit-content {
+        padding: 15px;
+        gap: 15px;
+    }
+    
+    .control-section {
+        padding: 15px;
+    }
+    
+    .control-section h2 {
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+    }
+    
+    .control-section h3 {
+        font-size: 1rem;
+        margin: 15px 0 10px 0;
+    }
+    
+    .media-grid {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 8px;
+    }
+    
+    .media-item .name {
+        font-size: 10px;
+        padding: 3px;
+    }
+    
+    .controls-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .btn {
+        width: 100%;
+        padding: 12px;
+        font-size: 14px;
+        margin: 2px 0;
+    }
+    
+    .timing-controls {
+        margin: 15px 0;
+    }
+    
+    .timing-controls input[type="range"] {
+        margin-bottom: 8px;
+    }
+    
+    .timing-controls input[type="number"] {
+        width: 70px;
+        padding: 6px;
+        font-size: 12px;
+    }
+    
+    .connection-status {
+        padding: 8px 12px;
+        font-size: 12px;
+        margin: 10px 0;
+    }
+    
+    .sync-status {
+        padding: 12px;
+        margin-bottom: 15px;
+        font-size: 14px;
+    }
+    
+    /* Stack current status side by side on mobile for better space usage */
+    .control-section:last-child > div:last-child {
+        display: flex;
+        gap: 15px;
+    }
+    
+    .control-section:last-child > div:last-child > div {
+        flex: 1;
+    }
+    
+    .control-section:last-child h4 {
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+    }
+    
+    .control-section:last-child p {
+        font-size: 0.8rem;
+        line-height: 1.2;
+    }
+}
+
+/* Ultra-small mobile devices */
+@media (max-width: 480px) {
+    .edit-header h1 {
+        font-size: 1.3rem;
+    }
+    
+    .edit-content {
+        padding: 10px;
+    }
+    
+    .control-section {
+        padding: 12px;
+    }
+    
+    .media-grid {
+        grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+        gap: 6px;
+    }
+    
+    .media-item .name {
+        font-size: 9px;
+        padding: 2px;
+    }
+    
+    .btn {
+        padding: 10px;
+        font-size: 12px;
+    }
+    
+    .timing-controls input[type="number"] {
+        width: 60px;
+    }
+    
+    /* Make current status stack vertically on very small screens */
+    .control-section:last-child > div:last-child {
+        flex-direction: column;
+        gap: 10px;
     }
 }

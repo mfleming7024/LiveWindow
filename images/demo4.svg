@@ -1,16 +1,83 @@
-<!-- Demo Image 4: Wave Pattern -->
+<!-- Castle Great Hall -->
 <svg width="1920" height="1080" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="wave" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#1abc9c;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#3498db;stop-opacity:1" />
+    <linearGradient id="castle-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#2c2c54;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#3c3c5c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4a4a6a;stop-opacity:1" />
     </linearGradient>
+    <radialGradient id="torch-light" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ff8c00;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#ff4500;stop-opacity:0.1" />
+    </radialGradient>
   </defs>
-  <rect width="100%" height="100%" fill="url(#wave)" />
-  <path d="M0,540 Q480,340 960,540 T1920,540 L1920,1080 L0,1080 Z" fill="rgba(255,255,255,0.3)"/>
-  <path d="M0,600 Q480,400 960,600 T1920,600 L1920,1080 L0,1080 Z" fill="rgba(255,255,255,0.2)"/>
-  <text x="50%" y="30%" text-anchor="middle" dominant-baseline="middle" 
-        font-family="Arial" font-size="120" fill="white" font-weight="bold">
-    DEMO 4
+  
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="url(#castle-bg)" />
+  
+  <!-- Stone floor pattern -->
+  <rect x="0" y="800" width="1920" height="280" fill="#708090" opacity="0.9"/>
+  <!-- Floor tiles -->
+  <rect x="100" y="850" width="150" height="150" fill="#696969" opacity="0.8"/>
+  <rect x="300" y="850" width="150" height="150" fill="#778899" opacity="0.8"/>
+  <rect x="500" y="850" width="150" height="150" fill="#696969" opacity="0.8"/>
+  <rect x="700" y="850" width="150" height="150" fill="#778899" opacity="0.8"/>
+  <rect x="900" y="850" width="150" height="150" fill="#696969" opacity="0.8"/>
+  <rect x="1100" y="850" width="150" height="150" fill="#778899" opacity="0.8"/>
+  <rect x="1300" y="850" width="150" height="150" fill="#696969" opacity="0.8"/>
+  <rect x="1500" y="850" width="150" height="150" fill="#778899" opacity="0.8"/>
+  
+  <!-- Great pillars -->
+  <rect x="300" y="200" width="80" height="600" fill="#696969"/>
+  <rect x="1540" y="200" width="80" height="600" fill="#696969"/>
+  
+  <!-- Pillar capitals -->
+  <rect x="280" y="180" width="120" height="40" fill="#778899"/>
+  <rect x="1520" y="180" width="120" height="40" fill="#778899"/>
+  
+  <!-- High arched windows -->
+  <rect x="150" y="150" width="100" height="200" rx="50" fill="#1a1a2e" opacity="0.7"/>
+  <rect x="1670" y="150" width="100" height="200" rx="50" fill="#1a1a2e" opacity="0.7"/>
+  
+  <!-- Torches on pillars -->
+  <rect x="340" y="250" width="10" height="80" fill="#8b4513"/>
+  <rect x="1570" y="250" width="10" height="80" fill="#8b4513"/>
+  
+  <!-- Torch flames -->
+  <polygon points="345,240 335,220 355,220" fill="#ff4500"/>
+  <polygon points="345,225 340,210 350,210" fill="#ff8c00"/>
+  <polygon points="1575,240 1565,220 1585,220" fill="#ff4500"/>
+  <polygon points="1575,225 1570,210 1580,210" fill="#ff8c00"/>
+  
+  <!-- Torch light glow -->
+  <circle cx="345" cy="230" r="80" fill="url(#torch-light)" opacity="0.6"/>
+  <circle cx="1575" cy="230" r="80" fill="url(#torch-light)" opacity="0.6"/>
+  
+  <!-- Great throne -->
+  <rect x="860" y="400" width="200" height="300" fill="#4a4a6a"/>
+  <rect x="840" y="380" width="240" height="50" fill="#5a5a7a"/>
+  <polygon points="960,350 900,380 1020,380" fill="#6a6a8a"/>
+  
+  <!-- Royal banners -->
+  <rect x="600" y="100" width="15" height="300" fill="#8b4513"/>
+  <rect x="580" y="120" width="80" height="120" fill="#8b0000"/>
+  <polygon points="620,140 600,160 620,180" fill="#ffd700"/>
+  
+  <rect x="1300" y="100" width="15" height="300" fill="#8b4513"/>
+  <rect x="1280" y="120" width="80" height="120" fill="#000080"/>
+  <circle cx="1320" cy="180" r="20" fill="#c0c0c0"/>
+  
+  <!-- Grand chandelier -->
+  <circle cx="960" cy="180" r="100" fill="none" stroke="#d4af37" stroke-width="8" opacity="0.8"/>
+  <circle cx="960" cy="180" r="60" fill="none" stroke="#d4af37" stroke-width="6" opacity="0.8"/>
+  <circle cx="920" cy="160" r="8" fill="#ffff00" opacity="0.9"/>
+  <circle cx="1000" cy="160" r="8" fill="#ffff00" opacity="0.9"/>
+  <circle cx="940" cy="200" r="8" fill="#ffff00" opacity="0.9"/>
+  <circle cx="980" cy="200" r="8" fill="#ffff00" opacity="0.9"/>
+  
+  <!-- Title -->
+  <text x="50%" y="90%" text-anchor="middle" dominant-baseline="middle" 
+        font-family="serif" font-size="100" fill="#d4af37" font-weight="bold">
+    CASTLE RAVENCREST
   </text>
 </svg>

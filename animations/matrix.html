@@ -5,96 +5,125 @@
         body {
             margin: 0;
             padding: 0;
-            background: #000;
+            background: linear-gradient(135deg, #2d1b35, #1a0a26, #0d0512);
             height: 100vh;
             overflow: hidden;
-            font-family: 'Courier New', monospace;
+            font-family: 'Cinzel', serif;
         }
         
-        .matrix-container {
+        .tome-container {
             position: relative;
             width: 100%;
             height: 100%;
         }
         
-        .matrix-column {
+        .rune-column {
             position: absolute;
             top: 0;
-            color: #00ff41;
-            font-size: 20px;
-            line-height: 20px;
-            animation: fall linear infinite;
+            color: #d4af37;
+            font-size: 24px;
+            line-height: 30px;
+            animation: ancientScroll linear infinite;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.8);
+            opacity: 0.9;
         }
         
-        .matrix-column:nth-child(1) {
-            left: 5%;
-            animation-duration: 3s;
-            animation-delay: 0s;
-        }
-        
-        .matrix-column:nth-child(2) {
-            left: 15%;
-            animation-duration: 2.5s;
-            animation-delay: -0.5s;
-        }
-        
-        .matrix-column:nth-child(3) {
-            left: 25%;
+        .rune-column:nth-child(1) {
+            left: 8%;
             animation-duration: 4s;
-            animation-delay: -1s;
+            animation-delay: 0s;
+            color: #d4af37;
         }
         
-        .matrix-column:nth-child(4) {
-            left: 35%;
+        .rune-column:nth-child(2) {
+            left: 18%;
             animation-duration: 3.5s;
+            animation-delay: -0.5s;
+            color: #ff6b6b;
+        }
+        
+        .rune-column:nth-child(3) {
+            left: 28%;
+            animation-duration: 5s;
+            animation-delay: -1s;
+            color: #4ecdc4;
+        }
+        
+        .rune-column:nth-child(4) {
+            left: 38%;
+            animation-duration: 4.5s;
             animation-delay: -1.5s;
+            color: #9370db;
         }
         
-        .matrix-column:nth-child(5) {
-            left: 45%;
-            animation-duration: 2.8s;
-            animation-delay: -2s;
-        }
-        
-        .matrix-column:nth-child(6) {
-            left: 55%;
-            animation-duration: 3.2s;
-            animation-delay: -2.5s;
-        }
-        
-        .matrix-column:nth-child(7) {
-            left: 65%;
-            animation-duration: 2.7s;
-            animation-delay: -3s;
-        }
-        
-        .matrix-column:nth-child(8) {
-            left: 75%;
+        .rune-column:nth-child(5) {
+            left: 48%;
             animation-duration: 3.8s;
+            animation-delay: -2s;
+            color: #ffd700;
+        }
+        
+        .rune-column:nth-child(6) {
+            left: 58%;
+            animation-duration: 4.2s;
+            animation-delay: -2.5s;
+            color: #ff69b4;
+        }
+        
+        .rune-column:nth-child(7) {
+            left: 68%;
+            animation-duration: 3.7s;
+            animation-delay: -3s;
+            color: #00ffff;
+        }
+        
+        .rune-column:nth-child(8) {
+            left: 78%;
+            animation-duration: 4.8s;
             animation-delay: -3.5s;
+            color: #32cd32;
         }
         
-        .matrix-column:nth-child(9) {
-            left: 85%;
-            animation-duration: 3.1s;
+        .rune-column:nth-child(9) {
+            left: 88%;
+            animation-duration: 4.1s;
             animation-delay: -4s;
+            color: #ff4500;
         }
         
-        .matrix-column:nth-child(10) {
-            left: 95%;
-            animation-duration: 2.9s;
-            animation-delay: -4.5s;
-        }
-        
-        @keyframes fall {
+        @keyframes ancientScroll {
             0% {
-                transform: translateY(-100vh);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(100vh);
+                transform: translateY(-120vh);
                 opacity: 0;
             }
+            10% {
+                opacity: 0.9;
+            }
+            90% {
+                opacity: 0.9;
+            }
+            100% {
+                transform: translateY(120vh);
+                opacity: 0;
+            }
+        }
+        
+        .magic-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, 
+                rgba(212, 175, 55, 0.1) 0%, 
+                rgba(138, 43, 226, 0.05) 50%, 
+                transparent 100%);
+            animation: glowPulse 6s ease-in-out infinite;
+        }
+        
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
         }
         
         .title {
@@ -102,28 +131,57 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: #00ff41;
-            font-family: 'Courier New', monospace;
+            color: #d4af37;
+            font-family: 'Cinzel', serif;
             font-size: 6rem;
             font-weight: bold;
-            text-shadow: 0 0 20px #00ff41;
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.8);
             z-index: 10;
+            animation: titleMagic 8s ease-in-out infinite;
+        }
+        
+        @keyframes titleMagic {
+            0%, 100% { 
+                opacity: 0.8; 
+                text-shadow: 0 0 30px rgba(212, 175, 55, 0.8); 
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% { 
+                opacity: 1; 
+                text-shadow: 0 0 50px rgba(255, 215, 0, 1), 0 0 80px rgba(212, 175, 55, 0.6); 
+                transform: translate(-50%, -50%) scale(1.05);
+            }
+        }
+        
+        .ancient-border {
+            position: absolute;
+            top: 5%;
+            left: 5%;
+            right: 5%;
+            bottom: 5%;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 20px;
+            box-shadow: inset 0 0 50px rgba(212, 175, 55, 0.1);
+            z-index: 1;
         }
     </style>
 </head>
 <body>
-    <div class="matrix-container">
-        <div class="matrix-column">1010101<br/>1101001<br/>0101010<br/>1011010<br/>0110101<br/>1010101<br/>0101010<br/>1101001</div>
-        <div class="matrix-column">0101010<br/>1010101<br/>1101001<br/>0110101<br/>1011010<br/>0101010<br/>1010101<br/>1101001</div>
-        <div class="matrix-column">1101001<br/>0101010<br/>1010101<br/>0110101<br/>1011010<br/>1101001<br/>0101010<br/>1010101</div>
-        <div class="matrix-column">0110101<br/>1011010<br/>0101010<br/>1010101<br/>1101001<br/>0110101<br/>1011010<br/>0101010</div>
-        <div class="matrix-column">1011010<br/>0110101<br/>1101001<br/>0101010<br/>1010101<br/>1011010<br/>0110101<br/>1101001</div>
-        <div class="matrix-column">1010101<br/>1101001<br/>0101010<br/>1011010<br/>0110101<br/>1010101<br/>0101010<br/>1101001</div>
-        <div class="matrix-column">0101010<br/>1010101<br/>1101001<br/>0110101<br/>1011010<br/>0101010<br/>1010101<br/>1101001</div>
-        <div class="matrix-column">1101001<br/>0101010<br/>1010101<br/>0110101<br/>1011010<br/>1101001<br/>0101010<br/>1010101</div>
-        <div class="matrix-column">0110101<br/>1011010<br/>0101010<br/>1010101<br/>1101001<br/>0110101<br/>1011010<br/>0101010</div>
-        <div class="matrix-column">1011010<br/>0110101<br/>1101001<br/>0101010<br/>1010101<br/>1011010<br/>0110101<br/>1101001</div>
-        <div class="title">MATRIX</div>
+    <div class="tome-container">
+        <div class="magic-glow"></div>
+        <div class="ancient-border"></div>
+        
+        <div class="rune-column">ᚠᛁᚱᛖ<br/>ᛗᚨᚷᛁᚲ<br/>ᛈᛟᚹᛖᚱ<br/>ᛋᛈᛖᛚᛚ<br/>ᚱᚢᚾᛖ<br/>ᛞᚱᚨᚷᛟᚾ<br/>ᛏᛟᚱᚲ<br/>ᛋᚨᛞᛖ</div>
+        <div class="rune-column">ᛁᚲᛖ<br/>ᚠᚱᛟᛋᛏ<br/>ᚹᛁᚾᛞ<br/>ᛋᛏᛟᚱᛗ<br/>ᛚᛁᚷᚺᛏ<br/>ᚦᚢᚾᛞᛖᚱ<br/>ᛒᛟᛚᛏ<br/>ᚠᛚᚨᛗᛖ</div>
+        <div class="rune-column">ᛞᚨᚱᚲ<br/>ᛋᚺᚨᛞᛟᚹ<br/>ᚾᛁᚷᚺᛏ<br/>ᛗᛟᛟᚾ<br/>ᛋᛏᚨᚱ<br/>ᚢᚾᛁᚲᛟᚱᚾ<br/>ᛞᚱᚨᛞᛟᚾ<br/>ᛖᛚᚠ</div>
+        <div class="rune-column">ᚺᛖᚨᛚ<br/>ᚹᚨᚱᛞ<br/>ᛋᚺᛁᛖᛚᛞ<br/>ᚨᚱᛗᛟᚱ<br/>ᛋᚹᛟᚱᛞ<br/>ᚨᚲᛋ<br/>ᛒᛟᚹ<br/>ᚨᚱᚱᛟᚹ</div>
+        <div class="rune-column">ᚷᛟᛚᛞ<br/>ᛋᛁᛚᚢᛖᚱ<br/>ᚷᛖᛗ<br/>ᚱᚢᛒᛁ<br/>ᛞᛁᚨᛗᛟᚾᛞ<br/>ᛈᛖᚨᚱᛚ<br/>ᚨᛗᛖᛏᚺᛁᛋᛏ<br/>ᛟᚾᛁᚲᛋ</div>
+        <div class="rune-column">ᚹᛁᛉᚨᚱᛞ<br/>ᛋᛟᚱᚲᛖᚱᛖᚱ<br/>ᚹᚨᚱᛚᛟᚲᚲ<br/>ᛞᚱᚢᛁᛞ<br/>ᚱᚨᚾᚷᛖᚱ<br/>ᚱᛟᚷᚢᛖ<br/>ᛈᚨᛚᚨᛞᛁᚾ<br/>ᛒᚨᚱᛞ</div>
+        <div class="rune-column">ᚠᛟᚱᛖᛋᛏ<br/>ᛗᛟᚢᚾᛏᚨᛁᚾ<br/>ᚱᛁᚢᛖᚱ<br/>ᛚᚨᚲᛖ<br/>ᛞᛖᛋᛖᚱᛏ<br/>ᚢᚨᛚᛚᛖᛁ<br/>ᚲᚨᚢᛖ<br/>ᚲᚨᛋᛏᛚᛖ</div>
+        <div class="rune-column">ᛏᚨᚢᛖᚱᚾ<br/>ᛁᚾᚾ<br/>ᛋᚺᛟᛈ<br/>ᛏᛖᛗᛈᛚᛖ<br/>ᛞᚢᚾᚷᛖᛟᚾ<br/>ᛏᛟᚹᛖᚱ<br/>ᛒᚱᛁᛞᚷᛖ<br/>ᚷᚨᛏᛖ</div>
+        <div class="rune-column">ᚺᛟᚱᛋᛖ<br/>ᚹᛟᛚᚠ<br/>ᛒᛖᚨᚱ<br/>ᛖᚨᚷᛚᛖ<br/>ᛚᛁᛟᚾ<br/>ᛏᛁᚷᛖᚱ<br/>ᛋᚾᚨᚲᛖ<br/>ᛋᛈᛁᛞᛖᚱ</div>
+        
+        <div class="title">ANCIENT TOME</div>
     </div>
 </body>
 </html>

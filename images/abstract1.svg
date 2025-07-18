@@ -1,13 +1,73 @@
-<!-- Abstract 1: Geometric Shapes -->
+<!-- Magical Spell Circle -->
 <svg width="1920" height="1080" xmlns="http://www.w3.org/2000/svg">
-  <rect width="100%" height="100%" fill="#2C3E50"/>
-  <circle cx="400" cy="300" r="150" fill="#E74C3C" opacity="0.8"/>
-  <rect x="800" y="200" width="300" height="300" fill="#3498DB" opacity="0.7" transform="rotate(45 950 350)"/>
-  <polygon points="1400,200 1600,400 1400,600 1200,400" fill="#F39C12" opacity="0.9"/>
-  <circle cx="300" cy="700" r="100" fill="#9B59B6" opacity="0.6"/>
-  <rect x="1200" y="600" width="400" height="200" fill="#1ABC9C" opacity="0.8"/>
-  <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" 
-        font-family="Arial" font-size="100" fill="white" font-weight="bold" opacity="0.9">
-    ABSTRACT 1
+  <defs>
+    <radialGradient id="magic-circle" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#4b0082;stop-opacity:0.8" />
+      <stop offset="50%" style="stop-color:#8a2be2;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#191970;stop-opacity:1" />
+    </radialGradient>
+    <radialGradient id="spell-glow" cx="50%" cy="50%" r="30%">
+      <stop offset="0%" style="stop-color:#00ffff;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#4169e1;stop-opacity:0.2" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Dark magical background -->
+  <rect width="100%" height="100%" fill="url(#magic-circle)" />
+  
+  <!-- Outer magic circle -->
+  <circle cx="960" cy="540" r="400" fill="none" stroke="#d4af37" stroke-width="8" opacity="0.9"/>
+  <circle cx="960" cy="540" r="380" fill="none" stroke="#ffd700" stroke-width="4" opacity="0.7"/>
+  
+  <!-- Inner magic circle -->
+  <circle cx="960" cy="540" r="300" fill="none" stroke="#00ffff" stroke-width="6" opacity="0.8"/>
+  <circle cx="960" cy="540" r="280" fill="none" stroke="#87ceeb" stroke-width="3" opacity="0.6"/>
+  
+  <!-- Central magic circle -->
+  <circle cx="960" cy="540" r="150" fill="none" stroke="#ff69b4" stroke-width="10" opacity="0.9"/>
+  <circle cx="960" cy="540" r="130" fill="url(#spell-glow)" opacity="0.6"/>
+  
+  <!-- Mystical symbols around the circles -->
+  <!-- Pentagram points -->
+  <polygon points="960,140 980,200 1040,200 990,240 1010,300 960,260 910,300 930,240 880,200 940,200" fill="#d4af37" opacity="0.8"/>
+  
+  <!-- Cardinal direction runes -->
+  <circle cx="1360" cy="540" r="20" fill="#00ffff" opacity="0.8"/>
+  <rect x="1350" y="530" width="20" height="4" fill="#ffd700"/>
+  <rect x="1358" y="522" width="4" height="20" fill="#ffd700"/>
+  
+  <circle cx="560" cy="540" r="20" fill="#00ffff" opacity="0.8"/>
+  <polygon points="560,550 550,560 570,560" fill="#ffd700"/>
+  <polygon points="560,530 550,520 570,520" fill="#ffd700"/>
+  
+  <circle cx="960" cy="940" r="20" fill="#00ffff" opacity="0.8"/>
+  <rect x="950" y="930" width="20" height="4" fill="#ffd700"/>
+  <polygon points="970,940 980,950 980,930" fill="#ffd700"/>
+  
+  <!-- Floating magical elements -->
+  <circle cx="600" cy="300" r="15" fill="#ff69b4" opacity="0.8"/>
+  <circle cx="1320" cy="280" r="12" fill="#00ff00" opacity="0.8"/>
+  <circle cx="700" cy="800" r="18" fill="#ff4500" opacity="0.8"/>
+  <circle cx="1200" cy="750" r="14" fill="#9370db" opacity="0.8"/>
+  
+  <!-- Magical energy beams -->
+  <line x1="960" y1="390" x2="960" y2="690" stroke="#00ffff" stroke-width="4" opacity="0.7"/>
+  <line x1="810" y1="540" x2="1110" y2="540" stroke="#00ffff" stroke-width="4" opacity="0.7"/>
+  
+  <!-- Arcane text around outer circle -->
+  <path id="circle-path" d="M 960 140 A 400 400 0 1 1 959 140" fill="none"/>
+  <text font-family="serif" font-size="30" fill="#d4af37" opacity="0.8">
+    <textPath href="#circle-path">IGNIS • AQUA • TERRA • VENTUS • SPIRITUS • IGNIS • AQUA</textPath>
+  </text>
+  
+  <!-- Central spell focus -->
+  <circle cx="960" cy="540" r="50" fill="#ffffff" opacity="0.9"/>
+  <circle cx="960" cy="540" r="30" fill="#00ffff" opacity="0.8"/>
+  <circle cx="960" cy="540" r="15" fill="#ffd700" opacity="1"/>
+  
+  <!-- Title -->
+  <text x="50%" y="10%" text-anchor="middle" dominant-baseline="middle" 
+        font-family="serif" font-size="80" fill="#d4af37" font-weight="bold">
+    CIRCLE OF POWER
   </text>
 </svg>

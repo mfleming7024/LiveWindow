@@ -1,18 +1,70 @@
-<!-- Abstract 2: Flowing Lines -->
+<!-- Ethereal Portal Magic -->
 <svg width="1920" height="1080" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="flow" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#8E44AD;stop-opacity:1" />
-      <stop offset="50%" style="stop-color:#3498DB;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#1ABC9C;stop-opacity:1" />
+    <radialGradient id="portal-center" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#00ffff;stop-opacity:0.8" />
+      <stop offset="60%" style="stop-color:#4169e1;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#191970;stop-opacity:1" />
+    </radialGradient>
+    <linearGradient id="energy-flow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff69b4;stop-opacity:0.8" />
+      <stop offset="50%" style="stop-color:#9370db;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#4b0082;stop-opacity:0.4" />
     </linearGradient>
   </defs>
-  <rect width="100%" height="100%" fill="#34495E"/>
-  <path d="M0,0 Q480,540 960,270 T1920,540 L1920,0 Z" fill="url(#flow)" opacity="0.8"/>
-  <path d="M0,200 Q480,740 960,470 T1920,740 L1920,200 Z" fill="url(#flow)" opacity="0.6"/>
-  <path d="M0,400 Q480,940 960,670 T1920,940 L1920,400 Z" fill="url(#flow)" opacity="0.4"/>
-  <text x="50%" y="20%" text-anchor="middle" dominant-baseline="middle" 
-        font-family="Arial" font-size="100" fill="white" font-weight="bold">
-    ABSTRACT 2
+  
+  <!-- Dark void background -->
+  <rect width="100%" height="100%" fill="#0a0a0a"/>
+  
+  <!-- Portal center -->
+  <circle cx="960" cy="540" r="200" fill="url(#portal-center)"/>
+  
+  <!-- Swirling energy rings -->
+  <circle cx="960" cy="540" r="250" fill="none" stroke="#00ffff" stroke-width="6" opacity="0.8"/>
+  <circle cx="960" cy="540" r="300" fill="none" stroke="#9370db" stroke-width="8" opacity="0.6"/>
+  <circle cx="960" cy="540" r="350" fill="none" stroke="#ff69b4" stroke-width="4" opacity="0.7"/>
+  <circle cx="960" cy="540" r="400" fill="none" stroke="#4169e1" stroke-width="3" opacity="0.5"/>
+  
+  <!-- Rotating magical energy arcs -->
+  <path d="M 760 540 Q 860 440 960 540 Q 1060 640 1160 540" stroke="#00ffff" stroke-width="8" fill="none" opacity="0.8"/>
+  <path d="M 960 340 Q 1060 440 960 540 Q 860 640 960 740" stroke="#ff69b4" stroke-width="6" fill="none" opacity="0.7"/>
+  <path d="M 760 340 Q 960 240 1160 340 Q 1260 540 1160 740 Q 960 840 760 740 Q 660 540 760 340" stroke="#9370db" stroke-width="4" fill="none" opacity="0.6"/>
+  
+  <!-- Floating mystical crystals -->
+  <polygon points="400,200 380,240 420,240" fill="#00ffff" opacity="0.9"/>
+  <polygon points="1520,300 1500,340 1540,340" fill="#ff69b4" opacity="0.8"/>
+  <polygon points="300,800 280,840 320,840" fill="#9370db" opacity="0.9"/>
+  <polygon points="1600,750 1580,790 1620,790" fill="#4169e1" opacity="0.8"/>
+  
+  <!-- Crystal light beams -->
+  <line x1="400" y1="220" x2="760" y2="440" stroke="#00ffff" stroke-width="2" opacity="0.6"/>
+  <line x1="1520" y1="320" x2="1160" y2="440" stroke="#ff69b4" stroke-width="2" opacity="0.5"/>
+  <line x1="300" y1="820" x2="760" y2="640" stroke="#9370db" stroke-width="2" opacity="0.6"/>
+  <line x1="1600" y1="770" x2="1160" y2="640" stroke="#4169e1" stroke-width="2" opacity="0.5"/>
+  
+  <!-- Ethereal mist -->
+  <ellipse cx="200" cy="400" rx="100" ry="50" fill="#ffffff" opacity="0.1"/>
+  <ellipse cx="1700" cy="600" rx="120" ry="60" fill="#00ffff" opacity="0.1"/>
+  <ellipse cx="500" cy="900" rx="80" ry="40" fill="#ff69b4" opacity="0.1"/>
+  <ellipse cx="1400" cy="200" rx="90" ry="45" fill="#9370db" opacity="0.1"/>
+  
+  <!-- Ancient runes floating in the void -->
+  <text x="200" y="300" font-family="serif" font-size="40" fill="#d4af37" opacity="0.7" transform="rotate(15 200 300)">ᚱᚢᚾᛖ</text>
+  <text x="1600" y="400" font-family="serif" font-size="35" fill="#d4af37" opacity="0.6" transform="rotate(-20 1600 400)">ᛗᚨᚷᛁᚲ</text>
+  <text x="400" y="950" font-family="serif" font-size="30" fill="#d4af37" opacity="0.8" transform="rotate(45 400 950)">ᛈᛟᚱᛏᚨᛚ</text>
+  
+  <!-- Portal event horizon -->
+  <circle cx="960" cy="540" r="180" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.9"/>
+  <circle cx="960" cy="540" r="160" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.7"/>
+  
+  <!-- Central singularity -->
+  <circle cx="960" cy="540" r="20" fill="#ffffff" opacity="0.95"/>
+  <circle cx="960" cy="540" r="10" fill="#00ffff" opacity="1"/>
+  
+  <!-- Title -->
+  <text x="50%" y="10%" text-anchor="middle" dominant-baseline="middle" 
+        font-family="serif" font-size="80" fill="#ffffff" font-weight="bold" opacity="0.9">
+    PLANAR GATEWAY
   </text>
 </svg>

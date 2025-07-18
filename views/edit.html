@@ -55,7 +55,7 @@
                      ng-repeat="animation in animations" 
                      ng-class="{'active': isActiveLeft('animation', animation.path)}"
                      ng-click="setLeftContent('animation', animation.path)">
-                    <iframe ng-src="{{animation.path}}" style="width: 100%; height: 100%; border: none; pointer-events: none;"></iframe>
+                    <img ng-src="{{animation.preview}}" alt="{{animation.name}} Preview" />
                     <div class="name">{{animation.name}}</div>
                 </div>
             </div>
@@ -86,7 +86,7 @@
                      ng-repeat="animation in animations" 
                      ng-class="{'active': isActiveRight('animation', animation.path)}"
                      ng-click="setRightContent('animation', animation.path)">
-                    <iframe ng-src="{{animation.path}}" style="width: 100%; height: 100%; border: none; pointer-events: none;"></iframe>
+                    <img ng-src="{{animation.preview}}" alt="{{animation.name}} Preview" />
                     <div class="name">{{animation.name}}</div>
                 </div>
             </div>

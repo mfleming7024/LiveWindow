@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(45deg, #1e3c72, #2a5298);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .wave-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .wave {
+            position: absolute;
+            width: 200%;
+            height: 200px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: wave 4s linear infinite;
+        }
+        
+        .wave:nth-child(1) {
+            top: 20%;
+            animation-delay: 0s;
+        }
+        
+        .wave:nth-child(2) {
+            top: 40%;
+            animation-delay: -1s;
+        }
+        
+        .wave:nth-child(3) {
+            top: 60%;
+            animation-delay: -2s;
+        }
+        
+        .wave:nth-child(4) {
+            top: 80%;
+            animation-delay: -3s;
+        }
+        
+        @keyframes wave {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(50%);
+            }
+        }
+        
+        .title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 6rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div class="wave-container">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="title">WAVES</div>
+    </div>
+</body>
+</html>

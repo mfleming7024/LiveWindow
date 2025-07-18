@@ -1,0 +1,134 @@
+<div class="edit-container">
+    <div class="edit-header">
+        <h1>LiveWindow Control Panel</h1>
+        <p>Dual Display Management System</p>
+        <div class="connection-status" ng-if="connectionStatus">
+            <span class="connection-indicator" ng-class="{'connected': connectionStatus.connected, 'disconnected': !connectionStatus.connected}"></span>
+            <span ng-if="connectionStatus.connected">Multi-Instance Control Active (ID: {{connectionStatus.socketId}})</span>
+            <span ng-if="!connectionStatus.connected">Standalone Mode - Multi-Instance Control Unavailable</span>
+        </div>
+        <button class="btn" ng-click="goToMain()">← Back to Display</button>
+    </div>
+    
+    <div class="edit-content">
+        <!-- Global Display Controls -->
+        <div class="control-section" style="grid-column: 1 / -1;">
+            <h2>Display Synchronization & Global Controls</h2>
+            
+            <div class="sync-status">
+                <span class="sync-indicator" ng-class="{'synced': syncMode, 'unsynced': !syncMode}"></span>
+                <span ng-if="syncMode">Displays Synchronized</span>
+                <span ng-if="!syncMode">Independent Mode</span>
+            </div>
+            
+            <div class="controls-grid">
+                <button class="btn" ng-class="{'btn-active': syncMode}" ng-click="toggleSync()">
+                    {{syncMode ? 'Disable Sync' : 'Enable Sync'}}
+                </button>
+                <button class="btn" ng-click="syncDisplays()">Copy Left → Right</button>
+                <button class="btn btn-danger" ng-click="clearBoth()">Clear Both Displays</button>
+            </div>
+        </div>
+        
+        <!-- Left Display Controls -->
+        <div class="control-section">
+            <h2>Left Display Control</h2>
+            
+            <div class="controls-grid">
+                <button class="btn" ng-click="clearLeft()">Clear Display</button>
+            </div>
+            
+            <h3>Images</h3>
+            <div class="media-grid">
+                <div class="media-item" 
+                     ng-repeat="image in images" 
+                     ng-class="{'active': isActiveLeft('image', image.path)}"
+                     ng-click="setLeftContent('image', image.path)">
+                    <img ng-src="{{image.path}}" alt="{{image.name}}" />
+                    <div class="name">{{image.name}}</div>
+                </div>
+            </div>
+            
+            <h3>Animations</h3>
+            <div class="media-grid">
+                <div class="media-item" 
+                     ng-repeat="animation in animations" 
+                     ng-class="{'active': isActiveLeft('animation', animation.path)}"
+                     ng-click="setLeftContent('animation', animation.path)">
+                    <iframe ng-src="{{animation.path}}" style="width: 100%; height: 100%; border: none; pointer-events: none;"></iframe>
+                    <div class="name">{{animation.name}}</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Display Controls -->
+        <div class="control-section">
+            <h2>Right Display Control</h2>
+            
+            <div class="controls-grid">
+                <button class="btn" ng-click="clearRight()">Clear Display</button>
+            </div>
+            
+            <h3>Images</h3>
+            <div class="media-grid">
+                <div class="media-item" 
+                     ng-repeat="image in images" 
+                     ng-class="{'active': isActiveRight('image', image.path)}"
+                     ng-click="setRightContent('image', image.path)">
+                    <img ng-src="{{image.path}}" alt="{{image.name}}" />
+                    <div class="name">{{image.name}}</div>
+                </div>
+            </div>
+            
+            <h3>Animations</h3>
+            <div class="media-grid">
+                <div class="media-item" 
+                     ng-repeat="animation in animations" 
+                     ng-class="{'active': isActiveRight('animation', animation.path)}"
+                     ng-click="setRightContent('animation', animation.path)">
+                    <iframe ng-src="{{animation.path}}" style="width: 100%; height: 100%; border: none; pointer-events: none;"></iframe>
+                    <div class="name">{{animation.name}}</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Timing and Auto Controls -->
+        <div class="control-section">
+            <h2>Timing & Automation</h2>
+            
+            <div class="timing-controls">
+                <label>Display Duration (seconds):</label>
+                <input type="range" min="1" max="30" ng-model="timing.duration" ng-change="updateTiming()" />
+                <input type="number" min="1" max="30" ng-model="timing.duration" ng-change="updateTiming()" />
+                
+                <label>Transition Time (seconds):</label>
+                <input type="range" min="0" max="5" step="0.1" ng-model="timing.transition" ng-change="updateTiming()" />
+                <input type="number" min="0" max="5" step="0.1" ng-model="timing.transition" ng-change="updateTiming()" />
+            </div>
+            
+            <div class="controls-grid">
+                <button class="btn" ng-click="startAutoAdvance()">Start Auto-Advance</button>
+                <button class="btn btn-danger" ng-click="stopAutoAdvance()">Stop Auto-Advance</button>
+            </div>
+        </div>
+        
+        <!-- Current Status -->
+        <div class="control-section">
+            <h2>Current Status</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <h4>Left Display:</h4>
+                    <p ng-if="!leftDisplay.type">Blank</p>
+                    <p ng-if="leftDisplay.type">{{leftDisplay.type}}: {{leftDisplay.content}}</p>
+                </div>
+                
+                <div>
+                    <h4>Right Display:</h4>
+                    <p ng-if="!rightDisplay.type">Blank</p>
+                    <p ng-if="rightDisplay.type">{{rightDisplay.type}}: {{rightDisplay.content}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

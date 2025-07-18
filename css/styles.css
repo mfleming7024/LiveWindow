@@ -1,0 +1,311 @@
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    height: 100%;
+    font-family: 'Arial', sans-serif;
+    background: #000;
+    overflow: hidden;
+}
+
+/* Main Display Layout */
+.main-display {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+}
+
+.display-half {
+    height: 100%;
+    width: 50%;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #333;
+}
+
+.display-left {
+    background: #111;
+}
+
+.display-right {
+    background: #111;
+}
+
+/* Content Display */
+.content-display {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.content-display img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.content-display video {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.animation-content {
+    width: 100%;
+    height: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* Edit Interface */
+.edit-container {
+    height: 100vh;
+    background: #1a1a1a;
+    color: #fff;
+    overflow-y: auto;
+}
+
+.edit-header {
+    background: #2d2d2d;
+    padding: 20px;
+    border-bottom: 2px solid #444;
+}
+
+.edit-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color: #00ff88;
+}
+
+/* Connection Status */
+.connection-status {
+    background: #333;
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin: 15px 0;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+}
+
+.connection-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.connection-indicator.connected {
+    background: #00ff88;
+    animation: pulse 2s infinite;
+}
+
+.connection-indicator.disconnected {
+    background: #ff4444;
+}
+
+.edit-content {
+    padding: 30px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.control-section {
+    background: #2d2d2d;
+    padding: 25px;
+    border-radius: 8px;
+    border: 1px solid #444;
+}
+
+.control-section h2 {
+    color: #00ff88;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+}
+
+/* Buttons */
+.btn {
+    background: #00ff88;
+    color: #000;
+    border: none;
+    padding: 12px 20px;
+    margin: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    background: #00cc6a;
+    transform: translateY(-2px);
+}
+
+.btn-danger {
+    background: #ff4444;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background: #cc3333;
+}
+
+.btn-active {
+    background: #ffaa00;
+    color: #000;
+}
+
+/* Controls Grid */
+.controls-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+/* Image/Animation Grid */
+.media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.media-item {
+    position: relative;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    overflow: hidden;
+    aspect-ratio: 16/9;
+    background: #444;
+}
+
+.media-item:hover {
+    border-color: #00ff88;
+}
+
+.media-item.active {
+    border-color: #ffaa00;
+}
+
+.media-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.media-item .name {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 5px;
+    font-size: 12px;
+    text-align: center;
+}
+
+/* Timing Controls */
+.timing-controls {
+    margin: 20px 0;
+}
+
+.timing-controls label {
+    display: block;
+    margin-bottom: 5px;
+    color: #ccc;
+}
+
+.timing-controls input[type="range"] {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.timing-controls input[type="number"] {
+    background: #444;
+    border: 1px solid #666;
+    color: #fff;
+    padding: 8px;
+    border-radius: 4px;
+    width: 100px;
+}
+
+/* Sync Status */
+.sync-status {
+    background: #333;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.sync-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.sync-indicator.synced {
+    background: #00ff88;
+    animation: pulse 2s infinite;
+}
+
+.sync-indicator.unsynced {
+    background: #ff4444;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+/* Navigation */
+.nav-bar {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.nav-bar .btn {
+    margin-left: 10px;
+}
+
+/* Responsive adjustments for vertical 1440p monitors */
+@media (min-height: 1440px) {
+    .edit-header h1 {
+        font-size: 3rem;
+    }
+    
+    .control-section h2 {
+        font-size: 2rem;
+    }
+    
+    .btn {
+        padding: 15px 25px;
+        font-size: 16px;
+    }
+    
+    .media-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+}

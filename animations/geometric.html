@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #2c3e50;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .geometric-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+        }
+        
+        .shape {
+            position: absolute;
+            animation: rotate 8s linear infinite;
+        }
+        
+        .square {
+            width: 200px;
+            height: 200px;
+            background: rgba(231, 76, 60, 0.8);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: rotate 6s linear infinite;
+        }
+        
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 100px solid transparent;
+            border-right: 100px solid transparent;
+            border-bottom: 173px solid rgba(52, 152, 219, 0.8);
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: rotate 4s linear infinite reverse;
+        }
+        
+        .circle {
+            width: 150px;
+            height: 150px;
+            background: rgba(46, 204, 113, 0.8);
+            border-radius: 50%;
+            top: 80%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: rotate 10s linear infinite;
+        }
+        
+        .hexagon {
+            width: 120px;
+            height: 69px;
+            background: rgba(155, 89, 182, 0.8);
+            position: relative;
+            top: 50%;
+            left: 20%;
+            transform: translate(-50%, -50%);
+            animation: rotate 7s linear infinite reverse;
+        }
+        
+        .hexagon:before,
+        .hexagon:after {
+            content: "";
+            position: absolute;
+            width: 0;
+            border-left: 60px solid transparent;
+            border-right: 60px solid transparent;
+        }
+        
+        .hexagon:before {
+            bottom: 100%;
+            border-bottom: 35px solid rgba(155, 89, 182, 0.8);
+        }
+        
+        .hexagon:after {
+            top: 100%;
+            border-top: 35px solid rgba(155, 89, 182, 0.8);
+        }
+        
+        @keyframes rotate {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+        
+        .title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 4rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div class="geometric-container">
+        <div class="shape square"></div>
+        <div class="shape triangle"></div>
+        <div class="shape circle"></div>
+        <div class="shape hexagon"></div>
+        <div class="title">GEOMETRIC</div>
+    </div>
+</body>
+</html>

@@ -1,130 +1,140 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Floating Embers Animation</title>
     <style>
-        body, html {
+        /* --- Basic Setup --- */
+        html, body {
+            height: 100%;
             margin: 0;
             padding: 0;
-            width: 100%;
-            height: 100vh;
-            overflow: hidden;
-            pointer-events: none;
-            background: transparent;
+            overflow: hidden; /* Prevents scrollbars from the animation */
+            font-family: 'Inter', sans-serif;
         }
-        
-        .embers-container {
-            position: absolute;
+
+        /* --- Background --- */
+        /* This is a placeholder for your webapp's background.
+           The embers will float on top of this. */
+        .background-content {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            z-index: -1; /* Place it behind all other content */
         }
-        
+
+        /* --- Ember Container --- */
+        /* This container holds all the ember particles. It's fixed to the viewport
+           and doesn't interfere with mouse clicks on the content below it. */
+        #ember-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* IMPORTANT: Allows clicks to pass through to content below */
+            overflow: hidden; /* Hide embers that might go off-screen horizontally */
+            z-index: 10;
+        }
+
+        /* --- Individual Ember Styling --- */
         .ember {
             position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle, #FF6B35, #FF4500, #8B0000);
-            box-shadow: 0 0 10px #FF6B35, 0 0 20px #FF4500;
-            animation: emberFloat linear infinite;
-        }
-        
-        .ember:before {
-            content: '';
-            position: absolute;
-            top: 20%;
-            left: 20%;
-            width: 60%;
-            height: 60%;
-            background: radial-gradient(circle, rgba(255, 255, 200, 0.8), transparent);
-            border-radius: 50%;
-        }
-        
-        .ember1 {
-            width: 4px;
-            height: 4px;
-            bottom: -10px;
-            left: 20%;
-            animation-duration: 12s;
-            animation-delay: 0s;
-        }
-        
-        .ember2 {
+            bottom: -20px; /* Start just below the viewport */
+
+            /* Randomized size will be set by JavaScript */
             width: 3px;
             height: 3px;
-            bottom: -10px;
-            left: 60%;
-            animation-duration: 15s;
-            animation-delay: 2s;
+
+            background-color: #ffab40; /* A nice fiery amber color */
+            border-radius: 50%;
+            
+            /* The glow effect is created with multiple box-shadows */
+            box-shadow: 0 0 8px 2px #ffab40, 
+                        0 0 12px 4px #ff6f00, 
+                        0 0 20px 6px #e65100;
+
+            /* Link the ember to the animation */
+            animation-name: float-up;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+
+            /* Animation duration and delay will be randomized by JavaScript */
         }
-        
-        .ember3 {
-            width: 5px;
-            height: 5px;
-            bottom: -10px;
-            left: 80%;
-            animation-duration: 10s;
-            animation-delay: 4s;
-        }
-        
-        .ember4 {
-            width: 2px;
-            height: 2px;
-            bottom: -10px;
-            left: 40%;
-            animation-duration: 18s;
-            animation-delay: 1s;
-        }
-        
-        .ember5 {
-            width: 3px;
-            height: 3px;
-            bottom: -10px;
-            left: 10%;
-            animation-duration: 14s;
-            animation-delay: 3s;
-        }
-        
-        .ember6 {
-            width: 4px;
-            height: 4px;
-            bottom: -10px;
-            left: 90%;
-            animation-duration: 16s;
-            animation-delay: 5s;
-        }
-        
-        @keyframes emberFloat {
+
+        /* --- The Animation Keyframes --- */
+        /* EDITED: Changed the keyframes to make the fade-out happen faster. */
+        @keyframes float-up {
             0% {
-                transform: translateY(0px) translateX(0px) scale(1);
-                opacity: 0.8;
+                /* Start at the bottom, invisible, with no horizontal movement */
+                transform: translateY(0) translateX(0);
+                opacity: 0;
             }
-            25% {
-                transform: translateY(-30vh) translateX(10px) scale(0.9);
+            10% {
+                /* Fade in quickly */
                 opacity: 1;
             }
-            50% {
-                transform: translateY(-60vh) translateX(-5px) scale(0.7);
-                opacity: 0.9;
-            }
-            75% {
-                transform: translateY(-90vh) translateX(15px) scale(0.5);
-                opacity: 0.6;
+            65% {
+                /* Mid-point of the animation's vertical travel */
+                transform: translateY(-50vh) translateX(var(--sway-mid));
             }
             100% {
-                transform: translateY(-120vh) translateX(-10px) scale(0.3);
+                /* * End the animation 60% of the way up the screen (at the 40% mark from the top).
+                 * The ember is fully transparent and has completed its horizontal sway.
+                 */
+                transform: translateY(-70vh) translateX(var(--sway-end));
                 opacity: 0;
             }
         }
     </style>
 </head>
 <body>
-    <div class="embers-container">
-        <div class="ember ember1"></div>
-        <div class="ember ember2"></div>
-        <div class="ember ember3"></div>
-        <div class="ember ember4"></div>
-        <div class="ember ember5"></div>
-        <div class="ember ember6"></div>
-    </div>
+
+    <!-- This is a placeholder for your actual page content's background -->
+    <div class="background-content"></div>
+
+    <!-- The container where JavaScript will generate the embers -->
+    <div id="ember-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('ember-container');
+            // EDITED: Reduced the number of embers by 40% (from 75 to 45).
+            const emberCount = 25;
+
+            for (let i = 0; i < emberCount; i++) {
+                const ember = document.createElement('div');
+                ember.className = 'ember';
+
+                // --- Randomize Ember Properties ---
+
+                // Random size for variety
+                const size = Math.random() * 6 + 2; // Size between 2px and 8px
+                ember.style.width = `${size}px`;
+                ember.style.height = `${size}px`;
+
+                // Random horizontal start position
+                ember.style.left = `${Math.random() * 100}%`;
+
+                // Random animation duration (how long it takes to float up)
+                ember.style.animationDuration = `${Math.random() * 10 + 8}s`; // 8 to 18 seconds
+
+                // Random animation delay (when the ember starts floating)
+                ember.style.animationDelay = `${Math.random() * 10}s`;
+
+                // Random horizontal sway using CSS Custom Properties
+                const swayMid = `${(Math.random() - 0.5) * 150}px`; // Sway up to 75px left or right
+                const swayEnd = `${(Math.random() - 0.5) * 300}px`; // Final sway up to 150px left or right
+                ember.style.setProperty('--sway-mid', swayMid);
+                ember.style.setProperty('--sway-end', swayEnd);
+
+                container.appendChild(ember);
+            }
+        });
+    </script>
+
 </body>
 </html>

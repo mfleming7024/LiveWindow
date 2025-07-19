@@ -46,10 +46,7 @@ angular.module('liveWindowApp')
         ];
         
         var overlays = [
-            { name: 'Stained Glass Light', path: 'overlays/stained-glass-light.html', preview: 'thumbnails/stained-light-preview.svg', description: 'Soft colored light rays moving across glass', theme: 'default' },
-            { name: 'Forest Wind', path: 'overlays/forest-wind.html', preview: 'thumbnails/forest-wind-preview.svg', description: 'Gentle wind wisps flowing through the trees', theme: 'forest' },
             { name: 'Cave Fireflies', path: 'overlays/cave-fireflies.html', preview: 'thumbnails/cave-fireflies-preview.svg', description: 'Tiny glowing fireflies dancing in the darkness', theme: 'cave' },
-            { name: 'Magical Sparkles', path: 'overlays/magical-sparkles.html', preview: 'thumbnails/magical-sparkles-preview.svg', description: 'Twinkling magical stars with cross-shaped light rays', theme: 'all' },
             { name: 'Floating Embers', path: 'overlays/floating-embers.html', preview: 'thumbnails/floating-embers-preview.svg', description: 'Warm glowing embers drifting upward', theme: 'all' }
         ];
         

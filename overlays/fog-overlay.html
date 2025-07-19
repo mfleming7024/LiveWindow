@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fog Overlay Animation</title>
+    <style>
+        /* --- Basic Setup --- */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevents scrollbars from the animation */
+            background: transparent; /* Transparent background as requested */
+        }
+
+        /* --- Fog Container --- */
+        /* This container holds all the fog layers. It's fixed to the viewport
+           and doesn't interfere with mouse clicks on the content below it. */
+        .fog-container {
+            position: fixed;
+            bottom: 0; /* Position at bottom */
+            left: 0;
+            width: 100%;
+            height: 40%; /* Only occupy bottom 40% of screen */
+            pointer-events: none; /* IMPORTANT: Allows clicks to pass through to content below */
+            overflow: hidden; /* Hide fog that might go off-screen */
+            z-index: 10;
+            /* Apply a mask that fades to transparent at the top */
+            -webkit-mask: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
+            mask: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
+        }
+
+        /* --- Individual Fog Layer Styling --- */
+        .fog-img {
+            position: absolute;
+            bottom: 0;
+            height: 100%; /* Fill the fog container height */
+            width: 300vw; /* Extra wide for seamless scrolling */
+            background-repeat: repeat-x;
+            background-size: contain; /* Maintain original aspect ratio */
+            background-position: bottom center;
+            z-index: 2;
+        }
+
+        /* First fog layer - slower movement using actual fog-1.png */
+        .fog-img-first {
+            background: url("img/fog-1.png");
+            animation: marquee 60s linear infinite;
+        }
+
+        /* Second fog layer - faster movement using actual fog-2.png */
+        .fog-img-second {
+            background: url("img/fog-2.png");
+            animation: marquee 30s linear infinite;
+        }
+
+        /* Fog movement animation - same as original */
+        @keyframes marquee {
+            0% {
+                transform: translate3d(0, 0, 0);
+            }
+            100% {
+                transform: translate3d(-200vw, 0, 0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Fog Container -->
+    <div class="fog-container">
+        <!-- Multiple fog layers for depth using actual fog images -->
+        <div class="fog-img fog-img-first"></div>
+        <div class="fog-img fog-img-second"></div>
+    </div>
+</body>
+</html>

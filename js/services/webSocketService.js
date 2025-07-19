@@ -69,6 +69,25 @@ angular.module('liveWindowApp')
                 }
             },
             
+            // Send overlay update
+            updateOverlay: function(side, overlay) {
+                if (socket && connected) {
+                    socket.emit('updateOverlay', {
+                        side: side,
+                        overlay: overlay
+                    });
+                }
+            },
+            
+            // Send clear overlay command
+            clearOverlay: function(side) {
+                if (socket && connected) {
+                    socket.emit('clearOverlay', {
+                        side: side
+                    });
+                }
+            },
+            
             // Send sync displays command
             syncDisplays: function() {
                 if (socket && connected) {

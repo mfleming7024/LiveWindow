@@ -4,6 +4,7 @@ angular.module('liveWindowApp')
         $scope.leftImages = DisplayService.getLeftImages();
         $scope.rightImages = DisplayService.getRightImages();
         $scope.animations = DisplayService.getAnimations();
+        $scope.overlays = DisplayService.getOverlays();
         $scope.leftDisplay = DisplayService.getLeftDisplay();
         $scope.rightDisplay = DisplayService.getRightDisplay();
         $scope.syncMode = DisplayService.getSyncMode();
@@ -48,6 +49,32 @@ angular.module('liveWindowApp')
             $scope.rightDisplay = DisplayService.getRightDisplay();
         };
         
+        // Overlay controls
+        $scope.setLeftOverlay = function(overlayPath) {
+            DisplayService.setLeftOverlay(overlayPath);
+            $scope.leftDisplay = DisplayService.getLeftDisplay();
+        };
+        
+        $scope.setRightOverlay = function(overlayPath) {
+            DisplayService.setRightOverlay(overlayPath);
+            $scope.rightDisplay = DisplayService.getRightDisplay();
+        };
+        
+        $scope.clearLeftOverlay = function() {
+            DisplayService.clearLeftOverlay();
+            $scope.leftDisplay = DisplayService.getLeftDisplay();
+        };
+        
+        $scope.clearRightOverlay = function() {
+            DisplayService.clearRightOverlay();
+            $scope.rightDisplay = DisplayService.getRightDisplay();
+        };
+        
+        $scope.getFilteredOverlays = function(side) {
+            var display = side === 'left' ? $scope.leftDisplay : $scope.rightDisplay;
+            return DisplayService.getOverlaysForTheme(display.content);
+        };
+        
         // Clear displays
         $scope.clearLeft = function() {
             DisplayService.clearLeft();
@@ -84,6 +111,14 @@ angular.module('liveWindowApp')
         
         $scope.isActiveRight = function(type, content) {
             return $scope.rightDisplay.type === type && $scope.rightDisplay.content === content;
+        };
+        
+        $scope.isActiveLeftOverlay = function(overlayPath) {
+            return $scope.leftDisplay.overlay === overlayPath;
+        };
+        
+        $scope.isActiveRightOverlay = function(overlayPath) {
+            return $scope.rightDisplay.overlay === overlayPath;
         };
         
         // Watch for changes in the display service

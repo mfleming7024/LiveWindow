@@ -1,0 +1,26 @@
+<svg width="120" height="80" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="ember1" cx="50%" cy="50%">
+      <stop offset="0%" style="stop-color:#FF6347;stop-opacity:0.8" />
+      <stop offset="40%" style="stop-color:#FF4500;stop-opacity:0.6" />
+      <stop offset="80%" style="stop-color:#FF8C00;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:transparent" />
+    </radialGradient>
+    <radialGradient id="ember2" cx="50%" cy="50%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:0.7" />
+      <stop offset="40%" style="stop-color:#FF6347;stop-opacity:0.5" />
+      <stop offset="80%" style="stop-color:#FF4500;stop-opacity:0.2" />
+      <stop offset="100%" style="stop-color:transparent" />
+    </radialGradient>
+  </defs>
+  <circle cx="25" cy="55" r="3" fill="url(#ember1)" />
+  <circle cx="45" cy="45" r="2.5" fill="url(#ember2)" />
+  <circle cx="70" cy="50" r="3.5" fill="url(#ember1)" />
+  <circle cx="85" cy="35" r="2" fill="url(#ember2)" />
+  <circle cx="35" cy="35" r="2.8" fill="url(#ember1)" />
+  <circle cx="60" cy="25" r="2.2" fill="url(#ember2)" />
+  <!-- Rising trails -->
+  <path d="M 25 55 Q 27 50 25 45" stroke="#FF6347" stroke-width="1" fill="none" opacity="0.3" />
+  <path d="M 70 50 Q 68 45 70 40" stroke="#FF4500" stroke-width="0.8" fill="none" opacity="0.4" />
+  <text x="60" y="70" font-family="Arial" font-size="10" text-anchor="middle" fill="#333">Floating Embers</text>
+</svg>

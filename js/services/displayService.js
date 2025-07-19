@@ -2,12 +2,14 @@ angular.module('liveWindowApp')
     .service('DisplayService', ['$rootScope', '$injector', function($rootScope, $injector) {
         var leftDisplay = {
             type: null,
-            content: null
+            content: null,
+            overlay: null
         };
         
         var rightDisplay = {
             type: null,
-            content: null
+            content: null,
+            overlay: null
         };
         
         var syncMode = false;
@@ -18,8 +20,8 @@ angular.module('liveWindowApp')
             console.log('Applying remote state update:', data);
             isRemoteControlled = true;
             
-            leftDisplay = data.leftDisplay || { type: null, content: null };
-            rightDisplay = data.rightDisplay || { type: null, content: null };
+            leftDisplay = data.leftDisplay || { type: null, content: null, overlay: null };
+            rightDisplay = data.rightDisplay || { type: null, content: null, overlay: null };
             syncMode = data.syncMode || false;
             
             $rootScope.$apply();
@@ -42,6 +44,11 @@ angular.module('liveWindowApp')
             { name: 'Portal Vortex', path: 'animations/spiral.html', preview: 'thumbnails/spiral-preview.svg' },
             { name: 'Ancient Tome', path: 'animations/matrix.html', preview: 'thumbnails/matrix-preview.svg' },
             { name: 'Mystical Mists', path: 'animations/fluid.html', preview: 'thumbnails/fluid-preview.svg' }
+        ];
+        
+        var overlays = [
+            { name: 'Cave Fireflies', path: 'overlays/cave-fireflies.html', preview: 'thumbnails/cave-fireflies-preview.svg', description: 'Tiny glowing fireflies dancing in the darkness', theme: 'cave' },
+            { name: 'Floating Embers', path: 'overlays/floating-embers.html', preview: 'thumbnails/floating-embers-preview.svg', description: 'Warm glowing embers drifting upward', theme: 'all' }
         ];
         
         return {
@@ -76,6 +83,23 @@ angular.module('liveWindowApp')
             
             getAnimations: function() {
                 return animations;
+            },
+            
+            getOverlays: function() {
+                return overlays;
+            },
+            
+            getOverlaysForTheme: function(imagePath) {
+                if (!imagePath) return overlays.filter(function(overlay) { return overlay.theme === 'all'; });
+                
+                var theme = 'all';
+                if (imagePath.includes('forest')) theme = 'forest';
+                else if (imagePath.includes('cave')) theme = 'cave';
+                else if (imagePath.includes('default')) theme = 'default';
+                
+                return overlays.filter(function(overlay) {
+                    return overlay.theme === theme || overlay.theme === 'all';
+                });
             },
             
             // Display setters
@@ -117,10 +141,60 @@ angular.module('liveWindowApp')
                 }
             },
             
+            // Overlay setters
+            setLeftOverlay: function(overlayPath) {
+                leftDisplay.overlay = overlayPath;
+                
+                if (syncMode) {
+                    rightDisplay.overlay = overlayPath;
+                }
+                
+                // Broadcast change if not from remote
+                if (!isRemoteControlled) {
+                    this.broadcastChange('updateOverlay', {
+                        side: syncMode ? 'both' : 'left',
+                        overlay: overlayPath
+                    });
+                }
+            },
+            
+            setRightOverlay: function(overlayPath) {
+                rightDisplay.overlay = overlayPath;
+                
+                if (syncMode) {
+                    leftDisplay.overlay = overlayPath;
+                }
+                
+                // Broadcast change if not from remote
+                if (!isRemoteControlled) {
+                    this.broadcastChange('updateOverlay', {
+                        side: syncMode ? 'both' : 'right',
+                        overlay: overlayPath
+                    });
+                }
+            },
+            
+            clearLeftOverlay: function() {
+                leftDisplay.overlay = null;
+                
+                if (!isRemoteControlled) {
+                    this.broadcastChange('clearOverlay', { side: 'left' });
+                }
+            },
+            
+            clearRightOverlay: function() {
+                rightDisplay.overlay = null;
+                
+                if (!isRemoteControlled) {
+                    this.broadcastChange('clearOverlay', { side: 'right' });
+                }
+            },
+            
             // Clear functions
             clearLeft: function() {
                 leftDisplay.type = null;
                 leftDisplay.content = null;
+                leftDisplay.overlay = null;
                 
                 if (!isRemoteControlled) {
                     this.broadcastChange('clearDisplay', { side: 'left' });
@@ -130,6 +204,7 @@ angular.module('liveWindowApp')
             clearRight: function() {
                 rightDisplay.type = null;
                 rightDisplay.content = null;
+                rightDisplay.overlay = null;
                 
                 if (!isRemoteControlled) {
                     this.broadcastChange('clearDisplay', { side: 'right' });
@@ -139,8 +214,10 @@ angular.module('liveWindowApp')
             clearBoth: function() {
                 leftDisplay.type = null;
                 leftDisplay.content = null;
+                leftDisplay.overlay = null;
                 rightDisplay.type = null;
                 rightDisplay.content = null;
+                rightDisplay.overlay = null;
                 
                 if (!isRemoteControlled) {
                     this.broadcastChange('clearDisplay', { side: 'both' });
@@ -196,6 +273,10 @@ angular.module('liveWindowApp')
                             WebSocketService.updateDisplay(data.side, data.type, data.content);
                         } else if (action === 'clearDisplay') {
                             WebSocketService.clearDisplay(data.side);
+                        } else if (action === 'updateOverlay') {
+                            WebSocketService.updateOverlay(data.side, data.overlay);
+                        } else if (action === 'clearOverlay') {
+                            WebSocketService.clearOverlay(data.side);
                         } else if (action === 'updateSync') {
                             WebSocketService.updateSync(data.syncMode);
                         } else if (action === 'syncDisplays') {

@@ -17,8 +17,8 @@ app.use(express.static(path.join(__dirname)));
 
 // Store current display state
 let displayState = {
-    leftDisplay: { type: null, content: null },
-    rightDisplay: { type: null, content: null },
+    leftDisplay: { type: null, content: null, overlay: null },
+    rightDisplay: { type: null, content: null, overlay: null },
     syncMode: false,
     timing: { duration: 5, transition: 1 }
 };
@@ -36,12 +36,12 @@ io.on('connection', (socket) => {
         
         // Update server state
         if (data.side === 'left') {
-            displayState.leftDisplay = { type: data.type, content: data.content };
+            displayState.leftDisplay = { type: data.type, content: data.content, overlay: displayState.leftDisplay.overlay };
         } else if (data.side === 'right') {
-            displayState.rightDisplay = { type: data.type, content: data.content };
+            displayState.rightDisplay = { type: data.type, content: data.content, overlay: displayState.rightDisplay.overlay };
         } else if (data.side === 'both') {
-            displayState.leftDisplay = { type: data.type, content: data.content };
-            displayState.rightDisplay = { type: data.type, content: data.content };
+            displayState.leftDisplay = { type: data.type, content: data.content, overlay: displayState.leftDisplay.overlay };
+            displayState.rightDisplay = { type: data.type, content: data.content, overlay: displayState.rightDisplay.overlay };
         }
         
         // Broadcast to all connected clients
@@ -53,12 +53,12 @@ io.on('connection', (socket) => {
         console.log('Clear display:', data);
         
         if (data.side === 'left') {
-            displayState.leftDisplay = { type: null, content: null };
+            displayState.leftDisplay = { type: null, content: null, overlay: null };
         } else if (data.side === 'right') {
-            displayState.rightDisplay = { type: null, content: null };
+            displayState.rightDisplay = { type: null, content: null, overlay: null };
         } else if (data.side === 'both') {
-            displayState.leftDisplay = { type: null, content: null };
-            displayState.rightDisplay = { type: null, content: null };
+            displayState.leftDisplay = { type: null, content: null, overlay: null };
+            displayState.rightDisplay = { type: null, content: null, overlay: null };
         }
         
         io.emit('stateUpdate', displayState);
@@ -81,7 +81,45 @@ io.on('connection', (socket) => {
     // Handle sync displays action
     socket.on('syncDisplays', () => {
         console.log('Syncing displays');
-        displayState.rightDisplay = { ...displayState.leftDisplay };
+        displayState.rightDisplay = { 
+            type: displayState.leftDisplay.type,
+            content: displayState.leftDisplay.content,
+            overlay: displayState.leftDisplay.overlay
+        };
+        io.emit('stateUpdate', displayState);
+    });
+    
+    // Handle overlay updates
+    socket.on('updateOverlay', (data) => {
+        console.log('Overlay update received:', data);
+        
+        // Update server state
+        if (data.side === 'left') {
+            displayState.leftDisplay.overlay = data.overlay;
+        } else if (data.side === 'right') {
+            displayState.rightDisplay.overlay = data.overlay;
+        } else if (data.side === 'both') {
+            displayState.leftDisplay.overlay = data.overlay;
+            displayState.rightDisplay.overlay = data.overlay;
+        }
+        
+        // Broadcast to all connected clients
+        io.emit('stateUpdate', displayState);
+    });
+    
+    // Handle clear overlay commands
+    socket.on('clearOverlay', (data) => {
+        console.log('Clear overlay:', data);
+        
+        if (data.side === 'left') {
+            displayState.leftDisplay.overlay = null;
+        } else if (data.side === 'right') {
+            displayState.rightDisplay.overlay = null;
+        } else if (data.side === 'both') {
+            displayState.leftDisplay.overlay = null;
+            displayState.rightDisplay.overlay = null;
+        }
+        
         io.emit('stateUpdate', displayState);
     });
     

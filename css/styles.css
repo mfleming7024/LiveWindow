@@ -258,36 +258,7 @@ body, html {
     width: 100px;
 }
 
-/* Sync Status */
-.sync-status {
-    background: #333;
-    padding: 15px;
-    border-radius: 4px;
-    margin-bottom: 20px;
-}
-
-.sync-indicator {
-    display: inline-block;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    margin-right: 10px;
-}
-
-.sync-indicator.synced {
-    background: #00ff88;
-    animation: pulse 2s infinite;
-}
-
-.sync-indicator.unsynced {
-    background: #ff4444;
-}
-
-@keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
-}
+/* Connection Status (keeping this as it's still used for WebSocket status) */
 
 /* Navigation */
 .nav-bar {

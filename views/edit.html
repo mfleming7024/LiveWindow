@@ -11,25 +11,6 @@
     </div>
     
     <div class="edit-content">
-        <!-- Global Display Controls -->
-        <div class="control-section" style="grid-column: 1 / -1;">
-            <h2>Display Synchronization & Global Controls</h2>
-            
-            <div class="sync-status">
-                <span class="sync-indicator" ng-class="{'synced': syncMode, 'unsynced': !syncMode}"></span>
-                <span ng-if="syncMode">Displays Synchronized</span>
-                <span ng-if="!syncMode">Independent Mode</span>
-            </div>
-            
-            <div class="controls-grid">
-                <button class="btn" ng-class="{'btn-active': syncMode}" ng-click="toggleSync()">
-                    {{syncMode ? 'Disable Sync' : 'Enable Sync'}}
-                </button>
-                <button class="btn" ng-click="syncDisplays()">Copy Left → Right</button>
-                <button class="btn btn-danger" ng-click="clearBoth()">Clear Both Displays</button>
-            </div>
-        </div>
-        
         <!-- Left Display Controls -->
         <div class="control-section">
             <h2>Left Display Control</h2>

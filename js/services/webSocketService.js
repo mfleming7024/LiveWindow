@@ -60,15 +60,6 @@ angular.module('liveWindowApp')
                 }
             },
             
-            // Send sync update
-            updateSync: function(syncMode) {
-                if (socket && connected) {
-                    socket.emit('updateSync', {
-                        syncMode: syncMode
-                    });
-                }
-            },
-            
             // Send overlay update
             updateOverlay: function(side, overlay) {
                 if (socket && connected) {
@@ -85,13 +76,6 @@ angular.module('liveWindowApp')
                     socket.emit('clearOverlay', {
                         side: side
                     });
-                }
-            },
-            
-            // Send sync displays command
-            syncDisplays: function() {
-                if (socket && connected) {
-                    socket.emit('syncDisplays');
                 }
             },
             

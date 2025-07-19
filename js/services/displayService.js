@@ -22,7 +22,6 @@ angular.module('liveWindowApp')
             
             leftDisplay = data.leftDisplay || { type: null, content: null, overlay: null };
             rightDisplay = data.rightDisplay || { type: null, content: null, overlay: null };
-            syncMode = data.syncMode || false;
             
             $rootScope.$apply();
             isRemoteControlled = false;
@@ -47,7 +46,10 @@ angular.module('liveWindowApp')
         ];
         
         var overlays = [
+            { name: 'Stained Glass Light', path: 'overlays/stained-glass-light.html', preview: 'thumbnails/stained-light-preview.svg', description: 'Soft colored light rays moving across glass', theme: 'default' },
+            { name: 'Forest Wind', path: 'overlays/forest-wind.html', preview: 'thumbnails/forest-wind-preview.svg', description: 'Gentle wind wisps flowing through the trees', theme: 'forest' },
             { name: 'Cave Fireflies', path: 'overlays/cave-fireflies.html', preview: 'thumbnails/cave-fireflies-preview.svg', description: 'Tiny glowing fireflies dancing in the darkness', theme: 'cave' },
+            { name: 'Magical Sparkles', path: 'overlays/magical-sparkles.html', preview: 'thumbnails/magical-sparkles-preview.svg', description: 'Twinkling magical stars with cross-shaped light rays', theme: 'all' },
             { name: 'Floating Embers', path: 'overlays/floating-embers.html', preview: 'thumbnails/floating-embers-preview.svg', description: 'Warm glowing embers drifting upward', theme: 'all' }
         ];
         
@@ -59,10 +61,6 @@ angular.module('liveWindowApp')
             
             getRightDisplay: function() {
                 return rightDisplay;
-            },
-            
-            getSyncMode: function() {
-                return syncMode;
             },
             
             getImages: function() {
@@ -107,15 +105,10 @@ angular.module('liveWindowApp')
                 leftDisplay.type = type;
                 leftDisplay.content = content;
                 
-                if (syncMode) {
-                    rightDisplay.type = type;
-                    rightDisplay.content = content;
-                }
-                
                 // Broadcast change if not from remote
                 if (!isRemoteControlled) {
                     this.broadcastChange('updateDisplay', {
-                        side: syncMode ? 'both' : 'left',
+                        side: 'left',
                         type: type,
                         content: content
                     });
@@ -126,15 +119,10 @@ angular.module('liveWindowApp')
                 rightDisplay.type = type;
                 rightDisplay.content = content;
                 
-                if (syncMode) {
-                    leftDisplay.type = type;
-                    leftDisplay.content = content;
-                }
-                
                 // Broadcast change if not from remote
                 if (!isRemoteControlled) {
                     this.broadcastChange('updateDisplay', {
-                        side: syncMode ? 'both' : 'right',
+                        side: 'right',
                         type: type,
                         content: content
                     });
@@ -145,14 +133,10 @@ angular.module('liveWindowApp')
             setLeftOverlay: function(overlayPath) {
                 leftDisplay.overlay = overlayPath;
                 
-                if (syncMode) {
-                    rightDisplay.overlay = overlayPath;
-                }
-                
                 // Broadcast change if not from remote
                 if (!isRemoteControlled) {
                     this.broadcastChange('updateOverlay', {
-                        side: syncMode ? 'both' : 'left',
+                        side: 'left',
                         overlay: overlayPath
                     });
                 }
@@ -161,14 +145,10 @@ angular.module('liveWindowApp')
             setRightOverlay: function(overlayPath) {
                 rightDisplay.overlay = overlayPath;
                 
-                if (syncMode) {
-                    leftDisplay.overlay = overlayPath;
-                }
-                
                 // Broadcast change if not from remote
                 if (!isRemoteControlled) {
                     this.broadcastChange('updateOverlay', {
-                        side: syncMode ? 'both' : 'right',
+                        side: 'right',
                         overlay: overlayPath
                     });
                 }
@@ -211,37 +191,6 @@ angular.module('liveWindowApp')
                 }
             },
             
-            clearBoth: function() {
-                leftDisplay.type = null;
-                leftDisplay.content = null;
-                leftDisplay.overlay = null;
-                rightDisplay.type = null;
-                rightDisplay.content = null;
-                rightDisplay.overlay = null;
-                
-                if (!isRemoteControlled) {
-                    this.broadcastChange('clearDisplay', { side: 'both' });
-                }
-            },
-            
-            // Sync functions
-            toggleSync: function() {
-                syncMode = !syncMode;
-                
-                if (!isRemoteControlled) {
-                    this.broadcastChange('updateSync', { syncMode: syncMode });
-                }
-            },
-            
-            syncDisplays: function() {
-                rightDisplay.type = leftDisplay.type;
-                rightDisplay.content = leftDisplay.content;
-                
-                if (!isRemoteControlled) {
-                    this.broadcastChange('syncDisplays');
-                }
-            },
-            
             // Initialize
             initializeDisplays: function() {
                 // Set default content if needed
@@ -277,10 +226,6 @@ angular.module('liveWindowApp')
                             WebSocketService.updateOverlay(data.side, data.overlay);
                         } else if (action === 'clearOverlay') {
                             WebSocketService.clearOverlay(data.side);
-                        } else if (action === 'updateSync') {
-                            WebSocketService.updateSync(data.syncMode);
-                        } else if (action === 'syncDisplays') {
-                            WebSocketService.syncDisplays();
                         }
                     }
                 } catch (e) {

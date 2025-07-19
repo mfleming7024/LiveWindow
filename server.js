@@ -18,9 +18,7 @@ app.use(express.static(path.join(__dirname)));
 // Store current display state
 let displayState = {
     leftDisplay: { type: null, content: null, overlay: null },
-    rightDisplay: { type: null, content: null, overlay: null },
-    syncMode: false,
-    timing: { duration: 5, transition: 1 }
+    rightDisplay: { type: null, content: null, overlay: null }
 };
 
 // Socket.IO connection handling
@@ -61,31 +59,6 @@ io.on('connection', (socket) => {
             displayState.rightDisplay = { type: null, content: null, overlay: null };
         }
         
-        io.emit('stateUpdate', displayState);
-    });
-    
-    // Handle sync mode changes
-    socket.on('updateSync', (data) => {
-        console.log('Sync update:', data);
-        displayState.syncMode = data.syncMode;
-        io.emit('stateUpdate', displayState);
-    });
-    
-    // Handle timing updates
-    socket.on('updateTiming', (data) => {
-        console.log('Timing update:', data);
-        displayState.timing = data.timing;
-        io.emit('stateUpdate', displayState);
-    });
-    
-    // Handle sync displays action
-    socket.on('syncDisplays', () => {
-        console.log('Syncing displays');
-        displayState.rightDisplay = { 
-            type: displayState.leftDisplay.type,
-            content: displayState.leftDisplay.content,
-            overlay: displayState.leftDisplay.overlay
-        };
         io.emit('stateUpdate', displayState);
     });
     

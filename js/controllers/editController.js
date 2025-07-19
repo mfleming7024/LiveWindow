@@ -7,7 +7,6 @@ angular.module('liveWindowApp')
         $scope.overlays = DisplayService.getOverlays();
         $scope.leftDisplay = DisplayService.getLeftDisplay();
         $scope.rightDisplay = DisplayService.getRightDisplay();
-        $scope.syncMode = DisplayService.getSyncMode();
         $scope.connectionStatus = null;
         
         // Check connection status periodically
@@ -86,24 +85,6 @@ angular.module('liveWindowApp')
             $scope.rightDisplay = DisplayService.getRightDisplay();
         };
         
-        $scope.clearBoth = function() {
-            DisplayService.clearBoth();
-            $scope.leftDisplay = DisplayService.getLeftDisplay();
-            $scope.rightDisplay = DisplayService.getRightDisplay();
-        };
-        
-        // Sync controls
-        $scope.toggleSync = function() {
-            DisplayService.toggleSync();
-            $scope.syncMode = DisplayService.getSyncMode();
-        };
-        
-        $scope.syncDisplays = function() {
-            DisplayService.syncDisplays();
-            $scope.leftDisplay = DisplayService.getLeftDisplay();
-            $scope.rightDisplay = DisplayService.getRightDisplay();
-        };
-        
         // Utility functions
         $scope.isActiveLeft = function(type, content) {
             return $scope.leftDisplay.type === type && $scope.leftDisplay.content === content;
@@ -120,11 +101,4 @@ angular.module('liveWindowApp')
         $scope.isActiveRightOverlay = function(overlayPath) {
             return $scope.rightDisplay.overlay === overlayPath;
         };
-        
-        // Watch for changes in the display service
-        $scope.$watch(function() {
-            return DisplayService.getSyncMode();
-        }, function(newVal) {
-            $scope.syncMode = newVal;
-        });
     }]);

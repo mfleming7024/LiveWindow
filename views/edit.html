@@ -57,11 +57,11 @@
                 <button class="btn btn-sm" ng-click="clearLeftOverlay()">Clear Overlay</button>
             </div>
             <div class="media-grid">
-                <div class="media-item" 
+                <div class="media-item overlay-item" 
                      ng-repeat="overlay in getOverlays()" 
                      ng-class="{'active': isActiveLeftOverlay(overlay.path)}"
                      ng-click="setLeftOverlay(overlay.path)">
-                    <img ng-src="{{overlay.preview}}" alt="{{overlay.name}} Preview" />
+                    <div class="overlay-emoji">{{overlay.emoji}}</div>
                     <div class="name">{{overlay.name}}</div>
                     <div class="description">{{overlay.description}}</div>
                 </div>
@@ -92,11 +92,11 @@
                 <button class="btn btn-sm" ng-click="clearRightOverlay()">Clear Overlay</button>
             </div>
             <div class="media-grid">
-                <div class="media-item" 
+                <div class="media-item overlay-item" 
                      ng-repeat="overlay in getOverlays()" 
                      ng-class="{'active': isActiveRightOverlay(overlay.path)}"
                      ng-click="setRightOverlay(overlay.path)">
-                    <img ng-src="{{overlay.preview}}" alt="{{overlay.name}} Preview" />
+                    <div class="overlay-emoji">{{overlay.emoji}}</div>
                     <div class="name">{{overlay.name}}</div>
                     <div class="description">{{overlay.description}}</div>
                 </div>

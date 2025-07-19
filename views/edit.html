@@ -2,11 +2,33 @@
     <div class="edit-header">
         <h1>LiveWindow Control Panel</h1>
         <p>Dual Display Management System</p>
-        <div class="connection-status" ng-if="connectionStatus">
-            <span class="connection-indicator" ng-class="{'connected': connectionStatus.connected, 'disconnected': !connectionStatus.connected}"></span>
-            <span ng-if="connectionStatus.connected">Multi-Instance Control Active (ID: {{connectionStatus.socketId}})</span>
-            <span ng-if="!connectionStatus.connected">Standalone Mode - Multi-Instance Control Unavailable</span>
+        
+        <div class="header-status-grid">
+            <!-- Connection Status -->
+            <div class="connection-status" ng-if="connectionStatus">
+                <span class="connection-indicator" ng-class="{'connected': connectionStatus.connected, 'disconnected': !connectionStatus.connected}"></span>
+                <span ng-if="connectionStatus.connected">Multi-Instance Control Active (ID: {{connectionStatus.socketId}})</span>
+                <span ng-if="!connectionStatus.connected">Standalone Mode - Multi-Instance Control Unavailable</span>
+            </div>
+            
+            <!-- Current Display Status -->
+            <div class="display-status">
+                <div class="status-display">
+                    <h4>Left Display:</h4>
+                    <p ng-if="!leftDisplay.type">Blank</p>
+                    <p ng-if="leftDisplay.type">{{leftDisplay.type}}: {{leftDisplay.content}}</p>
+                    <p ng-if="leftDisplay.overlay" class="overlay-status">Overlay: {{leftDisplay.overlay}}</p>
+                </div>
+                
+                <div class="status-display">
+                    <h4>Right Display:</h4>
+                    <p ng-if="!rightDisplay.type">Blank</p>
+                    <p ng-if="rightDisplay.type">{{rightDisplay.type}}: {{rightDisplay.content}}</p>
+                    <p ng-if="rightDisplay.overlay" class="overlay-status">Overlay: {{rightDisplay.overlay}}</p>
+                </div>
+            </div>
         </div>
+        
         <button class="btn" ng-click="goToMain()">← Back to Display</button>
     </div>
     
@@ -99,27 +121,6 @@
                     <img ng-src="{{overlay.preview}}" alt="{{overlay.name}} Preview" />
                     <div class="name">{{overlay.name}}</div>
                     <div class="description">{{overlay.description}}</div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Current Status -->
-        <div class="control-section">
-            <h2>Current Status</h2>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                <div>
-                    <h4>Left Display:</h4>
-                    <p ng-if="!leftDisplay.type">Blank</p>
-                    <p ng-if="leftDisplay.type">{{leftDisplay.type}}: {{leftDisplay.content}}</p>
-                    <p ng-if="leftDisplay.overlay" class="overlay-status">Overlay: {{leftDisplay.overlay}}</p>
-                </div>
-                
-                <div>
-                    <h4>Right Display:</h4>
-                    <p ng-if="!rightDisplay.type">Blank</p>
-                    <p ng-if="rightDisplay.type">{{rightDisplay.type}}: {{rightDisplay.content}}</p>
-                    <p ng-if="rightDisplay.overlay" class="overlay-status">Overlay: {{rightDisplay.overlay}}</p>
                 </div>
             </div>
         </div>

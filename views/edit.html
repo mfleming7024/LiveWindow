@@ -52,17 +52,6 @@
                 </div>
             </div>
             
-            <h3>Animations</h3>
-            <div class="media-grid">
-                <div class="media-item" 
-                     ng-repeat="animation in animations" 
-                     ng-class="{'active': isActiveLeft('animation', animation.path)}"
-                     ng-click="setLeftContent('animation', animation.path)">
-                    <img ng-src="{{animation.preview}}" alt="{{animation.name}} Preview" />
-                    <div class="name">{{animation.name}}</div>
-                </div>
-            </div>
-            
             <h3>Dynamic Overlays</h3>
             <div class="controls-grid" style="margin-bottom: 10px;">
                 <button class="btn btn-sm" ng-click="clearLeftOverlay()">Clear Overlay</button>
@@ -95,17 +84,6 @@
                      ng-click="setRightContent('image', image.path)">
                     <img ng-src="{{image.path}}" alt="{{image.name}}" />
                     <div class="name">{{image.name}}</div>
-                </div>
-            </div>
-            
-            <h3>Animations</h3>
-            <div class="media-grid">
-                <div class="media-item" 
-                     ng-repeat="animation in animations" 
-                     ng-class="{'active': isActiveRight('animation', animation.path)}"
-                     ng-click="setRightContent('animation', animation.path)">
-                    <img ng-src="{{animation.preview}}" alt="{{animation.name}} Preview" />
-                    <div class="name">{{animation.name}}</div>
                 </div>
             </div>
             

@@ -41,7 +41,7 @@
             <h3>Images</h3>
             <div class="media-grid">
                 <div class="media-item" 
-                     ng-repeat="image in images" 
+                     ng-repeat="image in leftImages" 
                      ng-class="{'active': isActiveLeft('image', image.path)}"
                      ng-click="setLeftContent('image', image.path)">
                     <img ng-src="{{image.path}}" alt="{{image.name}}" />
@@ -72,7 +72,7 @@
             <h3>Images</h3>
             <div class="media-grid">
                 <div class="media-item" 
-                     ng-repeat="image in images" 
+                     ng-repeat="image in rightImages" 
                      ng-class="{'active': isActiveRight('image', image.path)}"
                      ng-click="setRightContent('image', image.path)">
                     <img ng-src="{{image.path}}" alt="{{image.name}}" />
@@ -89,26 +89,6 @@
                     <img ng-src="{{animation.preview}}" alt="{{animation.name}} Preview" />
                     <div class="name">{{animation.name}}</div>
                 </div>
-            </div>
-        </div>
-        
-        <!-- Timing and Auto Controls -->
-        <div class="control-section">
-            <h2>Timing & Automation</h2>
-            
-            <div class="timing-controls">
-                <label>Display Duration (seconds):</label>
-                <input type="range" min="1" max="30" ng-model="timing.duration" ng-change="updateTiming()" />
-                <input type="number" min="1" max="30" ng-model="timing.duration" ng-change="updateTiming()" />
-                
-                <label>Transition Time (seconds):</label>
-                <input type="range" min="0" max="5" step="0.1" ng-model="timing.transition" ng-change="updateTiming()" />
-                <input type="number" min="0" max="5" step="0.1" ng-model="timing.transition" ng-change="updateTiming()" />
-            </div>
-            
-            <div class="controls-grid">
-                <button class="btn" ng-click="startAutoAdvance()">Start Auto-Advance</button>
-                <button class="btn btn-danger" ng-click="stopAutoAdvance()">Stop Auto-Advance</button>
             </div>
         </div>
         

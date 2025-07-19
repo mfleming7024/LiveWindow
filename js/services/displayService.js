@@ -11,13 +11,7 @@ angular.module('liveWindowApp')
         };
         
         var syncMode = false;
-        var autoAdvanceInterval = null;
         var isRemoteControlled = false;
-        
-        var timing = {
-            duration: 5,
-            transition: 1
-        };
         
         // Listen for remote state updates
         $rootScope.$on('websocket:stateUpdate', function(event, data) {
@@ -27,7 +21,6 @@ angular.module('liveWindowApp')
             leftDisplay = data.leftDisplay || { type: null, content: null };
             rightDisplay = data.rightDisplay || { type: null, content: null };
             syncMode = data.syncMode || false;
-            timing = data.timing || { duration: 5, transition: 1 };
             
             $rootScope.$apply();
             isRemoteControlled = false;
@@ -65,12 +58,20 @@ angular.module('liveWindowApp')
                 return syncMode;
             },
             
-            getTiming: function() {
-                return timing;
-            },
-            
             getImages: function() {
                 return images;
+            },
+            
+            getLeftImages: function() {
+                return images.filter(function(image) {
+                    return image.path.includes('-left');
+                });
+            },
+            
+            getRightImages: function() {
+                return images.filter(function(image) {
+                    return image.path.includes('-right');
+                });
             },
             
             getAnimations: function() {
@@ -164,44 +165,6 @@ angular.module('liveWindowApp')
                 }
             },
             
-            // Timing
-            setTiming: function(newTiming) {
-                timing = angular.copy(newTiming);
-                
-                if (!isRemoteControlled) {
-                    this.broadcastChange('updateTiming', { timing: timing });
-                }
-            },
-            
-            // Auto-advance
-            startAutoAdvance: function() {
-                var self = this;
-                if (autoAdvanceInterval) {
-                    clearInterval(autoAdvanceInterval);
-                }
-                
-                autoAdvanceInterval = setInterval(function() {
-                    // Auto-advance through images
-                    var currentIndex = -1;
-                    for (var i = 0; i < images.length; i++) {
-                        if (images[i].path === leftDisplay.content) {
-                            currentIndex = i;
-                            break;
-                        }
-                    }
-                    
-                    var nextIndex = (currentIndex + 1) % images.length;
-                    self.setLeftContent('image', images[nextIndex].path);
-                }, timing.duration * 1000);
-            },
-            
-            stopAutoAdvance: function() {
-                if (autoAdvanceInterval) {
-                    clearInterval(autoAdvanceInterval);
-                    autoAdvanceInterval = null;
-                }
-            },
-            
             // Initialize
             initializeDisplays: function() {
                 // Set default content if needed
@@ -235,8 +198,6 @@ angular.module('liveWindowApp')
                             WebSocketService.clearDisplay(data.side);
                         } else if (action === 'updateSync') {
                             WebSocketService.updateSync(data.syncMode);
-                        } else if (action === 'updateTiming') {
-                            WebSocketService.updateTiming(data.timing);
                         } else if (action === 'syncDisplays') {
                             WebSocketService.syncDisplays();
                         }

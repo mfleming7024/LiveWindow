@@ -69,15 +69,6 @@ angular.module('liveWindowApp')
                 }
             },
             
-            // Send timing update
-            updateTiming: function(timing) {
-                if (socket && connected) {
-                    socket.emit('updateTiming', {
-                        timing: timing
-                    });
-                }
-            },
-            
             // Send sync displays command
             syncDisplays: function() {
                 if (socket && connected) {

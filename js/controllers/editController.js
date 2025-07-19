@@ -1,12 +1,12 @@
 angular.module('liveWindowApp')
     .controller('EditController', ['$scope', '$location', '$interval', 'DisplayService', function($scope, $location, $interval, DisplayService) {
         // Initialize scope variables
-        $scope.images = DisplayService.getImages();
+        $scope.leftImages = DisplayService.getLeftImages();
+        $scope.rightImages = DisplayService.getRightImages();
         $scope.animations = DisplayService.getAnimations();
         $scope.leftDisplay = DisplayService.getLeftDisplay();
         $scope.rightDisplay = DisplayService.getRightDisplay();
         $scope.syncMode = DisplayService.getSyncMode();
-        $scope.timing = DisplayService.getTiming();
         $scope.connectionStatus = null;
         
         // Check connection status periodically
@@ -77,20 +77,6 @@ angular.module('liveWindowApp')
             $scope.rightDisplay = DisplayService.getRightDisplay();
         };
         
-        // Timing controls
-        $scope.updateTiming = function() {
-            DisplayService.setTiming($scope.timing);
-        };
-        
-        // Auto-advance controls
-        $scope.startAutoAdvance = function() {
-            DisplayService.startAutoAdvance();
-        };
-        
-        $scope.stopAutoAdvance = function() {
-            DisplayService.stopAutoAdvance();
-        };
-        
         // Utility functions
         $scope.isActiveLeft = function(type, content) {
             return $scope.leftDisplay.type === type && $scope.leftDisplay.content === content;
@@ -106,10 +92,4 @@ angular.module('liveWindowApp')
         }, function(newVal) {
             $scope.syncMode = newVal;
         });
-        
-        $scope.$watch(function() {
-            return DisplayService.getTiming();
-        }, function(newVal) {
-            $scope.timing = newVal;
-        }, true);
     }]);

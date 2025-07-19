@@ -49,7 +49,8 @@ angular.module('liveWindowApp')
             { name: 'Cave Fireflies', path: 'overlays/cave-fireflies.html', emoji: '✨', description: 'Tiny glowing fireflies dancing in the darkness', theme: 'cave' },
             { name: 'Fog', path: 'overlays/fog.html', emoji: '🌫️', description: 'Mysterious fog rolling in', theme: 'all' },
             { name: 'Rain Drops', path: 'overlays/rain-drops.html', emoji: '🌧️', description: 'Gentle rain falling in a rhythmic pattern', theme: 'all' },
-            { name: 'Floating Embers', path: 'overlays/floating-embers.html', emoji: '🔥', description: 'Warm glowing embers drifting upward', theme: 'all' }
+            { name: 'Floating Embers', path: 'overlays/floating-embers.html', emoji: '🔥', description: 'Warm glowing embers drifting upward', theme: 'all' },
+            { name: 'Sunbeams', path: 'overlays/sunbeams.html', emoji: '☀️', description: 'Radiant beams of sunlight streaming through', theme: 'all' }
         ];
         
         return {

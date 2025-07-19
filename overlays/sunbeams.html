@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Randomized Sunbeam Animation</title>
+    <style>
+        /* Basic reset and fullscreen setup */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* The main container that holds the background image and the animation */
+        .scene-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden; /* Ensures rays don't spill out */
+        }
+
+        /* This container holds all the sunbeam elements. */
+        .sunbeams {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Allows clicks to pass through to content below */
+            overflow: hidden;
+            
+            /* Add a mask to fade out the bottom of the container */
+            mask-image: linear-gradient(to bottom, white 60%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, white 60%, transparent 100%);
+        }
+
+        /* Base styling for an individual sunbeam element.
+           JavaScript will add the animation properties dynamically. */
+        .beam {
+            position: absolute;
+            top: -50%; /* Start above the viewport */
+            left: 50%; /* Centered initially, JS will vary this */
+            width: 80px; /* Base width, JS will vary this */
+            height: 200%; /* Long enough to cross the entire screen */
+            
+            /* The gradient creates the soft light effect */
+            background: linear-gradient(
+                to bottom,
+                rgba(255, 245, 200, 0.35) 0%, /* Increased opacity slightly */
+                rgba(255, 245, 200, 0) 70%
+            );
+            
+            /* UPDATED: Using filter:blur() for a much softer edge */
+            filter: blur(14px);
+            
+            transform-origin: center top; /* Pivot from the top-center */
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="scene-container">
+        <div class="sunbeams">
+            <div class="beam"></div>
+            <div class="beam"></div>
+            <div class="beam"></div>
+            <div class="beam"></div>
+            <div class="beam"></div>
+            <div class="beam"></div>
+            <div class="beam"></div>
+            <div class="beam"></div>
+            <div class="beam"></div>
+            <div class="beam"></div>
+        </div>
+    </div>
+
+    <script>
+        // This script runs after the page has loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            const beamsContainer = document.querySelector('.sunbeams');
+            const beams = document.querySelectorAll('.beam');
+            
+            // We'll inject our dynamically generated @keyframes into this style tag
+            const styleSheet = document.createElement('style');
+            document.head.appendChild(styleSheet);
+
+            beams.forEach((beam, i) => {
+                // 1. Generate random properties for each beam
+                
+                // UPDATED: Duration increased by 50% for slower movement
+                // New range: 22.5s to 37.5s
+                const duration = Math.random() * 15 + 22.5; 
+                
+                // UPDATED: Delay range increased to match new duration
+                const delay = Math.random() * -37.5;      
+                const startRotation = Math.random() * 80 - 40; // Initial angle: -40deg to 40deg
+                
+                // The sweep distance will be between 10 and 25 degrees
+                const rotationSweep = Math.random() * 15 + 10;
+                const endRotation = startRotation + rotationSweep;
+                
+                // Each beam needs a unique animation name
+                const animationName = `sweep-${i}`;
+
+                // 2. Create the unique @keyframes rule as a string
+                const keyframes = `
+                    @keyframes ${animationName} {
+                        0% {
+                            opacity: 0;
+                            transform: rotate(${startRotation}deg) scaleY(1);
+                        }
+                        10% {
+                            opacity: 0.8; /* Increased opacity slightly */
+                        }
+                        50% {
+                            transform: rotate(${endRotation}deg) scaleY(1.05);
+                        }
+                        90% {
+                            opacity: 0;
+                        }
+                        100% {
+                            opacity: 0;
+                        }
+                    }
+                `;
+
+                // 3. Add the new keyframe rule to our generated stylesheet
+                styleSheet.sheet.insertRule(keyframes, styleSheet.sheet.cssRules.length);
+
+                // 4. Apply the unique animation and other random styles to the beam
+                beam.style.animation = `${animationName} ${duration}s ease-in-out ${delay}s infinite`;
+                
+                // Also randomize width and horizontal position for more variety
+                beam.style.width = `${Math.random() * 50 + 50}px`; // Width: 50px to 100px
+                beam.style.left = `${Math.random() * 40 + 30}%`; // Left: 30% to 70%
+            });
+        });
+    </script>
+
+</body>
+</html>

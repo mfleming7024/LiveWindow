@@ -48,12 +48,17 @@
             height: 60px; /* Length of the raindrop streak */
             background: linear-gradient(to top, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.25));
             animation: fall linear infinite;
+            
+            /* PERFORMANCE: Hardware acceleration and optimization hints */
+            transform: translate3d(0, 0, 0); /* Trigger hardware acceleration */
+            will-change: transform; /* Hint browser about animated properties */
+            backface-visibility: hidden; /* Optimize for 3D transforms */
         }
 
         /* Keyframe animation for the falling motion */
         @keyframes fall {
             to {
-                transform: translateY(110vh); /* End position well below the viewport to ensure it disappears completely */
+                transform: translate3d(0, 110vh, 0); /* End position well below the viewport to ensure it disappears completely */
             }
         }
 

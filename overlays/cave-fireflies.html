@@ -28,7 +28,11 @@
         .firefly-wrapper {
             position: absolute;
             opacity: 0; /* Start invisible to prevent initial stutter */
+            
+            /* PERFORMANCE: Hardware acceleration and optimization hints */
+            transform: translate3d(0, 0, 0); /* Trigger hardware acceleration */
             will-change: transform, opacity; /* Hint for browser optimization */
+            backface-visibility: hidden; /* Optimize for 3D transforms */
             
             /* Multiple animations: one for fade-in, one for floating */
             animation-name: fadeIn, float;
@@ -46,7 +50,11 @@
             background-color: #fff;
             box-shadow: 0 0 8px 3px rgba(255, 255, 255, 0.7), /* Main glow */
                         0 0 14px 6px rgba(255, 255, 255, 0.5);   /* Outer haze */
+            
+            /* PERFORMANCE: Hardware acceleration and optimization hints */
+            transform: translate3d(0, 0, 0); /* Trigger hardware acceleration */
             will-change: transform, opacity; /* Hint for browser optimization */
+            backface-visibility: hidden; /* Optimize for 3D transforms */
             
             animation-name: pulse;
             animation-timing-function: ease-in-out;
@@ -66,16 +74,16 @@
         /* Animation for the floating movement, applied to the wrapper */
         @keyframes float {
             0%, 100% {
-                transform: translateX(var(--tx-1)) translateY(var(--ty-1));
+                transform: translate3d(var(--tx-1), var(--ty-1), 0);
             }
             25% {
-                transform: translateX(var(--tx-2)) translateY(var(--ty-2));
+                transform: translate3d(var(--tx-2), var(--ty-2), 0);
             }
             50% {
-                transform: translateX(var(--tx-3)) translateY(var(--ty-3));
+                transform: translate3d(var(--tx-3), var(--ty-3), 0);
             }
             75% {
-                transform: translateX(var(--tx-4)) translateY(var(--ty-4));
+                transform: translate3d(var(--tx-4), var(--ty-4), 0);
             }
         }
 
@@ -83,11 +91,11 @@
         @keyframes pulse {
             0%, 100% {
                 opacity: 0.5;
-                transform: scale(0.9);
+                transform: scale3d(0.9, 0.9, 1);
             }
             50% {
                 opacity: 1;
-                transform: scale(1.1);
+                transform: scale3d(1.1, 1.1, 1);
             }
         }
     </style>

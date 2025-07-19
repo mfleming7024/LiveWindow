@@ -3,7 +3,6 @@ angular.module('liveWindowApp')
         // Initialize scope variables
         $scope.leftImages = DisplayService.getLeftImages();
         $scope.rightImages = DisplayService.getRightImages();
-        $scope.animations = DisplayService.getAnimations();
         $scope.overlays = DisplayService.getOverlays();
         $scope.leftDisplay = DisplayService.getLeftDisplay();
         $scope.rightDisplay = DisplayService.getRightDisplay();

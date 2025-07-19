@@ -57,6 +57,11 @@
                         0 0 12px 4px #ff6f00, 
                         0 0 20px 6px #e65100;
 
+            /* PERFORMANCE: Hardware acceleration and optimization hints */
+            transform: translate3d(0, 0, 0); /* Trigger hardware acceleration */
+            will-change: transform, opacity; /* Hint browser about animated properties */
+            backface-visibility: hidden; /* Optimize for 3D transforms */
+
             /* Link the ember to the animation */
             animation-name: float-up;
             animation-timing-function: linear;
@@ -70,7 +75,7 @@
         @keyframes float-up {
             0% {
                 /* Start at the bottom, invisible, with no horizontal movement */
-                transform: translateY(0) translateX(0);
+                transform: translate3d(0, 0, 0);
                 opacity: 0;
             }
             10% {
@@ -79,13 +84,13 @@
             }
             65% {
                 /* Mid-point of the animation's vertical travel */
-                transform: translateY(-50vh) translateX(var(--sway-mid));
+                transform: translate3d(var(--sway-mid), -50vh, 0);
             }
             100% {
                 /* * End the animation 60% of the way up the screen (at the 40% mark from the top).
                  * The ember is fully transparent and has completed its horizontal sway.
                  */
-                transform: translateY(-70vh) translateX(var(--sway-end));
+                transform: translate3d(var(--sway-end), -70vh, 0);
                 opacity: 0;
             }
         }
@@ -102,8 +107,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const container = document.getElementById('ember-container');
-            // EDITED: Reduced the number of embers by 40% (from 75 to 45).
-            const emberCount = 25;
+            const emberCount = 17;
 
             for (let i = 0; i < emberCount; i++) {
                 const ember = document.createElement('div');

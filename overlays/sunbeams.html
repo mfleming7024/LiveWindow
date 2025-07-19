@@ -56,7 +56,11 @@
             /* UPDATED: Using filter:blur() for a much softer edge */
             filter: blur(14px);
             
+            /* PERFORMANCE: Hardware acceleration and optimization hints */
+            transform: translate3d(0, 0, 0); /* Trigger hardware acceleration */
             transform-origin: center top; /* Pivot from the top-center */
+            will-change: transform, opacity; /* Hint browser about animated properties */
+            backface-visibility: hidden; /* Optimize for 3D transforms */
         }
 
     </style>
@@ -111,13 +115,13 @@
                     @keyframes ${animationName} {
                         0% {
                             opacity: 0;
-                            transform: rotate(${startRotation}deg) scaleY(1);
+                            transform: translate3d(-50%, 0, 0) rotate(${startRotation}deg) scaleY(1);
                         }
                         10% {
                             opacity: 0.8; /* Increased opacity slightly */
                         }
                         50% {
-                            transform: rotate(${endRotation}deg) scaleY(1.05);
+                            transform: translate3d(-50%, 0, 0) rotate(${endRotation}deg) scaleY(1.05);
                         }
                         90% {
                             opacity: 0;

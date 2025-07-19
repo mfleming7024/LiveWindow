@@ -13,7 +13,6 @@
                     <!-- Blank display -->
                 </div>
                 <img ng-if="leftDisplay.type === 'image'" ng-src="{{leftDisplay.content}}" alt="Left Display Image" />
-                <iframe ng-if="leftDisplay.type === 'animation'" ng-src="{{leftDisplay.content}}" style="width: 100%; height: 100%; border: none;"></iframe>
                 <video ng-if="leftDisplay.type === 'video'" ng-src="{{leftDisplay.content}}" autoplay loop muted></video>
                 
                 <!-- Overlay Layer -->
@@ -29,7 +28,6 @@
                     <!-- Blank display -->
                 </div>
                 <img ng-if="rightDisplay.type === 'image'" ng-src="{{rightDisplay.content}}" alt="Right Display Image" />
-                <iframe ng-if="rightDisplay.type === 'animation'" ng-src="{{rightDisplay.content}}" style="width: 100%; height: 100%; border: none;"></iframe>
                 <video ng-if="rightDisplay.type === 'video'" ng-src="{{rightDisplay.content}}" autoplay loop muted></video>
                 
                 <!-- Overlay Layer -->

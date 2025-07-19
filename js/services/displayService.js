@@ -36,15 +36,6 @@ angular.module('liveWindowApp')
 			{ name: 'Cave Right', path: 'images/cave-right.png' },
         ];
         
-        var animations = [
-            { name: 'Mystical Energies', path: 'animations/waves.html', preview: 'thumbnails/waves-preview.svg' },
-            { name: 'Spell Casting', path: 'animations/particles.html', preview: 'thumbnails/particles-preview.svg' },
-            { name: 'Elemental Crystals', path: 'animations/geometric.html', preview: 'thumbnails/geometric-preview.svg' },
-            { name: 'Portal Vortex', path: 'animations/spiral.html', preview: 'thumbnails/spiral-preview.svg' },
-            { name: 'Ancient Tome', path: 'animations/matrix.html', preview: 'thumbnails/matrix-preview.svg' },
-            { name: 'Mystical Mists', path: 'animations/fluid.html', preview: 'thumbnails/fluid-preview.svg' }
-        ];
-        
         var overlays = [
             { name: 'Cave Fireflies', path: 'overlays/cave-fireflies.html', emoji: '✨', description: 'Tiny glowing fireflies dancing in the darkness', theme: 'cave' },
             { name: 'Fog', path: 'overlays/fog.html', emoji: '🌫️', description: 'Mysterious fog rolling in', theme: 'all' },
@@ -77,10 +68,6 @@ angular.module('liveWindowApp')
                 return images.filter(function(image) {
                     return image.path.includes('-right');
                 });
-            },
-            
-            getAnimations: function() {
-                return animations;
             },
             
             getOverlays: function() {

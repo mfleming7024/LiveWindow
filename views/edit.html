@@ -69,7 +69,7 @@
             </div>
             <div class="media-grid">
                 <div class="media-item" 
-                     ng-repeat="overlay in getFilteredOverlays('left')" 
+                     ng-repeat="overlay in getOverlays()" 
                      ng-class="{'active': isActiveLeftOverlay(overlay.path)}"
                      ng-click="setLeftOverlay(overlay.path)">
                     <img ng-src="{{overlay.preview}}" alt="{{overlay.name}} Preview" />
@@ -115,7 +115,7 @@
             </div>
             <div class="media-grid">
                 <div class="media-item" 
-                     ng-repeat="overlay in getFilteredOverlays('right')" 
+                     ng-repeat="overlay in getOverlays()" 
                      ng-class="{'active': isActiveRightOverlay(overlay.path)}"
                      ng-click="setRightOverlay(overlay.path)">
                     <img ng-src="{{overlay.preview}}" alt="{{overlay.name}} Preview" />

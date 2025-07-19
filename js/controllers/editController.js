@@ -69,9 +69,8 @@ angular.module('liveWindowApp')
             $scope.rightDisplay = DisplayService.getRightDisplay();
         };
         
-        $scope.getFilteredOverlays = function(side) {
-            var display = side === 'left' ? $scope.leftDisplay : $scope.rightDisplay;
-            return DisplayService.getOverlaysForTheme(display.content);
+        $scope.getOverlays = function() {
+            return DisplayService.getOverlays();
         };
         
         // Clear displays

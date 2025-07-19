@@ -1,36 +1,41 @@
 <div class="main-display">
     <div class="nav-bar">
-        <button class="btn" ng-click="goToEdit()">Edit Mode</button>
-    </div>
-    
-    <div class="display-half display-left">
-        <div class="content-display">
-            <div ng-if="!leftDisplay.type" class="placeholder">
-                <!-- Blank display -->
-            </div>
-            <img ng-if="leftDisplay.type === 'image'" ng-src="{{leftDisplay.content}}" alt="Left Display Image" />
-            <iframe ng-if="leftDisplay.type === 'animation'" ng-src="{{leftDisplay.content}}" style="width: 100%; height: 100%; border: none;"></iframe>
-            <video ng-if="leftDisplay.type === 'video'" ng-src="{{leftDisplay.content}}" autoplay loop muted></video>
-            
-            <!-- Overlay Layer -->
-            <div ng-if="leftDisplay.overlay" class="overlay-layer">
-                <iframe ng-src="{{leftDisplay.overlay}}" style="width: 100%; height: 100%; border: none; pointer-events: none; position: absolute; top: 0; left: 0; z-index: 10;"></iframe>
-            </div>
+        <div class="edit-controls" ng-if="!editButtonHidden">
+            <button class="btn" ng-click="goToEdit()">Edit Mode</button>
+            <button class="btn btn-hide" ng-click="hideEditButton()" title="Hide Edit Mode button until refresh">×</button>
         </div>
     </div>
     
-    <div class="display-half display-right">
-        <div class="content-display">
-            <div ng-if="!rightDisplay.type" class="placeholder">
-                <!-- Blank display -->
+    <div class="display-content">
+        <div class="display-half display-left">
+            <div class="content-display">
+                <div ng-if="!leftDisplay.type" class="placeholder">
+                    <!-- Blank display -->
+                </div>
+                <img ng-if="leftDisplay.type === 'image'" ng-src="{{leftDisplay.content}}" alt="Left Display Image" />
+                <iframe ng-if="leftDisplay.type === 'animation'" ng-src="{{leftDisplay.content}}" style="width: 100%; height: 100%; border: none;"></iframe>
+                <video ng-if="leftDisplay.type === 'video'" ng-src="{{leftDisplay.content}}" autoplay loop muted></video>
+                
+                <!-- Overlay Layer -->
+                <div ng-if="leftDisplay.overlay" class="overlay-layer">
+                    <iframe ng-src="{{leftDisplay.overlay}}" style="width: 100%; height: 100%; border: none; pointer-events: none; position: absolute; top: 0; left: 0; z-index: 10;"></iframe>
+                </div>
             </div>
-            <img ng-if="rightDisplay.type === 'image'" ng-src="{{rightDisplay.content}}" alt="Right Display Image" />
-            <iframe ng-if="rightDisplay.type === 'animation'" ng-src="{{rightDisplay.content}}" style="width: 100%; height: 100%; border: none;"></iframe>
-            <video ng-if="rightDisplay.type === 'video'" ng-src="{{rightDisplay.content}}" autoplay loop muted></video>
-            
-            <!-- Overlay Layer -->
-            <div ng-if="rightDisplay.overlay" class="overlay-layer">
-                <iframe ng-src="{{rightDisplay.overlay}}" style="width: 100%; height: 100%; border: none; pointer-events: none; position: absolute; top: 0; left: 0; z-index: 10;"></iframe>
+        </div>
+        
+        <div class="display-half display-right">
+            <div class="content-display">
+                <div ng-if="!rightDisplay.type" class="placeholder">
+                    <!-- Blank display -->
+                </div>
+                <img ng-if="rightDisplay.type === 'image'" ng-src="{{rightDisplay.content}}" alt="Right Display Image" />
+                <iframe ng-if="rightDisplay.type === 'animation'" ng-src="{{rightDisplay.content}}" style="width: 100%; height: 100%; border: none;"></iframe>
+                <video ng-if="rightDisplay.type === 'video'" ng-src="{{rightDisplay.content}}" autoplay loop muted></video>
+                
+                <!-- Overlay Layer -->
+                <div ng-if="rightDisplay.overlay" class="overlay-layer">
+                    <iframe ng-src="{{rightDisplay.overlay}}" style="width: 100%; height: 100%; border: none; pointer-events: none; position: absolute; top: 0; left: 0; z-index: 10;"></iframe>
+                </div>
             </div>
         </div>
     </div>

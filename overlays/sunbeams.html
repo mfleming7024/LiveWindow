@@ -54,7 +54,7 @@
             );
             
             /* UPDATED: Using filter:blur() for a much softer edge */
-            filter: blur(14px);
+            filter: blur(10px);
             
             /* PERFORMANCE: Hardware acceleration and optimization hints */
             transform: translate3d(0, 0, 0); /* Trigger hardware acceleration */
@@ -95,12 +95,12 @@
             beams.forEach((beam, i) => {
                 // 1. Generate random properties for each beam
                 
-                // UPDATED: Duration increased by 50% for slower movement
-                // New range: 22.5s to 37.5s
-                const duration = Math.random() * 15 + 22.5; 
+                // UPDATED: Duration increased significantly for very slow movement to hide GPU performance issues
+                // New range: 45s to 75s (much slower to mask stuttering)
+                const duration = Math.random() * 30 + 45; 
                 
                 // UPDATED: Delay range increased to match new duration
-                const delay = Math.random() * -37.5;      
+                const delay = Math.random() * -75;      
                 const startRotation = Math.random() * 80 - 40; // Initial angle: -40deg to 40deg
                 
                 // The sweep distance will be between 10 and 25 degrees

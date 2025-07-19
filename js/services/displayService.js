@@ -36,9 +36,10 @@ angular.module('liveWindowApp')
 		var images = [
 			{ name: 'Default Image Left', path: 'images/default-left.png' },
 			{ name: 'Default Image Right', path: 'images/default-right.png' },
-            { name: 'Demo Image 1', path: 'images/demo1.svg' },
-            { name: 'Landscape 1', path: 'images/landscape1.svg' },
-            { name: 'Abstract 1', path: 'images/abstract1.svg' }
+			{ name: 'Forest Left', path: 'images/forest-left.png' },
+			{ name: 'Forest Right', path: 'images/forest-right.png' },
+			{ name: 'Cave Left', path: 'images/cave-left.png' },
+			{ name: 'Cave Right', path: 'images/cave-right.png' },
         ];
         
         var animations = [

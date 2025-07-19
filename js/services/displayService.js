@@ -28,12 +28,12 @@ angular.module('liveWindowApp')
         });
         
 		var images = [
-			{ name: 'Default Image Left', path: 'images/default-left.png' },
-			{ name: 'Default Image Right', path: 'images/default-right.png' },
-			{ name: 'Forest Left', path: 'images/forest-left.png' },
-			{ name: 'Forest Right', path: 'images/forest-right.png' },
-			{ name: 'Cave Left', path: 'images/cave-left.png' },
-			{ name: 'Cave Right', path: 'images/cave-right.png' },
+			{ name: 'Default Image', path: 'images/default-left.png' },
+			{ name: 'Default Image', path: 'images/default-right.png' },
+			{ name: 'Forest', path: 'images/forest-left.png' },
+			{ name: 'Forest', path: 'images/forest-right.png' },
+			{ name: 'Cave', path: 'images/cave-left.png' },
+			{ name: 'Cave', path: 'images/cave-right.png' }
         ];
         
         var overlays = [

@@ -1,5 +1,5 @@
 angular.module('liveWindowApp')
-    .service('DisplayService', ['$rootScope', '$injector', function($rootScope, $injector) {
+    .service('DisplayService', ['$rootScope', '$injector', function ($rootScope, $injector) {
         var leftDisplay = {
             type: null,
             content: null,
@@ -16,7 +16,7 @@ angular.module('liveWindowApp')
         var isRemoteControlled = false;
         
         // Listen for remote state updates
-        $rootScope.$on('websocket:stateUpdate', function(event, data) {
+        $rootScope.$on('websocket:stateUpdate', function (event, data) {
             console.log('Applying remote state update:', data);
             isRemoteControlled = true;
             
@@ -27,11 +27,21 @@ angular.module('liveWindowApp')
             isRemoteControlled = false;
         });
         
-		var images = [
-			{ name: 'Default Image', path: 'images/default-left.png' },
-			{ name: 'Default Image', path: 'images/default-right.png' },
-			{ name: 'Forest', path: 'images/forest-left.png' },
-			{ name: 'Forest', path: 'images/forest-right.png' },
+        var images = [
+            { name: 'Stained Glass', path: 'images/default-left.png' },
+            { name: 'Stained Glass', path: 'images/default-right.png' },
+            { name: 'Day', path: 'images/day-left.png' },
+            { name: 'Day', path: 'images/day-right.png' },
+            { name: 'Night', path: 'images/night-left.png' },
+            { name: 'Night', path: 'images/night-right.png' },
+            { name: 'Forest', path: 'images/forest-left.png' },
+            { name: 'Forest', path: 'images/forest-right.png' },
+            { name: 'Forest - Night', path: 'images/forest-night-left.png' },
+            { name: 'Forest - Night', path: 'images/forest-night-right.png' },
+            { name: 'Town', path: 'images/town-left.png' },
+            { name: 'Town', path: 'images/town-right.png' },
+            { name: 'Bar', path: 'images/bar-left.png' },
+            { name: 'Bar', path: 'images/bar-right.png' },
 			{ name: 'Cave', path: 'images/cave-left.png' },
 			{ name: 'Cave', path: 'images/cave-right.png' }
         ];

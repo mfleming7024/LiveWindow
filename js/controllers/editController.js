@@ -83,6 +83,17 @@ angular.module('liveWindowApp')
             $scope.rightDisplay = DisplayService.getRightDisplay();
         };
         
+        // Window pane toggles
+        $scope.toggleLeftWindowPane = function() {
+            DisplayService.toggleLeftWindowPane();
+            $scope.leftDisplay = DisplayService.getLeftDisplay();
+        };
+        
+        $scope.toggleRightWindowPane = function() {
+            DisplayService.toggleRightWindowPane();
+            $scope.rightDisplay = DisplayService.getRightDisplay();
+        };
+        
         // Utility functions
         $scope.isActiveLeft = function(type, content) {
             return $scope.leftDisplay.type === type && $scope.leftDisplay.content === content;

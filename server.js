@@ -17,8 +17,8 @@ app.use(express.static(path.join(__dirname)));
 
 // Store current display state
 let displayState = {
-    leftDisplay: { type: null, content: null, overlay: null },
-    rightDisplay: { type: null, content: null, overlay: null }
+    leftDisplay: { type: null, content: null, overlay: null, windowPane: false },
+    rightDisplay: { type: null, content: null, overlay: null, windowPane: false }
 };
 
 // Socket.IO connection handling
@@ -34,9 +34,9 @@ io.on('connection', (socket) => {
         
         // Update server state
         if (data.side === 'left') {
-            displayState.leftDisplay = { type: data.type, content: data.content, overlay: displayState.leftDisplay.overlay };
+            displayState.leftDisplay = { type: data.type, content: data.content, overlay: displayState.leftDisplay.overlay, windowPane: displayState.leftDisplay.windowPane };
         } else if (data.side === 'right') {
-            displayState.rightDisplay = { type: data.type, content: data.content, overlay: displayState.rightDisplay.overlay };
+            displayState.rightDisplay = { type: data.type, content: data.content, overlay: displayState.rightDisplay.overlay, windowPane: displayState.rightDisplay.windowPane };
         }
         
         // Broadcast to all connected clients
@@ -48,9 +48,9 @@ io.on('connection', (socket) => {
         console.log('Clear display:', data);
         
         if (data.side === 'left') {
-            displayState.leftDisplay = { type: null, content: null, overlay: null };
+            displayState.leftDisplay = { type: null, content: null, overlay: null, windowPane: false };
         } else if (data.side === 'right') {
-            displayState.rightDisplay = { type: null, content: null, overlay: null };
+            displayState.rightDisplay = { type: null, content: null, overlay: null, windowPane: false };
         }
         
         io.emit('stateUpdate', displayState);
@@ -79,6 +79,19 @@ io.on('connection', (socket) => {
             displayState.leftDisplay.overlay = null;
         } else if (data.side === 'right') {
             displayState.rightDisplay.overlay = null;
+        }
+        
+        io.emit('stateUpdate', displayState);
+    });
+    
+    // Handle window pane updates
+    socket.on('updateWindowPane', (data) => {
+        console.log('Window pane update received:', data);
+        
+        if (data.side === 'left') {
+            displayState.leftDisplay.windowPane = data.windowPane;
+        } else if (data.side === 'right') {
+            displayState.rightDisplay.windowPane = data.windowPane;
         }
         
         io.emit('stateUpdate', displayState);

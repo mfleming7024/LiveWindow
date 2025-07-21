@@ -3,13 +3,15 @@ angular.module('liveWindowApp')
         var leftDisplay = {
             type: null,
             content: null,
-            overlay: null
+            overlay: null,
+            windowPane: false
         };
         
         var rightDisplay = {
             type: null,
             content: null,
-            overlay: null
+            overlay: null,
+            windowPane: false
         };
         
         var syncMode = false;
@@ -20,8 +22,8 @@ angular.module('liveWindowApp')
             console.log('Applying remote state update:', data);
             isRemoteControlled = true;
             
-            leftDisplay = data.leftDisplay || { type: null, content: null, overlay: null };
-            rightDisplay = data.rightDisplay || { type: null, content: null, overlay: null };
+            leftDisplay = data.leftDisplay || { type: null, content: null, overlay: null, windowPane: false };
+            rightDisplay = data.rightDisplay || { type: null, content: null, overlay: null, windowPane: false };
             
             $rootScope.$apply();
             isRemoteControlled = false;
@@ -167,11 +169,35 @@ angular.module('liveWindowApp')
                 }
             },
             
+            // Window pane controls
+            toggleLeftWindowPane: function() {
+                leftDisplay.windowPane = !leftDisplay.windowPane;
+                
+                if (!isRemoteControlled) {
+                    this.broadcastChange('updateWindowPane', { 
+                        side: 'left', 
+                        windowPane: leftDisplay.windowPane 
+                    });
+                }
+            },
+            
+            toggleRightWindowPane: function() {
+                rightDisplay.windowPane = !rightDisplay.windowPane;
+                
+                if (!isRemoteControlled) {
+                    this.broadcastChange('updateWindowPane', { 
+                        side: 'right', 
+                        windowPane: rightDisplay.windowPane 
+                    });
+                }
+            },
+            
             // Clear functions
             clearLeft: function() {
                 leftDisplay.type = null;
                 leftDisplay.content = null;
                 leftDisplay.overlay = null;
+                leftDisplay.windowPane = false;
                 
                 if (!isRemoteControlled) {
                     this.broadcastChange('clearDisplay', { side: 'left' });
@@ -182,6 +208,7 @@ angular.module('liveWindowApp')
                 rightDisplay.type = null;
                 rightDisplay.content = null;
                 rightDisplay.overlay = null;
+                rightDisplay.windowPane = false;
                 
                 if (!isRemoteControlled) {
                     this.broadcastChange('clearDisplay', { side: 'right' });
@@ -223,6 +250,8 @@ angular.module('liveWindowApp')
                             WebSocketService.updateOverlay(data.side, data.overlay);
                         } else if (action === 'clearOverlay') {
                             WebSocketService.clearOverlay(data.side);
+                        } else if (action === 'updateWindowPane') {
+                            WebSocketService.updateWindowPane(data.side, data.windowPane);
                         }
                     }
                 } catch (e) {

@@ -79,6 +79,16 @@ angular.module('liveWindowApp')
                 }
             },
             
+            // Send window pane update
+            updateWindowPane: function(side, windowPane) {
+                if (socket && connected) {
+                    socket.emit('updateWindowPane', {
+                        side: side,
+                        windowPane: windowPane
+                    });
+                }
+            },
+            
             // Get connection status
             getConnectionStatus: function() {
                 return {

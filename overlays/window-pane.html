@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            background: transparent;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .window-frame {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: transparent;
+            pointer-events: none;
+        }
+        
+        /* Vertical window frame bars */
+        .window-frame::before {
+            content: '';
+            position: absolute;
+            left: 33.33%;
+            top: 0;
+            bottom: 0;
+            width: 8px;
+            background: linear-gradient(to right, 
+                rgba(139, 69, 19, 0.9) 0%,
+                rgba(160, 82, 45, 0.95) 20%,
+                rgba(139, 69, 19, 0.9) 100%
+            );
+            box-shadow: 
+                inset 2px 0 4px rgba(101, 67, 33, 0.8),
+                inset -2px 0 4px rgba(101, 67, 33, 0.8),
+                2px 0 6px rgba(0, 0, 0, 0.3),
+                -2px 0 6px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+        
+        .window-frame::after {
+            content: '';
+            position: absolute;
+            left: 66.66%;
+            top: 0;
+            bottom: 0;
+            width: 8px;
+            background: linear-gradient(to right, 
+                rgba(139, 69, 19, 0.9) 0%,
+                rgba(160, 82, 45, 0.95) 20%,
+                rgba(139, 69, 19, 0.9) 100%
+            );
+            box-shadow: 
+                inset 2px 0 4px rgba(101, 67, 33, 0.8),
+                inset -2px 0 4px rgba(101, 67, 33, 0.8),
+                2px 0 6px rgba(0, 0, 0, 0.3),
+                -2px 0 6px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+        
+        /* Horizontal window frame bars */
+        .horizontal-bar {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(to bottom, 
+                rgba(139, 69, 19, 0.9) 0%,
+                rgba(160, 82, 45, 0.95) 20%,
+                rgba(139, 69, 19, 0.9) 100%
+            );
+            box-shadow: 
+                inset 0 2px 4px rgba(101, 67, 33, 0.8),
+                inset 0 -2px 4px rgba(101, 67, 33, 0.8),
+                0 2px 6px rgba(0, 0, 0, 0.3),
+                0 -2px 6px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+        
+        .horizontal-bar.top {
+            top: 33.33%;
+        }
+        
+        .horizontal-bar.bottom {
+            top: 66.66%;
+        }
+        
+        /* Window frame border */
+        .window-border {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 8px solid rgba(139, 69, 19, 0.95);
+            box-shadow: 
+                inset 0 0 20px rgba(101, 67, 33, 0.6),
+                inset 0 0 40px rgba(160, 82, 45, 0.3),
+                0 0 30px rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            pointer-events: none;
+			
+        }
+        
+        /* Corner reinforcements */
+        .corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, 
+                rgba(160, 82, 45, 0.98) 0%,
+                rgba(139, 69, 19, 0.95) 100%
+            );
+            box-shadow: 
+                inset 2px 2px 6px rgba(101, 67, 33, 0.8),
+                2px 2px 8px rgba(0, 0, 0, 0.4);
+            z-index: 1001;
+        }
+        
+        .corner.top-left { top: 33.8%; left: 33.8%; transform: translate(-50%, -50%); }
+        .corner.top-right { top: 33.8%; left: 67.1%; transform: translate(-50%, -50%); }
+        .corner.bottom-left { top: 67.1%; left: 33.8%; transform: translate(-50%, -50%); }
+        .corner.bottom-right { top: 67.1%; left: 67.1%; transform: translate(-50%, -50%); }
+
+        /* Glass reflection effect */
+        .glass-reflection {
+            position: absolute;
+            top: 11px;
+            left: 11px;
+            right: 11px;
+            height: 40%;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.1) 0%,
+                rgba(255, 255, 255, 0.05) 30%,
+                transparent 100%
+            );
+            z-index: 998;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="window-frame">
+        <div class="window-border"></div>
+        <div class="horizontal-bar top"></div>
+        <div class="horizontal-bar bottom"></div>
+        <div class="glass-reflection"></div>
+        
+        <!-- Corner reinforcements -->
+        <div class="corner top-left"></div>
+        <div class="corner top-right"></div>
+        <div class="corner bottom-left"></div>
+        <div class="corner bottom-right"></div>
+    </div>
+</body>
+</html>

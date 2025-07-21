@@ -66,6 +66,15 @@
                     <div class="description">{{overlay.description}}</div>
                 </div>
             </div>
+            
+            <h3 style="margin-top: 30px;">Window Pane</h3>
+            <div class="controls-grid">
+                <button class="btn" 
+                        ng-class="{'btn-active': leftDisplay.windowPane}" 
+                        ng-click="toggleLeftWindowPane()">
+                    {{leftDisplay.windowPane ? '✓ Window Pane ON' : 'Window Pane OFF'}}
+                </button>
+            </div>
         </div>
         
         <!-- Right Display Controls -->
@@ -100,6 +109,15 @@
                     <div class="name">{{overlay.name}}</div>
                     <div class="description">{{overlay.description}}</div>
                 </div>
+            </div>
+            
+            <h3 style="margin-top: 30px;">Window Pane</h3>
+            <div class="controls-grid">
+                <button class="btn" 
+                        ng-class="{'btn-active': rightDisplay.windowPane}" 
+                        ng-click="toggleRightWindowPane()">
+                    {{rightDisplay.windowPane ? '✓ Window Pane ON' : 'Window Pane OFF'}}
+                </button>
             </div>
         </div>
     </div>

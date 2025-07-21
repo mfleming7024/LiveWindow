@@ -37,9 +37,6 @@ io.on('connection', (socket) => {
             displayState.leftDisplay = { type: data.type, content: data.content, overlay: displayState.leftDisplay.overlay };
         } else if (data.side === 'right') {
             displayState.rightDisplay = { type: data.type, content: data.content, overlay: displayState.rightDisplay.overlay };
-        } else if (data.side === 'both') {
-            displayState.leftDisplay = { type: data.type, content: data.content, overlay: displayState.leftDisplay.overlay };
-            displayState.rightDisplay = { type: data.type, content: data.content, overlay: displayState.rightDisplay.overlay };
         }
         
         // Broadcast to all connected clients
@@ -53,9 +50,6 @@ io.on('connection', (socket) => {
         if (data.side === 'left') {
             displayState.leftDisplay = { type: null, content: null, overlay: null };
         } else if (data.side === 'right') {
-            displayState.rightDisplay = { type: null, content: null, overlay: null };
-        } else if (data.side === 'both') {
-            displayState.leftDisplay = { type: null, content: null, overlay: null };
             displayState.rightDisplay = { type: null, content: null, overlay: null };
         }
         
@@ -71,9 +65,6 @@ io.on('connection', (socket) => {
             displayState.leftDisplay.overlay = data.overlay;
         } else if (data.side === 'right') {
             displayState.rightDisplay.overlay = data.overlay;
-        } else if (data.side === 'both') {
-            displayState.leftDisplay.overlay = data.overlay;
-            displayState.rightDisplay.overlay = data.overlay;
         }
         
         // Broadcast to all connected clients
@@ -87,9 +78,6 @@ io.on('connection', (socket) => {
         if (data.side === 'left') {
             displayState.leftDisplay.overlay = null;
         } else if (data.side === 'right') {
-            displayState.rightDisplay.overlay = null;
-        } else if (data.side === 'both') {
-            displayState.leftDisplay.overlay = null;
             displayState.rightDisplay.overlay = null;
         }
         

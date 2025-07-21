@@ -10,6 +10,11 @@ body, html {
     font-family: 'Arial', sans-serif;
     background: #000;
     overflow: hidden;
+    /* Improve touch performance on mobile */
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 /* Main Display Layout */
@@ -232,11 +237,19 @@ body, html {
     font-size: 14px;
     font-weight: bold;
     transition: all 0.3s ease;
+    /* Better touch targets */
+    min-height: 44px;
+    min-width: 44px;
+    touch-action: manipulation;
 }
 
 .btn:hover {
     background: #00cc6a;
     transform: translateY(-2px);
+}
+
+.btn:active {
+    transform: translateY(0);
 }
 
 .btn-danger {
@@ -277,10 +290,17 @@ body, html {
     overflow: hidden;
     aspect-ratio: 16/9;
     background: #444;
+    /* Better touch targets on mobile */
+    min-height: 44px;
+    transition: all 0.2s ease;
 }
 
 .media-item:hover {
     border-color: #00ff88;
+}
+
+.media-item:active {
+    transform: scale(0.98);
 }
 
 .media-item.active {
@@ -337,6 +357,7 @@ body, html {
     color: #ccc;
     line-height: 1.3;
     margin: 0;
+    display: none; /* Hide descriptions on smaller screens by default */
 }
 
 /* Timing Controls */
@@ -475,6 +496,20 @@ body, html {
     .timing-controls input[type="number"] {
         width: 80px;
     }
+    
+    /* Show overlay descriptions on tablets */
+    .overlay-item .description {
+        display: block;
+    }
+    
+    .overlay-item {
+        min-height: 140px;
+        padding: 12px;
+    }
+    
+    .overlay-emoji {
+        font-size: 2.5rem;
+    }
 }
 
 /* Responsive adjustments for mobile devices */
@@ -540,6 +575,27 @@ body, html {
     .media-item .name {
         font-size: 10px;
         padding: 3px;
+    }
+    
+    /* Mobile overlay styling - simpler layout */
+    .overlay-item {
+        min-height: 90px;
+        padding: 8px;
+        aspect-ratio: 1;
+    }
+    
+    .overlay-emoji {
+        font-size: 2rem;
+        margin-bottom: 4px;
+    }
+    
+    .overlay-item .name {
+        font-size: 11px;
+        margin-bottom: 0;
+    }
+    
+    .overlay-item .description {
+        display: none; /* Hide on mobile to save space */
     }
     
     .controls-grid {
@@ -623,6 +679,26 @@ body, html {
     .media-item .name {
         font-size: 9px;
         padding: 2px;
+    }
+    
+    /* Ultra-small overlay styling */
+    .overlay-item {
+        min-height: 70px;
+        padding: 6px;
+    }
+    
+    .overlay-emoji {
+        font-size: 1.5rem;
+        margin-bottom: 2px;
+    }
+    
+    .overlay-item .name {
+        font-size: 10px;
+    }
+    
+    /* Reduce section spacing on very small screens */
+    .control-section h3[style*="margin-top"] {
+        margin-top: 15px !important;
     }
     
     .btn {

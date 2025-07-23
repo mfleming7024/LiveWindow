@@ -2,6 +2,7 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const server = http.createServer(app);
@@ -14,6 +15,59 @@ const io = socketIo(server, {
 
 // Serve static files
 app.use(express.static(path.join(__dirname)));
+
+// API endpoint to get available images
+app.get('/api/images', (req, res) => {
+    try {
+        const imagesDir = path.join(__dirname, 'images');
+        const files = fs.readdirSync(imagesDir);
+        
+        // Filter for PNG files and exclude system files
+        const imageFiles = files.filter(file => 
+            file.endsWith('.png') && !file.startsWith('.')
+        );
+        
+        // Group by theme and create structured data
+        const images = [];
+        const processedThemes = new Set();
+        
+        imageFiles.forEach(file => {
+            // Extract theme name (everything before -left/-right)
+            const match = file.match(/^(.+)-(left|right)\.png$/);
+            if (match) {
+                const theme = match[1];
+                const side = match[2];
+                
+                if (!processedThemes.has(theme)) {
+                    const leftFile = `${theme}-left.png`;
+                    const rightFile = `${theme}-right.png`;
+                    
+                    // Only include if both left and right exist
+                    if (imageFiles.includes(leftFile) && imageFiles.includes(rightFile)) {
+                        // Convert theme name to display name
+                        const displayName = theme.split('-').map(word => 
+                            word.charAt(0).toUpperCase() + word.slice(1)
+                        ).join(' ');
+                        
+                        // Add both left and right images to maintain compatibility with existing code
+                        images.push({ name: displayName, path: `images/${leftFile}` });
+                        images.push({ name: displayName, path: `images/${rightFile}` });
+                        
+                        processedThemes.add(theme);
+                    }
+                }
+            }
+        });
+        
+        // Sort alphabetically by name
+        images.sort((a, b) => a.name.localeCompare(b.name));
+        
+        res.json(images);
+    } catch (error) {
+        console.error('Error reading images directory:', error);
+        res.status(500).json({ error: 'Failed to load images' });
+    }
+});
 
 // Store current display state
 let displayState = {

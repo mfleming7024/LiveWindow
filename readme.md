@@ -13,20 +13,15 @@ LiveWindow is an AngularJS-based web application designed for controlling conten
 ### Dual Display Management
 - **Split-Screen Layout**: Browser window stretches across both monitors (50% width each)
 - **Independent Control**: Each display can show different content independently
-- **Synchronized Mode**: Option to mirror content across both displays
 - **Real-time Updates**: Instant content switching without page refreshes
 
 ### Content Types
 - **Static Images**: SVG-based demo images with various themes (geometric, landscapes, abstract)
 - **Animated Content**: HTML/CSS-based animations (waves, particles, matrix, fluid effects, etc.)
-- **Video Support**: Ready for video content integration
 - **Blank Display**: Clean black screen option
 
 ### Control Interface (`/#/edit` route)
 - **Intuitive Grid Layout**: Visual thumbnails for easy content selection
-- **Timing Controls**: Adjustable display duration and transition times
-- **Auto-Advance**: Automatic slideshow functionality through content
-- **Sync Management**: Toggle between independent and synchronized display modes
 - **Real-time Status**: Current display status and connection indicators
 
 ## 🏗️ Architecture
@@ -103,8 +98,6 @@ LiveWindow is an AngularJS-based web application designed for controlling conten
 ## 🎮 Control Features
 
 ### Global Controls
-- **Sync Toggle**: Enable/disable synchronized display mode
-- **Copy Left→Right**: Manual synchronization action
 - **Clear All**: Master clear for all displays
 - **Connection Status**: Real-time connectivity indicator
 
@@ -112,8 +105,3 @@ LiveWindow is an AngularJS-based web application designed for controlling conten
 - **Content Selection**: Choose images or animations per display
 - **Clear Display**: Individual display clearing
 - **Real-time Preview**: See changes instantly
-
-### Automation
-- **Auto-Advance**: Automatic content rotation
-- **Timing Controls**: Customize display duration and transitions
-- **Synchronized Timing**: Coordinated timing across all instances

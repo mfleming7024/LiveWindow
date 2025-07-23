@@ -1,5 +1,5 @@
 angular.module('liveWindowApp')
-    .service('DisplayService', ['$rootScope', '$injector', function ($rootScope, $injector) {
+    .service('DisplayService', ['$rootScope', '$injector', '$http', function ($rootScope, $injector, $http) {
         var leftDisplay = {
             type: null,
             content: null,
@@ -16,6 +16,7 @@ angular.module('liveWindowApp')
         
         var syncMode = false;
         var isRemoteControlled = false;
+        var images = []; // Will be loaded dynamically
         
         // Listen for remote state updates
         $rootScope.$on('websocket:stateUpdate', function (event, data) {
@@ -29,31 +30,25 @@ angular.module('liveWindowApp')
             isRemoteControlled = false;
         });
         
-        var images = [
-            { name: 'Stained Glass', path: 'images/default-left.png' },
-            { name: 'Stained Glass', path: 'images/default-right.png' },
-            { name: 'Day', path: 'images/day-left.png' },
-            { name: 'Day', path: 'images/day-right.png' },
-            { name: 'Night', path: 'images/night-left.png' },
-            { name: 'Night', path: 'images/night-right.png' },
-            { name: 'Forest', path: 'images/forest-left.png' },
-            { name: 'Forest', path: 'images/forest-right.png' },
-            { name: 'Forest - Night', path: 'images/forest-night-left.png' },
-            { name: 'Forest - Night', path: 'images/forest-night-right.png' },
-            { name: 'Town', path: 'images/town-left.png' },
-            { name: 'Town', path: 'images/town-right.png' },
-            { name: 'Bar', path: 'images/bar-left.png' },
-            { name: 'Bar', path: 'images/bar-right.png' },
-			{ name: 'Cave', path: 'images/cave-left.png' },
-			{ name: 'Cave', path: 'images/cave-right.png' }
-        ];
+        // Load images dynamically from server
+        function loadImages() {
+            $http.get('/api/images').then(function(response) {
+                images = response.data;
+                console.log('Loaded', images.length, 'images dynamically from filesystem');
+                $rootScope.$broadcast('imagesLoaded', images);
+            }).catch(function(error) {
+                console.error('Failed to load images from server:', error);
+                images = [];
+                $rootScope.$broadcast('imagesLoadError', error);
+            });
+        }
         
         var overlays = [
-            { name: 'Cave Fireflies', path: 'overlays/cave-fireflies.html', emoji: '✨', description: 'Tiny glowing fireflies dancing in the darkness', theme: 'cave' },
-            { name: 'Rain Drops', path: 'overlays/rain-drops.html', emoji: '🌧️', description: 'Gentle rain falling in a rhythmic pattern', theme: 'all' },
-            { name: 'Floating Embers', path: 'overlays/floating-embers.html', emoji: '🔥', description: 'Warm glowing embers drifting upward', theme: 'all' },
-            { name: 'Sunbeams', path: 'overlays/sunbeams.html', emoji: '☀️', description: 'Radiant beams of sunlight streaming through', theme: 'all' },
-            { name: 'Fog Overlay', path: 'overlays/fog-overlay.html', emoji: '🌫️', description: 'Mystical fog drifting across the bottom of the screen', theme: 'all' }
+            { name: 'Cave Fireflies', path: 'overlays/cave-fireflies.html', emoji: '✨', description: 'Tiny glowing fireflies dancing in the darkness' },
+            { name: 'Rain Drops', path: 'overlays/rain-drops.html', emoji: '🌧️', description: 'Gentle rain falling in a rhythmic pattern' },
+            { name: 'Floating Embers', path: 'overlays/floating-embers.html', emoji: '🔥', description: 'Warm glowing embers drifting upward' },
+            { name: 'Sunbeams', path: 'overlays/sunbeams.html', emoji: '☀️', description: 'Radiant beams of sunlight streaming through' },
+            { name: 'Fog Overlay', path: 'overlays/fog-overlay.html', emoji: '🌫️', description: 'Mystical fog drifting across the bottom of the screen' }
         ];
         
         return {
@@ -86,17 +81,9 @@ angular.module('liveWindowApp')
                 return overlays;
             },
             
-            getOverlaysForTheme: function(imagePath) {
-                if (!imagePath) return overlays.filter(function(overlay) { return overlay.theme === 'all'; });
-                
-                var theme = 'all';
-                if (imagePath.includes('forest')) theme = 'forest';
-                else if (imagePath.includes('cave')) theme = 'cave';
-                else if (imagePath.includes('default')) theme = 'default';
-                
-                return overlays.filter(function(overlay) {
-                    return overlay.theme === theme || overlay.theme === 'all';
-                });
+            // Utility method to refresh image list
+            refreshImages: function() {
+                loadImages();
             },
             
             // Display setters
@@ -217,6 +204,9 @@ angular.module('liveWindowApp')
             
             // Initialize
             initializeDisplays: function() {
+                // Load images dynamically
+                loadImages();
+                
                 // Set default content if needed
                 if (!leftDisplay.type && !rightDisplay.type) {
                     // Start with blank displays

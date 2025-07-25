@@ -77,6 +77,31 @@ angular.module('liveWindowApp')
                 });
             },
             
+            // Get themes for unified control
+            getThemes: function() {
+                var themes = [];
+                var leftImages = this.getLeftImages();
+                
+                leftImages.forEach(function(leftImage) {
+                    var themeName = leftImage.name.replace('-left', '');
+                    var rightImagePath = leftImage.path.replace('-left', '-right');
+                    var rightImage = images.find(function(img) {
+                        return img.path === rightImagePath;
+                    });
+                    
+                    if (rightImage) {
+                        themes.push({
+                            name: themeName,
+                            leftPath: leftImage.path,
+                            rightPath: rightImage.path,
+                            displayName: themeName.charAt(0).toUpperCase() + themeName.slice(1).replace(/[-_]/g, ' ')
+                        });
+                    }
+                });
+                
+                return themes;
+            },
+            
             getOverlays: function() {
                 return overlays;
             },
@@ -86,6 +111,63 @@ angular.module('liveWindowApp')
                 loadImages();
             },
             
+            // Unified theme setters
+            setTheme: function(theme) {
+                this.setLeftContent('image', theme.leftPath);
+                this.setRightContent('image', theme.rightPath);
+            },
+            
+            // Unified overlay setters
+            setBothOverlays: function(overlayPath) {
+                this.setLeftOverlay(overlayPath);
+                this.setRightOverlay(overlayPath);
+            },
+            
+            clearBothOverlays: function() {
+                this.clearLeftOverlay();
+                this.clearRightOverlay();
+            },
+            
+            // Unified window pane toggle
+            toggleBothWindowPanes: function() {
+                var newState = !leftDisplay.windowPane || !rightDisplay.windowPane;
+                leftDisplay.windowPane = newState;
+                rightDisplay.windowPane = newState;
+                
+                if (!isRemoteControlled) {
+                    this.broadcastChange('updateWindowPane', { 
+                        side: 'left', 
+                        windowPane: newState 
+                    });
+                    this.broadcastChange('updateWindowPane', { 
+                        side: 'right', 
+                        windowPane: newState 
+                    });
+                }
+            },
+            
+            // Unified clear
+            clearBoth: function() {
+                this.clearLeft();
+                this.clearRight();
+            },
+            
+            // Check if theme is active
+            isThemeActive: function(theme) {
+                return leftDisplay.type === 'image' && leftDisplay.content === theme.leftPath &&
+                       rightDisplay.type === 'image' && rightDisplay.content === theme.rightPath;
+            },
+            
+            // Check if overlay is active on both displays
+            isOverlayActiveOnBoth: function(overlayPath) {
+                return leftDisplay.overlay === overlayPath && rightDisplay.overlay === overlayPath;
+            },
+            
+            // Check if window panes are active on both displays
+            areWindowPanesActive: function() {
+                return leftDisplay.windowPane && rightDisplay.windowPane;
+            },
+
             // Display setters
             setLeftContent: function(type, content) {
                 leftDisplay.type = type;

@@ -33,34 +33,38 @@
     </div>
     
     <div class="edit-content">
-        <!-- Left Display Controls -->
-        <div class="control-section">
-            <h2>Left Display Control</h2>
+        <!-- Unified Display Controls -->
+        <div class="control-section unified-controls">
+            <h2>Unified Display Control</h2>
+            <p class="control-description">Changes apply to both left and right displays simultaneously</p>
             
             <div class="controls-grid">
-                <button class="btn" ng-click="clearLeft()">Clear Display</button>
+                <button class="btn" ng-click="clearBoth()">Clear Both Displays</button>
             </div>
             
-            <h3>Images</h3>
+            <h3>Themes</h3>
             <div class="media-grid">
-                <div class="media-item" 
-                     ng-repeat="image in leftImages" 
-                     ng-class="{'active': isActiveLeft('image', image.path)}"
-                     ng-click="setLeftContent('image', image.path)">
-                    <img ng-src="{{image.path}}" alt="{{image.name}}" />
-                    <div class="name">{{image.name}}</div>
+                <div class="media-item theme-item" 
+                     ng-repeat="theme in themes" 
+                     ng-class="{'active': isThemeActive(theme)}"
+                     ng-click="setTheme(theme)">
+                    <div class="theme-preview">
+                        <img ng-src="{{theme.leftPath}}" alt="{{theme.name}} left" class="preview-left" />
+                        <img ng-src="{{theme.rightPath}}" alt="{{theme.name}} right" class="preview-right" />
+                    </div>
+                    <div class="name">{{theme.displayName}}</div>
                 </div>
             </div>
             
             <h3 style="margin-top: 30px;">Dynamic Overlays</h3>
             <div class="controls-grid" style="margin-bottom: 10px;">
-                <button class="btn btn-sm" ng-click="clearLeftOverlay()">Clear Overlay</button>
+                <button class="btn btn-sm" ng-click="clearBothOverlays()">Clear All Overlays</button>
             </div>
             <div class="media-grid">
                 <div class="media-item overlay-item" 
                      ng-repeat="overlay in getOverlays()" 
-                     ng-class="{'active': isActiveLeftOverlay(overlay.path)}"
-                     ng-click="setLeftOverlay(overlay.path)">
+                     ng-class="{'active': isOverlayActiveOnBoth(overlay.path)}"
+                     ng-click="setBothOverlays(overlay.path)">
                     <div class="overlay-emoji">{{overlay.emoji}}</div>
                     <div class="name">{{overlay.name}}</div>
                     <div class="description">{{overlay.description}}</div>
@@ -70,53 +74,9 @@
             <h3 style="margin-top: 30px;">Window Pane</h3>
             <div class="controls-grid">
                 <button class="btn" 
-                        ng-class="{'btn-active': leftDisplay.windowPane}" 
-                        ng-click="toggleLeftWindowPane()">
-                    {{leftDisplay.windowPane ? '✓ Window Pane ON' : 'Window Pane OFF'}}
-                </button>
-            </div>
-        </div>
-        
-        <!-- Right Display Controls -->
-        <div class="control-section">
-            <h2>Right Display Control</h2>
-            
-            <div class="controls-grid">
-                <button class="btn" ng-click="clearRight()">Clear Display</button>
-            </div>
-            
-            <h3>Images</h3>
-            <div class="media-grid">
-                <div class="media-item" 
-                     ng-repeat="image in rightImages" 
-                     ng-class="{'active': isActiveRight('image', image.path)}"
-                     ng-click="setRightContent('image', image.path)">
-                    <img ng-src="{{image.path}}" alt="{{image.name}}" />
-                    <div class="name">{{image.name}}</div>
-                </div>
-            </div>
-            
-            <h3 style="margin-top: 30px;">Dynamic Overlays</h3>
-            <div class="controls-grid" style="margin-bottom: 10px;">
-                <button class="btn btn-sm" ng-click="clearRightOverlay()">Clear Overlay</button>
-            </div>
-            <div class="media-grid">
-                <div class="media-item overlay-item" 
-                     ng-repeat="overlay in getOverlays()" 
-                     ng-class="{'active': isActiveRightOverlay(overlay.path)}"
-                     ng-click="setRightOverlay(overlay.path)">
-                    <div class="overlay-emoji">{{overlay.emoji}}</div>
-                    <div class="name">{{overlay.name}}</div>
-                    <div class="description">{{overlay.description}}</div>
-                </div>
-            </div>
-            
-            <h3 style="margin-top: 30px;">Window Pane</h3>
-            <div class="controls-grid">
-                <button class="btn" 
-                        ng-class="{'btn-active': rightDisplay.windowPane}" 
-                        ng-click="toggleRightWindowPane()">
-                    {{rightDisplay.windowPane ? '✓ Window Pane ON' : 'Window Pane OFF'}}
+                        ng-class="{'btn-active': areWindowPanesActive()}" 
+                        ng-click="toggleBothWindowPanes()">
+                    {{areWindowPanesActive() ? '✓ Window Panes ON' : 'Window Panes OFF'}}
                 </button>
             </div>
         </div>

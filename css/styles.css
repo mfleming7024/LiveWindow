@@ -203,10 +203,7 @@ body, html {
 
 .edit-content {
     padding: 30px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-    max-width: 1200px;
+    max-width: 800px;
     margin: 0 auto;
 }
 
@@ -714,5 +711,36 @@ body, html {
     .control-section:last-child > div:last-child {
         flex-direction: column;
         gap: 10px;
+    }
+}
+
+/* Unified Controls Styles */
+.control-section .control-description {
+    color: #ccc;
+    font-style: italic;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+/* Theme Preview Styles */
+.theme-item .theme-preview {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 8px;
+}
+
+.theme-preview .preview-left,
+.theme-preview .preview-right {
+    width: 50%;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .theme-preview .preview-left,
+    .theme-preview .preview-right {
+        height: 40px;
     }
 }

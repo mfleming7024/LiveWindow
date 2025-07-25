@@ -1,13 +1,17 @@
 angular.module('liveWindowApp')
     .controller('EditController', ['$scope', '$location', '$interval', 'DisplayService', function($scope, $location, $interval, DisplayService) {
         // Initialize scope variables
-        $scope.leftImages = DisplayService.getLeftImages();
-        $scope.rightImages = DisplayService.getRightImages();
+        $scope.themes = DisplayService.getThemes();
         $scope.overlays = DisplayService.getOverlays();
         $scope.leftDisplay = DisplayService.getLeftDisplay();
         $scope.rightDisplay = DisplayService.getRightDisplay();
         $scope.connectionStatus = null;
         
+        // Listen for images loaded event to refresh themes
+        $scope.$on('imagesLoaded', function() {
+            $scope.themes = DisplayService.getThemes();
+        });
+
         // Check connection status periodically
         var checkConnection = function() {
             try {
@@ -35,79 +39,55 @@ angular.module('liveWindowApp')
         $scope.goToMain = function() {
             $location.path('/');
         };
-        
-        // Display content selection
-        $scope.setLeftContent = function(type, content) {
-            DisplayService.setLeftContent(type, content);
+
+        // Unified theme control
+        $scope.setTheme = function(theme) {
+            DisplayService.setTheme(theme);
             $scope.leftDisplay = DisplayService.getLeftDisplay();
-        };
-        
-        $scope.setRightContent = function(type, content) {
-            DisplayService.setRightContent(type, content);
             $scope.rightDisplay = DisplayService.getRightDisplay();
         };
-        
-        // Overlay controls
-        $scope.setLeftOverlay = function(overlayPath) {
-            DisplayService.setLeftOverlay(overlayPath);
+
+        // Unified overlay controls
+        $scope.setBothOverlays = function(overlayPath) {
+            DisplayService.setBothOverlays(overlayPath);
             $scope.leftDisplay = DisplayService.getLeftDisplay();
-        };
-        
-        $scope.setRightOverlay = function(overlayPath) {
-            DisplayService.setRightOverlay(overlayPath);
             $scope.rightDisplay = DisplayService.getRightDisplay();
         };
-        
-        $scope.clearLeftOverlay = function() {
-            DisplayService.clearLeftOverlay();
+
+        $scope.clearBothOverlays = function() {
+            DisplayService.clearBothOverlays();
             $scope.leftDisplay = DisplayService.getLeftDisplay();
-        };
-        
-        $scope.clearRightOverlay = function() {
-            DisplayService.clearRightOverlay();
             $scope.rightDisplay = DisplayService.getRightDisplay();
         };
-        
+
+        // Unified window pane toggle
+        $scope.toggleBothWindowPanes = function() {
+            DisplayService.toggleBothWindowPanes();
+            $scope.leftDisplay = DisplayService.getLeftDisplay();
+            $scope.rightDisplay = DisplayService.getRightDisplay();
+        };
+
+        // Unified clear
+        $scope.clearBoth = function() {
+            DisplayService.clearBoth();
+            $scope.leftDisplay = DisplayService.getLeftDisplay();
+            $scope.rightDisplay = DisplayService.getRightDisplay();
+        };
+
         $scope.getOverlays = function() {
             return DisplayService.getOverlays();
         };
-        
-        // Clear displays
-        $scope.clearLeft = function() {
-            DisplayService.clearLeft();
-            $scope.leftDisplay = DisplayService.getLeftDisplay();
+
+        // Unified utility functions
+        $scope.isThemeActive = function(theme) {
+            return DisplayService.isThemeActive(theme);
         };
-        
-        $scope.clearRight = function() {
-            DisplayService.clearRight();
-            $scope.rightDisplay = DisplayService.getRightDisplay();
+
+        $scope.isOverlayActiveOnBoth = function(overlayPath) {
+            return DisplayService.isOverlayActiveOnBoth(overlayPath);
         };
-        
-        // Window pane toggles
-        $scope.toggleLeftWindowPane = function() {
-            DisplayService.toggleLeftWindowPane();
-            $scope.leftDisplay = DisplayService.getLeftDisplay();
-        };
-        
-        $scope.toggleRightWindowPane = function() {
-            DisplayService.toggleRightWindowPane();
-            $scope.rightDisplay = DisplayService.getRightDisplay();
-        };
-        
-        // Utility functions
-        $scope.isActiveLeft = function(type, content) {
-            return $scope.leftDisplay.type === type && $scope.leftDisplay.content === content;
-        };
-        
-        $scope.isActiveRight = function(type, content) {
-            return $scope.rightDisplay.type === type && $scope.rightDisplay.content === content;
-        };
-        
-        $scope.isActiveLeftOverlay = function(overlayPath) {
-            return $scope.leftDisplay.overlay === overlayPath;
-        };
-        
-        $scope.isActiveRightOverlay = function(overlayPath) {
-            return $scope.rightDisplay.overlay === overlayPath;
+
+        $scope.areWindowPanesActive = function() {
+            return DisplayService.areWindowPanesActive();
         };
     }]);

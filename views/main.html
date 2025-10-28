@@ -13,7 +13,6 @@
                     <!-- Blank display -->
                 </div>
                 <img ng-if="leftDisplay.type === 'image'" ng-src="{{leftDisplay.content}}" alt="Left Display Image" />
-                <video ng-if="leftDisplay.type === 'video'" ng-src="{{leftDisplay.content}}" autoplay loop muted></video>
                 
                 <!-- Overlay Layer -->
                 <div ng-if="leftDisplay.overlay" class="overlay-layer">
@@ -33,7 +32,6 @@
                     <!-- Blank display -->
                 </div>
                 <img ng-if="rightDisplay.type === 'image'" ng-src="{{rightDisplay.content}}" alt="Right Display Image" />
-                <video ng-if="rightDisplay.type === 'video'" ng-src="{{rightDisplay.content}}" autoplay loop muted></video>
                 
                 <!-- Overlay Layer -->
                 <div ng-if="rightDisplay.overlay" class="overlay-layer">

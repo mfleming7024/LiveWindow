@@ -1,113 +1,102 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSS Rain Animation Overlay</title>
-    <style>
-        /* Basic setup to make the effect fullscreen and remove default margins */
-        body, html {
-            height: 100%;
-            margin: 0;
-            overflow: hidden; /* Prevents scrollbars from appearing */
-            font-family: 'Inter', sans-serif;
-        }
+<style>
+  .overlay-root {position:absolute; inset:0; pointer-events:none; }
+</style>
+<div class="overlay-root" data-quality="medium" aria-hidden="true">
+  <canvas class="rain-canvas"></canvas>
+</div>
+<script>
+(function(){
+  var renderer, scene, camera, geometry, material, lines, animationId, container;
+  function ensureThree(){ if(window.THREE) return Promise.resolve(); if (window.OverlayCommon && window.OverlayCommon.loadThree) return window.OverlayCommon.loadThree(); return new Promise(function(res,rej){ var s=document.createElement('script'); s.src='https://unpkg.com/three@0.158.0/build/three.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); }
+  function init(){ var canvas = container.querySelector('.rain-canvas'); renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true }); renderer.setPixelRatio(window.devicePixelRatio||1); scene = new THREE.Scene(); camera = new THREE.PerspectiveCamera(60,1,0.1,1000); camera.position.z = 1;
+    var quality = container.getAttribute('data-quality')||'medium'; var count = quality==='low'?200:quality==='high'?1200:600;
+    geometry = new THREE.BufferGeometry();
+    // We'll represent each raindrop as a short vertical line segment (two vertices)
+    // so they read as streaks instead of pointy/snow-like dots.
+    // For LineSegments we need 2 vertices per drop.
+    var vertexCount = count * 2;
+    var positions = new Float32Array(vertexCount * 3);
+    // per-particle data (one entry per particle)
+    var speeds = new Float32Array(count);
+    var phases = new Float32Array(count);
+    // per-particle streak length (proportional to speed)
+    var lengths = new Float32Array(count);
+    for(var i=0;i<count;i++){
+      // initial top vertex (start of streak)
+      var x = (Math.random()-0.5)*2;
+      var y = Math.random()*2 - 1;
+      var z = -Math.random()*4;
+      var vi = i*6; // two vertices * 3 components
+      positions[vi] = x;
+      positions[vi+1] = y;
+      positions[vi+2] = z;
+      // bottom vertex (end of streak) slightly below start
+      positions[vi+3] = x;
+      positions[vi+4] = y - 0.05; // small initial streak length
+      positions[vi+5] = z;
+      // faster speeds to read like water (increase from previous)
+      speeds[i] = 3.0 + Math.random()*4.0; // between 3.0 and 7.0 units/sec
+      phases[i] = Math.random()*Math.PI*2;
+  lengths[i] = 0.02 + Math.random()*0.04; // shorter base streak length
+    }
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions,3));
+    geometry.setAttribute('aSpeed', new THREE.BufferAttribute(speeds,1));
+    geometry.setAttribute('aPhase', new THREE.BufferAttribute(phases,1));
+    geometry.setAttribute('aLength', new THREE.BufferAttribute(lengths,1));
+  // Line material: muted gray, less bright than additive white streaks
+  // Use normal blending so lines don't over-brighten lighter backgrounds
+  material = new THREE.LineBasicMaterial({ color:0x9aa6ac, transparent:true, opacity:0.55, depthWrite:false, blending: THREE.NormalBlending });
+    lines = new THREE.LineSegments(geometry, material);
+    scene.add(lines);
+    // track time for smooth delta-based animation
+    lines.userData._lastTime = performance.now();
+    window.addEventListener('resize', onResize);
+    onResize();
+  }
+  function animate(now){ if(!geometry) return; var elapsed = (now - (lines.userData._lastTime||now))/1000; lines.userData._lastTime = now; var pos = geometry.attributes.position.array; var speeds = geometry.attributes.aSpeed.array; var phases = geometry.attributes.aPhase.array; var lengths = geometry.attributes.aLength.array; var particleCount = speeds.length; for(var i=0;i<particleCount;i++){ var vi = i*6; // top vertex
+    var topX = pos[vi];
+    var topY = pos[vi+1];
+    var topZ = pos[vi+2];
+    var speed = speeds[i];
+    // advance top vertex downward by speed*elapsed
+    topY -= speed * elapsed;
+    // horizontal sway proportional to speed (faster rain has small streak wobble)
+    var sway = Math.sin(phases[i] + now*0.001) * 0.004 * (0.5 + (speed-3)/8);
+    topX += sway;
+    // compute bottom vertex based on streak length (longer for faster drops)
+  // reduce the scale factor so even fastest drops stay short
+  var len = lengths[i] * (0.5 + (speed-3)/12);
+    var bottomX = topX;
+    var bottomY = topY - len;
+    var bottomZ = topZ;
+    // write back
+    pos[vi] = topX; pos[vi+1] = topY; pos[vi+2] = topZ;
+    pos[vi+3] = bottomX; pos[vi+4] = bottomY; pos[vi+5] = bottomZ;
+    // if bottom vertex is below view, wrap both vertices to top with some randomization
+    if(bottomY < -1.6) {
+      var newX = (Math.random()-0.5)*2;
+      var newY = 1.6 - (Math.random()*0.2);
+      pos[vi] = newX; pos[vi+1] = newY; pos[vi+2] = -Math.random()*4;
+  var newLen = 0.02 + Math.random()*0.04;
+      pos[vi+3] = newX; pos[vi+4] = newY - newLen; pos[vi+5] = pos[vi+2];
+      speeds[i] = 3.0 + Math.random()*4.0;
+      phases[i] = Math.random()*Math.PI*2;
+      lengths[i] = newLen;
+      geometry.attributes.aSpeed.needsUpdate = true;
+      geometry.attributes.aPhase.needsUpdate = true;
+      geometry.attributes.aLength.needsUpdate = true;
+    }
+  }
+    geometry.attributes.position.needsUpdate = true; renderer.render(scene,camera); animationId = requestAnimationFrame(animate); }
+  function onResize(){ if(!renderer) return; var w=container.clientWidth,h=container.clientHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); }
+  window.initOverlay = window.initOverlay || function(c){ container = c||document.body; ensureThree().then(function(){ init(); animationId = requestAnimationFrame(animate); }).catch(function(e){ console.error('three load failed', e); }); };
+  window.destroyOverlay = window.destroyOverlay || function(){ if(animationId) cancelAnimationFrame(animationId); animationId=null; if(geometry) geometry.dispose(); if(material) material.dispose(); if(renderer){ renderer.dispose(); if(renderer.domElement && renderer.domElement.parentNode) renderer.domElement.parentNode.removeChild(renderer.domElement); renderer=null; } window.removeEventListener('resize', onResize); scene=camera=geometry=material=null; };
+})();
+</script>
 
-        /* * Main container for the background image and the rain effect.
-         * Using fixed positioning ensures it covers the entire viewport.
-        */
-        .background-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        /* * The rain container - this is the overlay.
-         * It sits on top of the background image.
-        */
-        .rain-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2; /* Sits on top of the background image */
-            pointer-events: none; /* Allows clicks to go through to elements behind it */
-            overflow: hidden; /* Ensures raindrops don't appear outside this container */
-        }
-
-        /* * The raindrop element.
-         * We create multiple of these and animate them.
-        */
-        .raindrop {
-            position: absolute;
-            bottom: 100%; /* Start just above the screen */
-            width: 2px;
-            height: 60px; /* Length of the raindrop streak */
-            background: linear-gradient(to top, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.25));
-            animation: fall linear infinite;
-            
-            /* PERFORMANCE: Hardware acceleration and optimization hints */
-            transform: translate3d(0, 0, 0); /* Trigger hardware acceleration */
-            will-change: transform; /* Hint browser about animated properties */
-            backface-visibility: hidden; /* Optimize for 3D transforms */
-        }
-
-        /* Keyframe animation for the falling motion */
-        @keyframes fall {
-            to {
-                transform: translate3d(0, 110vh, 0); /* End position well below the viewport to ensure it disappears completely */
-            }
-        }
-
-        /*
-         * == RAINDROP RANDOMIZATION ==
-         * Using JavaScript to dynamically create and randomize raindrops.
-         * This is more scalable and creates a more natural effect than manually
-         * defining each one in CSS with :nth-child.
-        */
-    </style>
-</head>
-<body>
-
-    <div class="background-container">
-        <!-- The rain overlay starts here -->
-        <div class="rain-container">
-            <!-- Raindrops will be dynamically generated here by JavaScript -->
-        </div>
-        <!-- The rain overlay ends here -->
-    </div>
-
-    <script>
-        // JavaScript to generate a more random and dense rainfall effect.
-        document.addEventListener('DOMContentLoaded', function() {
-            const rainContainer = document.querySelector('.rain-container');
-            if (!rainContainer) return;
-
-            const numberOfRaindrops = 60; // Adjust for more or less rain
-
-            for (let i = 0; i < numberOfRaindrops; i++) {
-                const drop = document.createElement('div');
-                drop.className = 'raindrop';
-                
-                // Random horizontal position
-                drop.style.left = `${Math.random() * 100}%`;
-                
-                // Random animation duration (controls speed)
-                drop.style.animationDuration = `${0.5 + Math.random() * 0.7}s`; // Between 0.5s and 1.2s
-                
-                // Random animation delay (staggers the start)
-                drop.style.animationDelay = `${Math.random() * 5}s`;
-                
-                // Random opacity
-                drop.style.opacity = `${Math.random() * 0.6 + 0.2}`; // Between 0.2 and 0.8
-                
-                rainContainer.appendChild(drop);
-            }
-        });
-    </script>
-
-</body>
-</html>
+<script>
+if (window.top !== window.self) {
+  document.addEventListener('DOMContentLoaded', function () { var c = document.querySelector('.overlay-root') || document.body; if (window.initOverlay) window.initOverlay(c); });
+  window.addEventListener('unload', function () { if (window.destroyOverlay) window.destroyOverlay(); });
+}
+</script>

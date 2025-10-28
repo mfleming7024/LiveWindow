@@ -1,132 +1,81 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Falling Snow Animation</title>
-    <style>
-        /* --- Base Setup --- */
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: transparent;
-        }
+<style>
+  .overlay-root{position:absolute;inset:0;pointer-events:none}
+</style>
+<div class="overlay-root" data-quality="medium" aria-hidden="true">
+  <canvas class="snow-canvas"></canvas>
+</div>
+<script>
+(function(){
+  var renderer, scene, camera, geometry, material, points, animationId, container;
+  function ensureThree(){ if(window.THREE) return Promise.resolve(); if (window.OverlayCommon && window.OverlayCommon.loadThree) return window.OverlayCommon.loadThree(); return new Promise(function(res,rej){ var s=document.createElement('script'); s.src='https://unpkg.com/three@0.158.0/build/three.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); }
+  function init(){ var canvas = container.querySelector('.snow-canvas'); renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true }); renderer.setPixelRatio(window.devicePixelRatio||1); scene = new THREE.Scene(); camera = new THREE.PerspectiveCamera(60,1,0.1,1000); camera.position.z = 1;
+    var quality = container.getAttribute('data-quality')||'medium'; var count = quality==='low'?200:quality==='high'?1000:500;
+    geometry = new THREE.BufferGeometry(); var positions = new Float32Array(count*3); var velocities = new Float32Array(count*1);
+    // Wind state: current, target, lerp factor
+    var wind = { x: 0.0, y: 0.0 };
+    var windTarget = { x: 0.0, y: 0.0 };
+    var windLerp = 0.0;
+    var windChangeInterval = 3000; // ms between wind target changes
+    var lastWindChange = performance.now();
+    function pickNewWindTarget(){
+      // pick a random horizontal wind between -0.6 and 0.6 and slight vertical bias
+      windTarget.x = (Math.random()*1.2 - 0.6);
+      windTarget.y = (Math.random()*0.2 - 0.1);
+      lastWindChange = performance.now();
+      windLerp = 0.0;
+    }
+    pickNewWindTarget();
+    // store wind objects on geometry for access in animate
+    geometry.userData = { wind: wind, windTarget: windTarget, windLerpRef: function(v){ windLerp = v; }, getWindLerp: function(){ return windLerp; }, lastWindChangeRef: function(t){ lastWindChange = t; }, getLastWindChange: function(){ return lastWindChange; }, windChangeInterval: windChangeInterval };
+  // Start flakes above the top of the normalized viewport (y in [1.0 .. 2.2]) so they enter from top
+  for(var i=0;i<count;i++){ positions[i*3]=(Math.random()-0.5)*2; positions[i*3+1]=1.0 + Math.random()*1.2; positions[i*3+2]=-Math.random()*4; velocities[i]=0.2+Math.random()*1.2; }
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions,3)); geometry.setAttribute('velocity', new THREE.BufferAttribute(velocities,1));
+    material = new THREE.PointsMaterial({ color:0xffffff, size:0.02, transparent:true, opacity:0.9, depthWrite:false }); points = new THREE.Points(geometry, material); scene.add(points); window.addEventListener('resize', onResize); onResize();
+  }
+  function animate(t){
+    if(!geometry) return;
+    var now = t || performance.now();
+    var pos = geometry.attributes.position.array; var vel = geometry.attributes.velocity.array;
+    // wind interpolation
+    var ud = geometry.userData;
+    var w = ud.wind, wt = ud.windTarget;
+    var elapsed = now - ud.getLastWindChange();
+    var interval = ud.windChangeInterval;
+    var frac = Math.min(1, elapsed / interval);
+    // smooth interpolation using ease
+    var ease = 0.5 - 0.5 * Math.cos(frac * Math.PI);
+    w.x += (wt.x - w.x) * 0.02; // small per-frame smoothing
+    w.y += (wt.y - w.y) * 0.02;
+    if (frac >= 1) {
+      // pick a new target every interval
+      ud.lastWindChangeRef(now);
+      // randomize next target slightly
+      wt.x = (Math.random()*1.2 - 0.6);
+      wt.y = (Math.random()*0.2 - 0.1);
+    }
 
-        /* --- Snow Container --- */
-        #snow-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
+    for(var i=0;i<pos.length;i+=3){
+      var idx = i/3;
+      // vertical motion
+      pos[i+1] -= vel[idx]*0.01;
+      // horizontal motion influenced by wind and a small per-flake sway
+      pos[i] += (w.x * 0.002) + Math.sin(pos[i+1]*0.01 + idx) * 0.001 + (Math.random()-0.5)*0.0005;
+      pos[i] += w.y * 0.0005; // slight vertical component to wind
+      // wrap
+  // Only respawn (re-enter) after leaving bottom (-1.2); when respawning, place back above top
+  if(pos[i+1] < -1.2){ pos[i+1] = 1.0 + Math.random()*1.2; pos[i] = (Math.random()-0.5)*2; }
+    }
+    geometry.attributes.position.needsUpdate = true; renderer.render(scene,camera); animationId = requestAnimationFrame(animate);
+  }
+  function onResize(){ if(!renderer) return; var w=container.clientWidth,h=container.clientHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); }
+  window.initOverlay = window.initOverlay || function(c){ container = c||document.body; ensureThree().then(function(){ init(); animationId = requestAnimationFrame(animate); }).catch(function(e){ console.error('three load failed', e); }); };
+  window.destroyOverlay = window.destroyOverlay || function(){ if(animationId) cancelAnimationFrame(animationId); animationId=null; if(geometry) geometry.dispose(); if(material) material.dispose(); if(renderer){ renderer.dispose(); if(renderer.domElement && renderer.domElement.parentNode) renderer.domElement.parentNode.removeChild(renderer.domElement); renderer=null; } window.removeEventListener('resize', onResize); scene=camera=geometry=material=null; };
+})();
+</script>
 
-        /* --- Snowflake Styling --- */
-        .snowflake {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: #fff;
-            border-radius: 50%;
-            opacity: 0.8;
-            
-            /* Performance optimization */
-            transform: translate3d(0, 0, 0);
-            will-change: transform, opacity;
-            backface-visibility: hidden;
-            
-            /* Box shadow creates a subtle glow */
-            box-shadow: 0 0 4px rgba(255, 255, 255, 0.6);
-            
-            animation-name: snowFall;
-            animation-timing-function: linear;
-            animation-iteration-count: infinite;
-        }
-
-        /* --- Keyframe Animations --- */
-        @keyframes snowFall {
-            0% {
-                transform: translate3d(var(--x-offset), -10vh, 0) rotateZ(0deg);
-                opacity: 0;
-            }
-            5% {
-                opacity: 0.8;
-            }
-            95% {
-                opacity: 0.8;
-            }
-            100% {
-                transform: translate3d(var(--x-offset), 110vh, 0) rotateZ(360deg);
-                opacity: 0;
-            }
-        }
-
-        /* --- Sway Animation for realistic movement --- */
-        @keyframes sway {
-            0%, 100% {
-                transform: translateX(-50px);
-            }
-            50% {
-                transform: translateX(50px);
-            }
-        }
-
-        .snowflake.sway {
-            animation: snowFall linear infinite, sway ease-in-out infinite;
-        }
-    </style>
-</head>
-<body>
-    <div id="snow-container"></div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const container = document.getElementById('snow-container');
-            const numberOfSnowflakes = 50; // Adjust for density
-
-            for (let i = 0; i < numberOfSnowflakes; i++) {
-                createSnowflake(container);
-            }
-        });
-
-        function createSnowflake(container) {
-            const snowflake = document.createElement('div');
-            snowflake.className = 'snowflake';
-            
-            // Randomize snowflake properties
-            const size = Math.random() * 8 + 4; // 4px to 12px
-            snowflake.style.width = `${size}px`;
-            snowflake.style.height = `${size}px`;
-
-            // Random horizontal position
-            const xStart = Math.random() * 100;
-            snowflake.style.left = `${xStart}%`;
-            snowflake.style.top = '-10vh';
-
-            // Randomize fall duration (faster snowflakes = larger, slower = smaller)
-            const duration = Math.random() * 15 + 10; // 10-25 seconds
-            snowflake.style.setProperty('--x-offset', `${(Math.random() - 0.5) * 100}px`);
-            snowflake.style.animationDuration = `${duration}s`;
-
-            // Random animation delay
-            const delay = Math.random() * 5;
-            snowflake.style.animationDelay = `${delay}s`;
-
-            // Random opacity variation
-            const opacity = Math.random() * 0.3 + 0.5; // 0.5 to 0.8
-            snowflake.style.opacity = opacity;
-
-            // Add sway animation to some snowflakes
-            if (Math.random() > 0.5) {
-                snowflake.classList.add('sway');
-                const swayDuration = Math.random() * 3 + 3; // 3-6 seconds
-                snowflake.style.setProperty('--sway-duration', `${swayDuration}s`);
-            }
-
-            container.appendChild(snowflake);
-        }
-    </script>
-</body>
-</html>
+<script>
+if (window.top !== window.self) {
+  document.addEventListener('DOMContentLoaded', function () { var c = document.querySelector('.overlay-root') || document.body; if (window.initOverlay) window.initOverlay(c); });
+  window.addEventListener('unload', function () { if (window.destroyOverlay) window.destroyOverlay(); });
+}
+</script>

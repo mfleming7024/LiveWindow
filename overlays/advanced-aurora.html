@@ -1,4 +1,3 @@
-<!doctype html>
 <style>
   /* Overlay root limited to top half for subtle aurora appearance */
   .overlay-root{position:absolute;left:0;right:0;top:0;height:50vh;pointer-events:none;overflow:hidden}
@@ -19,9 +18,7 @@
     if(window.THREE) return Promise.resolve();
     if (window.OverlayCommon && window.OverlayCommon.loadThree) return window.OverlayCommon.loadThree();
     return new Promise(function(res,rej){
-      var s=document.createElement('script');
-      s.src='https://unpkg.com/three@0.158.0/build/three.min.js';
-      s.onload=res; s.onerror=rej; document.head.appendChild(s);
+      var s=document.createElement('script'); s.src='https://unpkg.com/three@0.158.0/build/three.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s);
     });
   }
 
@@ -36,14 +33,11 @@
 
     var vertexShader = `varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position,1.0);} `;
 
-    // Fragment shader: layered sin/noise bands with soft falloff and color mixing
     var fragmentShader = `
       uniform float time; uniform vec2 resolution; uniform float intensity; uniform float speed; uniform float bandScale; varying vec2 vUv;
 
-      // cheap hash noise
       float hash21(vec2 p){ p = fract(p*vec2(123.34,456.21)); p += dot(p,p+45.32); return fract(p.x*p.y); }
 
-      // fbm-like sum of sines for smooth organic bands
       float bandNoise(vec2 uv){
         float t = time * 0.001 * speed;
         float n = 0.0;
@@ -58,36 +52,20 @@
 
       void main(){
         vec2 uv = vUv;
-        // vertical falloff so aurora is stronger near top
         float vfall = smoothstep(0.9, -0.15, uv.y);
-        // compute wavy band pattern across x with time
         float bands = bandNoise(vec2(uv.x * bandScale, uv.y * 0.6));
-
-        // three main color contributions with different offsets
         float g = smoothstep(0.35, 0.78, bands + 0.05 * sin(time*0.0008 + uv.x*6.0));
         float p = smoothstep(0.2, 0.7, bands - 0.22 + 0.06 * cos(time*0.0006 + uv.x*4.0));
         float r = smoothstep(0.1, 0.6, bands - 0.45 + 0.05 * sin(time*0.0009 + uv.x*2.0));
-
-        // color vectors
         vec3 green = vec3(0.05,0.7,0.35);
         vec3 purple = vec3(0.66,0.16,0.6);
         vec3 red = vec3(0.92,0.22,0.3);
-
-        // subtle highlights
         vec3 highlight = vec3(0.9,1.0,0.95);
-
-        // mix colors by weight and add small noise-based shimmer
         float shimmer = hash21(uv*resolution.xy + time*0.001) * 0.08;
         vec3 col = g * green + p * purple + r * red;
         col = mix(col, highlight, 0.07 * (g + p));
-
-        // overall alpha shaped by vertical falloff and band intensity
         float alpha = (g + p*0.9 + r*0.7) * 0.6 * vfall * intensity + shimmer;
-
-        // apply soft radial fade towards bottom
         alpha *= smoothstep(0.0, 0.8, 1.0 - uv.y);
-
-        // final color tone mapping
         col = pow(col, vec3(1.0/1.05));
         gl_FragColor = vec4(col * 1.05, clamp(alpha, 0.0, 1.0));
       }
@@ -108,39 +86,20 @@
     renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
     renderer.setPixelRatio(pixelRatio);
     scene = new THREE.Scene();
-    // simple camera that covers plane
     camera = new THREE.OrthographicCamera(-1,1,1,-1,0.1,10);
     camera.position.z = 1;
-
     var geom = new THREE.PlaneGeometry(2,2);
     var mat = createMaterial();
     mesh = new THREE.Mesh(geom, mat);
     scene.add(mesh);
-
     onResize();
     window.addEventListener('resize', onResize);
   }
 
-  function animate(t){
-    if(!mesh) return;
-    mesh.material.uniforms.time.value = t;
-    // small breathing of bandScale for organic motion
-    mesh.material.uniforms.bandScale.value = 1.4 + 0.25 * Math.sin(t*0.0008);
-    renderer.render(scene, camera);
-    animationId = requestAnimationFrame(animate);
-  }
-
-  function onResize(){
-    if(!renderer) return;
-    var w = container.clientWidth, h = container.clientHeight;
-    renderer.setSize(w, h, false);
-    if(mesh && mesh.material && mesh.material.uniforms && mesh.material.uniforms.resolution){
-      mesh.material.uniforms.resolution.value.set(w, h);
-    }
-  }
-
+  function animate(t){ if(!mesh) return; mesh.material.uniforms.time.value = t; mesh.material.uniforms.bandScale.value = 1.4 + 0.25 * Math.sin(t*0.0008); renderer.render(scene, camera); animationId = requestAnimationFrame(animate); }
+  function onResize(){ if(!renderer) return; var w = container.clientWidth, h = container.clientHeight; renderer.setSize(w,h,false); if(mesh && mesh.material && mesh.material.uniforms) mesh.material.uniforms.resolution.value.set(w,h); }
   window.initOverlay = window.initOverlay || function(c){ container = c || document.body; ensureThree().then(function(){ init(); animationId = requestAnimationFrame(animate); }).catch(function(e){ console.warn('three load failed', e); }); };
-  window.destroyOverlay = window.destroyOverlay || function(){ if(animationId) cancelAnimationFrame(animationId); animationId=null; try{ if(mesh){ if(mesh.geometry) mesh.geometry.dispose(); if(mesh.material){ if(mesh.material.uniforms){ /* no-op */ } mesh.material.dispose(); } scene.remove(mesh); mesh=null; } if(renderer){ renderer.dispose(); if(renderer.domElement && renderer.domElement.parentNode) renderer.domElement.parentNode.removeChild(renderer.domElement); renderer=null; } window.removeEventListener('resize', onResize); }catch(e){ console.error(e);} scene=camera=null; };
+  window.destroyOverlay = window.destroyOverlay || function(){ if(animationId) cancelAnimationFrame(animationId); animationId=null; try{ if(mesh){ if(mesh.geometry) mesh.geometry.dispose(); if(mesh.material){ mesh.material.dispose(); } scene.remove(mesh); mesh=null; } if(renderer){ renderer.dispose(); if(renderer.domElement && renderer.domElement.parentNode) renderer.domElement.parentNode.removeChild(renderer.domElement); renderer=null; } window.removeEventListener('resize', onResize); }catch(e){ console.error(e);} scene=camera=null; };
 
 })();
 </script>

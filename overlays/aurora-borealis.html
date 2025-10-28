@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aurora Borealis Animation</title>
+    <style>
+        /* --- Base Setup --- */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: transparent;
+        }
+
+        /* --- Aurora Container --- */
+        #aurora-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            filter: blur(1px);
+        }
+
+        /* --- Aurora Waves --- */
+        .aurora-wave {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            mix-blend-mode: screen;
+            opacity: 0.6;
+        }
+
+        /* Green Aurora Path */
+        .aurora-wave.green {
+            animation: auroraGreenShift 8s ease-in-out infinite;
+        }
+
+        /* Purple Aurora Path */
+        .aurora-wave.purple {
+            animation: auroraPurpleShift 10s ease-in-out infinite;
+        }
+
+        /* Blue Aurora Path */
+        .aurora-wave.blue {
+            animation: auroraBluShift 12s ease-in-out infinite;
+        }
+
+        /* --- Keyframe Animations --- */
+        @keyframes auroraGreenShift {
+            0%, 100% {
+                opacity: 0.2;
+                clip-path: polygon(0 30%, 100% 40%, 100% 60%, 0 50%);
+            }
+            50% {
+                opacity: 0.7;
+                clip-path: polygon(0 20%, 100% 30%, 100% 70%, 0 60%);
+            }
+        }
+
+        @keyframes auroraPurpleShift {
+            0%, 100% {
+                opacity: 0.3;
+                clip-path: polygon(0 40%, 100% 35%, 100% 65%, 0 55%);
+            }
+            50% {
+                opacity: 0.6;
+                clip-path: polygon(0 25%, 100% 35%, 100% 65%, 0 75%);
+            }
+        }
+
+        @keyframes auroraBluShift {
+            0%, 100% {
+                opacity: 0.2;
+                clip-path: polygon(0 50%, 100% 45%, 100% 75%, 0 60%);
+            }
+            50% {
+                opacity: 0.5;
+                clip-path: polygon(0 35%, 100% 40%, 100% 75%, 0 70%);
+            }
+        }
+
+        /* --- Glow Particles --- */
+        .glow-particle {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            filter: blur(80px);
+            
+            animation-name: glowFloat;
+            animation-timing-function: ease-in-out;
+            animation-iteration-count: infinite;
+        }
+
+        @keyframes glowFloat {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translate(var(--drift-x), var(--drift-y)) scale(1.2);
+                opacity: 0.6;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="aurora-container">
+        <div class="aurora-wave green"></div>
+        <div class="aurora-wave purple"></div>
+        <div class="aurora-wave blue"></div>
+        <div id="glow-particles"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('glow-particles');
+            
+            // Create gradient backgrounds for aurora waves
+            const greenWave = document.querySelector('.aurora-wave.green');
+            greenWave.style.background = 'linear-gradient(90deg, transparent, rgba(0, 255, 100, 0.6), transparent)';
+
+            const purpleWave = document.querySelector('.aurora-wave.purple');
+            purpleWave.style.background = 'linear-gradient(90deg, transparent, rgba(150, 0, 200, 0.5), transparent)';
+
+            const blueWave = document.querySelector('.aurora-wave.blue');
+            blueWave.style.background = 'linear-gradient(90deg, transparent, rgba(0, 150, 255, 0.5), transparent)';
+
+            // Create glow particles
+            const numberOfParticles = 5;
+            for (let i = 0; i < numberOfParticles; i++) {
+                createGlowParticle(container, i);
+            }
+        });
+
+        function createGlowParticle(container, index) {
+            const particle = document.createElement('div');
+            particle.className = 'glow-particle';
+
+            // Random starting position
+            const x = Math.random() * 100;
+            const y = Math.random() * 60 + 20; // Keep in upper 60% of screen
+            particle.style.left = `${x}%`;
+            particle.style.top = `${y}%`;
+
+            // Random color for glow
+            const colors = [
+                'rgba(0, 255, 100, 0.8)',
+                'rgba(150, 0, 200, 0.8)',
+                'rgba(0, 150, 255, 0.8)',
+                'rgba(100, 255, 150, 0.6)'
+            ];
+            particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+            // Animation properties
+            const duration = Math.random() * 8 + 6; // 6-14 seconds
+            particle.style.animationDuration = `${duration}s`;
+
+            // Random drift amount
+            const driftX = (Math.random() - 0.5) * 200;
+            const driftY = (Math.random() - 0.5) * 150;
+            particle.style.setProperty('--drift-x', `${driftX}px`);
+            particle.style.setProperty('--drift-y', `${driftY}px`);
+
+            // Random delay
+            const delay = Math.random() * 3;
+            particle.style.animationDelay = `${delay}s`;
+
+            container.appendChild(particle);
+        }
+    </script>
+</body>
+</html>

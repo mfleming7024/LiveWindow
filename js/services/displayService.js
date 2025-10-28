@@ -44,11 +44,17 @@ angular.module('liveWindowApp')
         }
         
         var overlays = [
+            // Original overlays
             { name: 'Cave Fireflies', path: 'overlays/cave-fireflies.html', emoji: '✨', description: 'Tiny glowing fireflies dancing in the darkness' },
             { name: 'Rain Drops', path: 'overlays/rain-drops.html', emoji: '🌧️', description: 'Gentle rain falling in a rhythmic pattern' },
             { name: 'Floating Embers', path: 'overlays/floating-embers.html', emoji: '🔥', description: 'Warm glowing embers drifting upward' },
             { name: 'Sunbeams', path: 'overlays/sunbeams.html', emoji: '☀️', description: 'Radiant beams of sunlight streaming through' },
-            { name: 'Fog Overlay', path: 'overlays/fog-overlay.html', emoji: '🌫️', description: 'Mystical fog drifting across the bottom of the screen' }
+            { name: 'Fog Overlay', path: 'overlays/fog-overlay.html', emoji: '🌫️', description: 'Mystical fog drifting across the bottom of the screen' },
+            // New dynamic overlays
+            { name: 'Falling Snow', path: 'overlays/falling-snow.html', emoji: '❄️', description: 'Gentle snowflakes falling with realistic wind sway' },
+            { name: 'Swirling Leaves', path: 'overlays/swirling-leaves.html', emoji: '🍂', description: 'Autumn leaves spinning and falling in multiple patterns' },
+            { name: 'Aurora Borealis', path: 'overlays/aurora-borealis.html', emoji: '🌌', description: 'Mystical northern lights with shimmering green and purple waves' },
+            { name: 'Particle Dust', path: 'overlays/particles-dust.html', emoji: '💫', description: 'Floating dust particles illuminated by dynamic light rays' }
         ];
         
         return {

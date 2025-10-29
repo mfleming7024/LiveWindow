@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>html,body{margin:0;padding:0;height:100%;background:transparent;overflow:hidden}canvas{display:block;}</style>
+</head>
+<body>
+  <div id="overlay-root"></div>
+  <script src="/overlays/vendor/three.min.js"></script>
+  <script>
+    (function(){
+      // Heat Haze - perlin-like turbulence displacement
+      var container=document.getElementById('overlay-root'); var renderer=new THREE.WebGLRenderer({alpha:true}); renderer.setSize(window.innerWidth,window.innerHeight); container.appendChild(renderer.domElement);
+      var scene=new THREE.Scene(); var camera=new THREE.OrthographicCamera(-1,1,1,-1,0,1);
+      var uniforms={time:{value:0},resolution:{value:new THREE.Vector2(window.innerWidth,window.innerHeight)},strength:{value:0.03}};
+      var frag = `
+        varying vec2 vUv; uniform float time; uniform vec2 resolution; uniform float strength;
+        // Simple pseudo-noise using sin combinations
+        float noise(vec2 p){ return sin(p.x*10.0 + time*2.0)*0.5 + cos(p.y*12.0 - time*1.5)*0.5; }
+        void main(){ vec2 uv = vUv; float n = noise(uv*3.0); uv += (n-0.5)*strength; float mask = smoothstep(0.0,1.0,1.0 - length(uv-0.5)*1.6); gl_FragColor = vec4(1.0,1.0,1.0, mask*0.6); }
+      `;
+      var mat = new THREE.ShaderMaterial({transparent:true,uniforms:uniforms,vertexShader:'varying vec2 vUv; void main(){vUv=uv; gl_Position=vec4(position,1.0);}',fragmentShader:frag});
+      scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),mat));
+      function onResize(){ renderer.setSize(window.innerWidth,window.innerHeight); uniforms.resolution.value.set(window.innerWidth,window.innerHeight);} window.addEventListener('resize', onResize,{passive:true}); var t=0; function animate(){ requestAnimationFrame(animate); t+=0.016; uniforms.time.value=t; renderer.render(scene,camera);} animate();
+    })();
+  </script>
+</body>
+</html>

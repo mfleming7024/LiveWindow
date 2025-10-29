@@ -55,6 +55,21 @@ angular.module('liveWindowApp')
             { name: 'Shadow Tendrils', path: 'overlays/shadow-tendrils.html', emoji: '🕸️', description: 'Ethereal shadow tendrils flowing across the display' },
             { name: 'Aurora', path: 'overlays/aurora.html', emoji: '🌌', description: 'Translucent aurora effect (reds, purples, greens) across the top 30% of the screen' }
         ];
+
+        // Add new three.js overlays for DND themed effects
+    overlays.push({ name: 'Ethereal Motes', path: 'overlays/ethereal-motes.html', emoji: '✨', description: 'Floating translucent motes that drift and glow — good for fae or magical ambiance' });
+
+    // Distortion-focused overlays (ripples, swirls, warps, glass/haze effects)
+    overlays.push({ name: 'Water Ripples', path: 'overlays/distortion-water-ripples.html', emoji: '🌊', description: 'Gentle concentric water ripples that subtly refract the background' });
+    overlays.push({ name: 'Lens Warp', path: 'overlays/distortion-lens-warp.html', emoji: '🔍', description: 'Localized lens-like warp with subtle magnification and chromatic aberration' });
+    overlays.push({ name: 'Heat Haze', path: 'overlays/distortion-heat-haze.html', emoji: '🌫️', description: 'A warm turbulence distortion like heat shimmer above a fire' });
+    overlays.push({ name: 'Swirling Vortex', path: 'overlays/distortion-vortex.html', emoji: '🌀', description: 'A slow swirling vortex that gently pulls the visuals around a center' });
+    overlays.push({ name: 'Glass Distort', path: 'overlays/distortion-glass.html', emoji: '🔲', description: 'Stained glass / frosted glass style distortion with subtle edges' });
+    overlays.push({ name: 'Warp Grid', path: 'overlays/distortion-warp-grid.html', emoji: '▦', description: 'A grid-based warp field that bends the background along a pattern' });
+    overlays.push({ name: 'Turbulent Swirl', path: 'overlays/distortion-turbulence.html', emoji: '🌪️', description: 'High-frequency turbulence and swirl for chaotic warp effects' });
+    overlays.push({ name: 'Ripple Field', path: 'overlays/distortion-ripple-field.html', emoji: '🔵', description: 'Many small interfering ripples for pond-like water surface effect' });
+    overlays.push({ name: 'Whirlpool', path: 'overlays/distortion-whirlpool.html', emoji: '🕳️', description: 'A stronger whirlpool-like center distortion with rotational flow' });
+    overlays.push({ name: 'Wave Grid', path: 'overlays/distortion-wave-grid.html', emoji: '〰️', description: 'Sine-wave distortions applied across a grid — good for energy fields' });
         
         return {
             // Getters

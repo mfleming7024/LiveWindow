@@ -1,0 +1,146 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>html,body{margin:0;padding:0;height:100%;background:transparent;overflow:hidden}canvas{display:block;}</style>
+</head>
+<body>
+  <div id="overlay-root"></div>
+  <script src="/overlays/vendor/three.min.js"></script>
+  <script>
+    (function(){
+      // Ethereal Motes - drifting translucent particles with subtle glow
+      var container = document.getElementById('overlay-root');
+      var scene = new THREE.Scene();
+      var camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+      camera.position.z = 100;
+
+      var renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setPixelRatio(window.devicePixelRatio || 1);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setClearColor(0x000000, 0);
+      container.appendChild(renderer.domElement);
+
+      // Glow sprite texture - use a generated canvas fallback and replace it if the image loads
+      function createFallbackMoteTexture(size){
+        size = size || 128;
+        var canvas = document.createElement('canvas');
+        canvas.width = size; canvas.height = size;
+        var ctx = canvas.getContext('2d');
+        var cx = size/2, cy = size/2, r = size/2;
+
+        // create radial gradient (soft glow)
+        var grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+        grad.addColorStop(0, 'rgba(255,255,255,1)');
+        grad.addColorStop(0.2, 'rgba(200,230,255,0.9)');
+        grad.addColorStop(0.4, 'rgba(170,200,255,0.6)');
+        grad.addColorStop(1, 'rgba(170,200,255,0)');
+
+        ctx.fillStyle = grad;
+        ctx.fillRect(0,0,size,size);
+        return new THREE.CanvasTexture(canvas);
+      }
+
+      var spriteTexture = createFallbackMoteTexture(128);
+
+      // Try to load the real image and patch the existing texture on success
+      new THREE.TextureLoader().load(
+        '/overlays/img/mote.png',
+        function(loadedTex){
+          try {
+            // Replace canvas image with loaded image to update all sprite materials using spriteTexture
+            spriteTexture.image = loadedTex.image || loadedTex.source && loadedTex.source.data || loadedTex.image;
+            spriteTexture.needsUpdate = true;
+            renderer.render(scene, camera);
+          } catch (e) {
+            // If assigning fails, ignore and keep canvas fallback
+            console.warn('Failed to apply loaded mote texture, using fallback', e);
+          }
+        },
+        undefined,
+        function(err){
+          // Image failed to load; keep the fallback canvas texture
+          console.warn('mote.png failed to load, using generated fallback texture', err);
+        }
+      );
+
+      var particles = new THREE.Group();
+      var particleCount = 120;
+
+      for (var i = 0; i < particleCount; i++) {
+        var material = new THREE.SpriteMaterial({
+          map: spriteTexture,
+          color: new THREE.Color(0x88ccff).lerp(new THREE.Color(0xff88ff), Math.random()),
+          transparent: true,
+          opacity: 0.6 + Math.random() * 0.4,
+          blending: THREE.AdditiveBlending
+        });
+
+        var sprite = new THREE.Sprite(material);
+        sprite.position.x = (Math.random() - 0.5) * 400;
+        sprite.position.y = (Math.random() - 0.5) * 200;
+        sprite.position.z = (Math.random() - 0.5) * 200;
+        var scale = 4 + Math.random() * 18;
+        sprite.scale.set(scale, scale, 1);
+        sprite.userData = {
+          vx: (Math.random() - 0.5) * 0.1,
+          vy: (Math.random() - 0.5) * 0.05,
+          vz: (Math.random() - 0.5) * 0.02,
+          phase: Math.random() * Math.PI * 2
+        };
+        particles.add(sprite);
+      }
+
+      scene.add(particles);
+
+      // Subtle camera parallax based on pointer
+      var pointer = { x: 0, y: 0 };
+      window.addEventListener('mousemove', function(e){
+        pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+        pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      }, { passive: true });
+
+      function onResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+      window.addEventListener('resize', onResize, { passive: true });
+
+      var t = 0;
+      function animate() {
+        requestAnimationFrame(animate);
+        t += 0.01;
+        particles.children.forEach(function(p){
+          p.position.x += p.userData.vx + Math.sin(t + p.userData.phase) * 0.02;
+          p.position.y += p.userData.vy + Math.cos(t * 0.7 + p.userData.phase) * 0.01;
+          p.position.z += p.userData.vz;
+
+          // wrap around bounds softly
+          if (p.position.x > 600) p.position.x = -600;
+          if (p.position.x < -600) p.position.x = 600;
+          if (p.position.y > 400) p.position.y = -400;
+          if (p.position.y < -400) p.position.y = 400;
+          if (p.position.z > 300) p.position.z = -300;
+          if (p.position.z < -300) p.position.z = 300;
+
+          // flicker
+          p.material.opacity = 0.5 + 0.5 * (0.6 + Math.sin(t * 2 + p.userData.phase) * 0.4);
+        });
+
+        // camera subtle move
+        camera.position.x += (pointer.x * 20 - camera.position.x) * 0.03;
+        camera.position.y += (pointer.y * 10 - camera.position.y) * 0.03;
+        camera.lookAt(scene.position);
+
+        renderer.render(scene, camera);
+      }
+
+  // no-op: texture handling above will use fallback and attempt to replace when/if image loads
+
+      animate();
+    })();
+  </script>
+</body>
+</html>

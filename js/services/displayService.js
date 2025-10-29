@@ -52,7 +52,8 @@ angular.module('liveWindowApp')
             { name: 'Falling Snow', path: 'overlays/falling-snow.html', emoji: '❄️', description: 'Gentle snowflakes falling with realistic wind sway' },
             { name: 'Swirling Leaves', path: 'overlays/swirling-leaves.html', emoji: '🍂', description: 'Autumn leaves spinning and falling in multiple patterns' },
             // Custom overlays
-            { name: 'Shadow Tendrils', path: 'overlays/shadow-tendrils.html', emoji: '🕸️', description: 'Ethereal shadow tendrils flowing across the display' }
+            { name: 'Shadow Tendrils', path: 'overlays/shadow-tendrils.html', emoji: '🕸️', description: 'Ethereal shadow tendrils flowing across the display' },
+            { name: 'Aurora', path: 'overlays/aurora.html', emoji: '🌌', description: 'Translucent aurora effect (reds, purples, greens) across the top 30% of the screen' }
         ];
         
         return {

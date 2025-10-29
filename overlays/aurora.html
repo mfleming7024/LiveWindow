@@ -1,0 +1,159 @@
+<!doctype html>
+<div id="aurora-overlay" style="position:absolute;top:0;left:0;right:0;height:55vh;pointer-events:none;z-index:50;overflow:hidden;">
+  <style>
+    #aurora-overlay canvas { width:100%; height:100%; display:block; }
+    .aurora-controls { position:absolute; right:8px; top:8px; background:rgba(0,0,0,0.35); color:#fff; padding:6px; border-radius:6px; font-family:Arial,Helvetica,sans-serif; font-size:12px; pointer-events:auto; }
+    .aurora-controls label { display:block; margin-bottom:4px; }
+    .aurora-controls input[type=range] { width:140px; }
+  </style>
+
+  <div id="aurora-root"></div>
+
+  <!-- Use local Three.js bundled in overlays/vendor to avoid CDN dependency -->
+  <script src="vendor/three.min.js"></script>
+  <script>
+    (function () {
+      // Ensure Three is available
+      if (typeof THREE === 'undefined') return;
+
+      var container = document.getElementById('aurora-root');
+      var width = container.clientWidth || window.innerWidth;
+      var height = container.clientHeight || (window.innerHeight * 0.30);
+
+      var scene = new THREE.Scene();
+      var camera = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, 0.1, 1000 );
+      camera.position.z = 10;
+
+      var renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setSize( width, height );
+      renderer.setPixelRatio(window.devicePixelRatio || 1);
+      container.appendChild(renderer.domElement);
+
+      // Create a big plane that covers the overlay area
+      var geometry = new THREE.PlaneGeometry(width, height, 64, 16);
+
+      // Simple shader material to produce layered color bands and noise
+      var material = new THREE.ShaderMaterial({
+        transparent: true,
+        depthWrite: false,
+        uniforms: {
+          uTime: { value: 0.0 },
+          uSpeed: { value: 0.5 },
+          uIntensity: { value: 1 },
+          uBands: { value: 2.0 },
+          uOpacity: { value: 0.35 },
+          uResolution: { value: new THREE.Vector2(width, height) }
+        },
+        vertexShader: `
+          varying vec2 vUv;
+          void main() {
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: `
+          varying vec2 vUv;
+          uniform float uTime;
+          uniform float uSpeed;
+          uniform float uIntensity;
+          uniform float uBands;
+          uniform float uOpacity;
+
+          // Simple 2D noise - iq's hash / noise (cheap)
+          float hash(vec2 p) {
+            return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453123);
+          }
+
+          float noise(vec2 p) {
+            vec2 i = floor(p);
+            vec2 f = fract(p);
+            float a = hash(i);
+            float b = hash(i + vec2(1.0, 0.0));
+            float c = hash(i + vec2(0.0, 1.0));
+            float d = hash(i + vec2(1.0, 1.0));
+            vec2 u = f*f*(3.0-2.0*f);
+            return mix(a, b, u.x) + (c - a)*u.y*(1.0 - u.x) + (d - b)*u.x*u.y;
+          }
+
+          void main() {
+            vec2 uv = vUv;
+            // Move the noise vertically over time
+            float t = uTime * uSpeed;
+
+            // Create multiple bands
+            float bands = 0.0;
+            for (int i = 0; i < 8; i++) {
+              if (float(i) >= uBands) break;
+              float fi = float(i);
+              float y = uv.y * 2.0 + fi * 0.35 + sin(t*0.6 + fi*1.7) * 0.15;
+              float n = noise(vec2(uv.x*6.0 + t*0.2 + fi*0.3, y*6.0));
+              float band = smoothstep(0.3 - fi*0.02, 0.9, n + (0.2 - fi*0.03));
+              bands += band * (1.0 - fi*0.12);
+            }
+
+            // Color mapping across distinct band colors: green, purple, yellow, orange
+            float mixVal = clamp(bands * uIntensity, 0.0, 1.0);
+
+            // Determine a band index from bands value so different bands map to different colors
+            float bandIndex = fract(bands * 0.25); // normalized 0..1
+
+            // Define the four base colors (blue/green palette)
+            vec3 colTeal   = vec3(0.02, 0.75, 0.66); // deep teal
+            vec3 colCyan   = vec3(0.12, 0.95, 0.95); // bright cyan
+            vec3 colSky    = vec3(0.36, 0.7, 0.95);  // soft sky blue
+            vec3 colMint   = vec3(0.6, 0.95, 0.75);  // pale mint/green
+
+            // Map bandIndex to one of the four colors with smooth blending
+            float s1 = smoothstep(0.0, 0.25, bandIndex);
+            float s2 = smoothstep(0.25, 0.5, bandIndex);
+            float s3 = smoothstep(0.5, 0.75, bandIndex);
+            float s4 = smoothstep(0.75, 1.0, bandIndex);
+
+            vec3 color = normalize(colTeal * (1.0 - s1) + colCyan * (s1 - s2) + colSky * (s2 - s3) + colMint * (s3 - s4));
+
+            // Add small horizontal modulation for richness
+            float horiz = 0.5 + 0.5 * sin((uv.x + uTime * 0.05) * 6.2831);
+            color = mix(color, vec3(1.0), 0.03 * (1.0 - horiz));
+
+            // Fade out towards the bottom of the overlay area
+            float fade = smoothstep(0.0, 0.25, uv.y);
+            float alpha = uOpacity * mixVal * fade;
+
+            // Slightly desaturate/mix by overall intensity so colors don't blow out
+            color = mix(color * 0.9, vec3(1.0), 0.05);
+
+            gl_FragColor = vec4(color, alpha);
+          }
+        `
+      });
+
+      var mesh = new THREE.Mesh(geometry, material);
+      mesh.position.set(0, 0, 0);
+      scene.add(mesh);
+
+      // Resize handling
+      function onResize() {
+        var w = container.clientWidth || window.innerWidth;
+        var h = container.clientHeight || (window.innerHeight * 0.30);
+        renderer.setSize(w, h);
+        material.uniforms.uResolution.value.set(w, h);
+      }
+      window.addEventListener('resize', onResize);
+
+      var last = performance.now();
+
+      function animate() {
+        var now = performance.now();
+        var dt = (now - last) / 1000;
+        last = now;
+        material.uniforms.uTime.value += dt;
+        renderer.render(scene, camera);
+        requestAnimationFrame(animate);
+      }
+      requestAnimationFrame(animate);
+
+  // No user-facing controls; defaults are set in the shader uniforms above
+
+    })();
+  </script>
+</div>

@@ -27,43 +27,57 @@
         /* --- Leaf Styling --- */
         .leaf {
             position: absolute;
-            width: 20px;
-            height: 20px;
-            background-size: cover;
-            
-            /* Performance optimization */
+            width: 28px;
+            height: 28px;
+            pointer-events: none;
+        }
+
+        /* wrapper holds the falling + horizontal offset, inner holds rotation/tilt */
+        .leaf__wrapper {
+            position: absolute;
+            inset: 0; /* fills parent */
             transform: translate3d(0, 0, 0);
             will-change: transform;
-            backface-visibility: hidden;
-            
-            animation-name: leafSwirl, leafFall;
-            animation-timing-function: ease-in, ease-in;
+            animation-name: leafFall;
+            animation-timing-function: linear;
+            animation-iteration-count: 1;
+        }
+
+        .leaf__inner {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform-origin: 50% 50%;
+            transform: translate(-50%, -50%) rotateZ(0deg);
+            will-change: transform;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.18));
+            animation-name: leafSwirl, leafSway;
+            animation-timing-function: ease-in-out, linear;
             animation-iteration-count: infinite, infinite;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
         }
 
         /* --- Keyframe Animations --- */
         @keyframes leafSwirl {
             0% {
-                transform: translate3d(0, 0, 0) rotateZ(0deg) rotateX(0deg);
+                transform: rotateZ(0deg) rotateX(0deg);
             }
             25% {
-                transform: translate3d(80px, 0, 0) rotateZ(90deg) rotateX(30deg);
+                transform: rotateZ(90deg) rotateX(30deg);
             }
             50% {
-                transform: translate3d(0, 0, 0) rotateZ(180deg) rotateX(0deg);
+                transform: rotateZ(180deg) rotateX(0deg);
             }
             75% {
-                transform: translate3d(-80px, 0, 0) rotateZ(270deg) rotateX(-30deg);
+                transform: rotateZ(270deg) rotateX(-30deg);
             }
             100% {
-                transform: translate3d(0, 0, 0) rotateZ(360deg) rotateX(0deg);
+                transform: rotateZ(360deg) rotateX(0deg);
             }
         }
 
         @keyframes leafFall {
             0% {
-                transform: translateY(-10vh);
+                transform: translateY(-10vh) translateX(var(--x-offset, 0px));
                 opacity: 0;
             }
             5% {
@@ -73,9 +87,18 @@
                 opacity: 1;
             }
             100% {
-                transform: translateY(110vh);
+                transform: translateY(110vh) translateX(var(--x-offset, 0px));
                 opacity: 0;
             }
+        }
+
+        /* horizontal swaying using CSS variable controlled frequency and amplitude */
+        @keyframes leafSway {
+            0% { transform: translateX(calc(var(--sway-amplitude, 20px)) ) rotateZ(0deg); }
+            25% { transform: translateX(calc(var(--sway-amplitude, 20px) * 0.5)) rotateZ(15deg); }
+            50% { transform: translateX(calc(var(--sway-amplitude, 0px) * -1)) rotateZ(0deg); }
+            75% { transform: translateX(calc(var(--sway-amplitude, 20px) * -0.5)) rotateZ(-15deg); }
+            100% { transform: translateX(calc(var(--sway-amplitude, 20px))) rotateZ(0deg); }
         }
 
         /* --- SVG Leaf Generator --- */
@@ -108,49 +131,80 @@
             const numberOfLeaves = 20;
 
             for (let i = 0; i < numberOfLeaves; i++) {
-                setTimeout(() => {
-                    createLeaf(container);
-                }, i * 400);
+                setTimeout(() => createLeaf(container), i * 300);
             }
 
-            // Continuously add new leaves
+            // Continuously add new leaves up to target count
             setInterval(() => {
                 if (container.children.length < numberOfLeaves) {
                     createLeaf(container);
                 }
-            }, 800);
+            }, 900);
         });
 
         function createLeaf(container) {
             const leaf = document.createElement('div');
             leaf.className = 'leaf';
-            
+
+            // wrapper used for the fall animation and x-offset start
+            const wrapper = document.createElement('div');
+            wrapper.className = 'leaf__wrapper';
+
+            // inner handles rotation and sway
+            const inner = document.createElement('div');
+            inner.className = 'leaf__inner';
+
             // Random leaf shape
             const leafShape = leafShapes[Math.floor(Math.random() * leafShapes.length)];
-            leaf.innerHTML = leafShape;
+            inner.innerHTML = leafShape;
 
-            // Random horizontal starting position
-            const xStart = Math.random() * 100;
-            leaf.style.left = `${xStart}%`;
+            // Random horizontal starting position (percent of container width)
+            const xStartPercent = Math.random() * 100;
+            leaf.style.left = `${xStartPercent}%`;
             leaf.style.top = '-10vh';
 
-            // Fall duration
-            const duration = Math.random() * 12 + 8; // 8-20 seconds
-            leaf.style.animationDuration = `${Math.random() * 4 + 4}s, ${duration}s`;
+            // Randomized fall duration (8-20s) and initial delay
+            const fallDuration = Math.random() * 12 + 8; // seconds
+            const delay = Math.random() * 4; // seconds
+            wrapper.style.animationDuration = `${fallDuration}s`;
+            wrapper.style.animationDelay = `${delay}s`;
 
-            // Random animation delay
-            const delay = Math.random() * 5;
-            leaf.style.animationDelay = `${delay}s, ${delay}s`;
+            // Random horizontal drift during fall applied as a CSS variable
+            // This will offset the leaf's entire fall path by some pixels left/right
+            const xOffset = (Math.random() * 200 - 100).toFixed(1); // -100px to 100px
+            wrapper.style.setProperty('--x-offset', `${xOffset}px`);
 
-            // Random rotation speed
-            const rotationSpeed = Math.random() * 1 + 0.5;
-            leaf.style.setProperty('--rotation-speed', `${rotationSpeed}s`);
+            // Sway amplitude and duration (CSS variables used by leafSway)
+            const swayAmp = Math.round(Math.random() * 30 + 8); // 8-38px
+            const swayDur = (Math.random() * 4 + 3).toFixed(2); // 3-7s
+            const swayDelay = (Math.random() * 3).toFixed(2);
+            inner.style.setProperty('--sway-amplitude', `${swayAmp}px`);
+            inner.style.animationDuration = `${Math.random() * 4 + 4}s, ${swayDur}s`;
+            inner.style.animationDelay = `${delay}s, ${swayDelay}s`;
 
-            // Remove leaf after animation completes
+            // Random rotation speed (affects leafSwirl cycle duration)
+            const swirlDur = (Math.random() * 6 + 4).toFixed(2); // 4-10s
+            // leafSwirl is the first animation on inner
+            inner.style.animationDuration = `${swirlDur}s, ${swayDur}s`;
+            inner.style.animationDelay = `0s, ${swayDelay}s`;
+
+            // Random scale for variety
+            const scale = (Math.random() * 0.7 + 0.7).toFixed(2); // 0.7 - 1.4
+            inner.style.transform = `translate(-50%, -50%) scale(${scale})`;
+
+            // Slight random 3D tilt
+            const tiltX = (Math.random() * 40 - 20).toFixed(1);
+            inner.style.setProperty('--tilt-x', `${tiltX}deg`);
+
+            // Remove leaf after it finishes falling (duration + delay) plus small buffer
+            const totalLife = Math.ceil((fallDuration + delay) * 1000 + 500);
             setTimeout(() => {
                 leaf.remove();
-            }, (duration + delay) * 1000);
+            }, totalLife);
 
+            // Append structure: leaf -> wrapper -> inner(svg)
+            wrapper.appendChild(inner);
+            leaf.appendChild(wrapper);
             container.appendChild(leaf);
         }
     </script>

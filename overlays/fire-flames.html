@@ -1,0 +1,191 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>html,body{margin:0;padding:0;height:100%;background:transparent;overflow:hidden}canvas{display:block;}</style>
+</head>
+<body>
+  <div id="overlay-root"></div>
+  <script src="/overlays/vendor/three.min.js"></script>
+  <script>
+    (function(){
+      // Fire Flames - flickering flames rising from the bottom
+      var container = document.getElementById('overlay-root');
+      var scene = new THREE.Scene();
+      var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
+      camera.position.z = 100;
+
+      var renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setPixelRatio(window.devicePixelRatio || 1);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setClearColor(0x000000, 0);
+      container.appendChild(renderer.domElement);
+
+      // Create a canvas-based fire texture using Perlin-like noise simulation
+      function createFireTexture(width, height) {
+        var canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        var ctx = canvas.getContext('2d');
+
+        // Create gradient from bottom (hot) to top (cool)
+        var gradient = ctx.createLinearGradient(0, height, 0, 0);
+        gradient.addColorStop(0, 'rgba(255, 255, 0, 0.8)');      // Yellow at bottom
+        gradient.addColorStop(0.3, 'rgba(255, 128, 0, 0.7)');    // Orange
+        gradient.addColorStop(0.6, 'rgba(255, 0, 0, 0.5)');      // Red
+        gradient.addColorStop(0.85, 'rgba(128, 0, 0, 0.3)');     // Dark red
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');            // Transparent at top
+
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+
+        // Add some Perlin-like noise pattern
+        var imageData = ctx.getImageData(0, 0, width, height);
+        var data = imageData.data;
+
+        for (var i = 0; i < data.length; i += 4) {
+          var pixelIndex = i / 4;
+          var x = pixelIndex % width;
+          var y = Math.floor(pixelIndex / width);
+
+          // Create a simple noise-like pattern using sine waves
+          var noise = Math.sin(x * 0.05 + y * 0.02) * Math.cos(x * 0.03 + y * 0.04);
+          var noiseValue = (noise + 1) / 2; // Normalize to 0-1
+
+          // Modulate alpha based on noise
+          data[i + 3] = Math.max(0, data[i + 3] * (0.6 + noiseValue * 0.4));
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+        return new THREE.CanvasTexture(canvas);
+      }
+
+      var fireTexture = createFireTexture(256, 512);
+      fireTexture.magFilter = THREE.LinearFilter;
+      fireTexture.minFilter = THREE.LinearFilter;
+
+      // Create particles group
+      var particles = new THREE.Group();
+      var particleCount = 400;
+      var particlesArray = [];
+
+      for (var i = 0; i < particleCount; i++) {
+        var geometry = new THREE.BufferGeometry();
+        var positions = new Float32Array([0, 0, 0]);
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+        var material = new THREE.PointsMaterial({
+          size: 3 + Math.random() * 5,
+          map: fireTexture,
+          color: new THREE.Color(1, 0.7 + Math.random() * 0.3, 0),
+          transparent: true,
+          opacity: 0.8,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false
+        });
+
+        var points = new THREE.Points(geometry, material);
+
+        // Start particles from bottom
+        points.position.x = (Math.random() - 0.5) * 300;
+        points.position.y = -150 + Math.random() * 20;
+        points.position.z = (Math.random() - 0.5) * 100;
+
+        var velocityVariation = 0.3 + Math.random() * 0.7;
+        var flickerSpeed = 0.5 + Math.random() * 1.5;
+
+        points.userData = {
+          velocityY: (0.8 + Math.random() * 0.7) * velocityVariation,
+          velocityX: (Math.random() - 0.5) * 0.3,
+          age: Math.random() * Math.PI * 2,
+          flickerSpeed: flickerSpeed,
+          lifespan: 3 + Math.random() * 2,
+          startOpacity: 0.7 + Math.random() * 0.3,
+          turbulence: Math.random() * 0.2
+        };
+
+        particles.add(points);
+        particlesArray.push({
+          points: points,
+          material: material,
+          startTime: Date.now()
+        });
+      }
+
+      scene.add(particles);
+
+      // Handle window resize
+      window.addEventListener('resize', function() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      // Animation loop
+      var startTime = Date.now();
+
+      function animate() {
+        requestAnimationFrame(animate);
+
+        var currentTime = Date.now();
+        var elapsed = (currentTime - startTime) / 1000;
+
+        particles.children.forEach(function(particle, index) {
+          var userData = particle.userData;
+
+          // Update position - rise upward with some drift
+          userData.age += 0.016; // ~60fps
+          particle.position.y += userData.velocityY;
+          particle.position.x += userData.velocityX + Math.sin(elapsed + index * 0.5) * userData.turbulence;
+
+          // Flicker effect - sine wave oscillation
+          var flicker = Math.sin(currentTime * userData.flickerSpeed * 0.003) * 0.5 + 0.5;
+
+          // Calculate life progress (0 to 1)
+          var lifeProgress = userData.age / userData.lifespan;
+
+          // Opacity: starts visible, fades as it rises
+          var opacity = userData.startOpacity * (1 - lifeProgress) * (0.5 + flicker * 0.5);
+          particle.material.opacity = Math.max(0, opacity);
+
+          // Color shift: yellow -> orange -> red as it rises
+          if (lifeProgress < 0.33) {
+            // Yellow to Orange
+            var t = lifeProgress / 0.33;
+            particle.material.color.setRGB(1, 0.8 - t * 0.2, 0);
+          } else if (lifeProgress < 0.66) {
+            // Orange to Red
+            var t = (lifeProgress - 0.33) / 0.33;
+            particle.material.color.setRGB(1, 0.6 - t * 0.4, 0);
+          } else {
+            // Red to Dark Red
+            var t = (lifeProgress - 0.66) / 0.34;
+            particle.material.color.setRGB(1 - t * 0.3, 0.2 - t * 0.2, 0);
+          }
+
+          // Size: grows then shrinks
+          var sizeMultiplier = 1 + Math.sin(lifeProgress * Math.PI) * 0.5;
+          particle.material.size = (3 + Math.random() * 5) * sizeMultiplier * (0.7 + flicker * 0.3);
+
+          // Reset particle if it's reached end of life or top of screen
+          if (lifeProgress >= 1 || particle.position.y > 200) {
+            particle.position.x = (Math.random() - 0.5) * 300;
+            particle.position.y = -150 + Math.random() * 20;
+            particle.position.z = (Math.random() - 0.5) * 100;
+            userData.age = 0;
+            userData.velocityY = (0.8 + Math.random() * 0.7) * (0.3 + Math.random() * 0.7);
+            userData.velocityX = (Math.random() - 0.5) * 0.3;
+            userData.flickerSpeed = 0.5 + Math.random() * 1.5;
+            userData.turbulence = Math.random() * 0.2;
+          }
+        });
+
+        renderer.render(scene, camera);
+      }
+
+      animate();
+    })();
+  </script>
+</body>
+</html>

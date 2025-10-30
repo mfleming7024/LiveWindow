@@ -105,3 +105,25 @@ LiveWindow is an AngularJS-based web application designed for controlling conten
 - **Content Selection**: Choose images or animations per display
 - **Clear Display**: Individual display clearing
 - **Real-time Preview**: See changes instantly
+
+## Future Improvements
+
+Here are some recommendations for future development:
+
+- **Modernize the Frontend**: The current implementation uses AngularJS, which is now outdated. Migrating to a modern framework like **React**, **Vue**, or a recent version of **Angular** would improve performance, maintainability, and the developer experience.
+
+- **Component-Based Architecture**: Refactor the frontend into smaller, reusable components. This will make the codebase easier to manage and scale.
+
+- **UI/UX Enhancements**: The control panel could be improved with a more intuitive and visually appealing design. Consider adding features like drag-and-drop, content search, and live previews.
+
+- **Dynamic Content Loading**: Instead of hardcoding the list of overlays, they could be loaded dynamically from the `overlays` directory, similar to how images are loaded.
+
+- **Video Support**: Extend the application to support video playback on the displays. This would require adding a video player and controls for playback.
+
+- **API for Content Management**: Create a RESTful API for managing content (images, overlays, videos). This would allow for a more robust content management system, potentially with a dedicated admin interface.
+
+- **Authentication**: Secure the control panel with a login system to prevent unauthorized access.
+
+- **Improved State Management**: For more complex scenarios, consider using a state management library like Redux or MobX on the frontend to handle application state more predictably.
+
+- **Testing**: Implement a testing strategy with unit tests for services and controllers, and end-to-end tests for user flows.

@@ -16,7 +16,7 @@
                 
                 <!-- Overlay Layer -->
                 <div ng-if="leftDisplay.overlay" class="overlay-layer">
-                    <iframe ng-src="{{leftDisplay.overlay}}" style="width: 100%; height: 100%; border: none; pointer-events: none; position: absolute; top: 0; left: 0; z-index: 10;"></iframe>
+                    <iframe ng-src="{{getOverlayUrl(leftDisplay)}}" style="width: 100%; height: 100%; border: none; pointer-events: none; position: absolute; top: 0; left: 0; z-index: 10;"></iframe>
                 </div>
                 
                 <!-- Window Pane Layer -->
@@ -35,7 +35,7 @@
                 
                 <!-- Overlay Layer -->
                 <div ng-if="rightDisplay.overlay" class="overlay-layer">
-                    <iframe ng-src="{{rightDisplay.overlay}}" style="width: 100%; height: 100%; border: none; pointer-events: none; position: absolute; top: 0; left: 0; z-index: 10;"></iframe>
+                    <iframe ng-src="{{getOverlayUrl(rightDisplay)}}" style="width: 100%; height: 100%; border: none; pointer-events: none; position: absolute; top: 0; left: 0; z-index: 10;"></iframe>
                 </div>
 
                 <!-- Window Pane Layer -->

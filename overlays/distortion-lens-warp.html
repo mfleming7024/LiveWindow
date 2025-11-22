@@ -7,6 +7,7 @@
 <body>
   <div id="overlay-root"></div>
   <script src="/overlays/vendor/three.min.js"></script>
+  <script src="/overlays/overlay-common.js"></script>
   <script>
     (function(){
       // Lens Warp - localized lens distortion with chromatic offset
@@ -14,26 +15,49 @@
       var renderer = new THREE.WebGLRenderer({ alpha:true }); renderer.setPixelRatio(window.devicePixelRatio||1); renderer.setSize(window.innerWidth, window.innerHeight); container.appendChild(renderer.domElement);
       var scene = new THREE.Scene(); var camera = new THREE.OrthographicCamera(-1,1,1,-1,0,1);
 
-      var uniforms = { time:{value:0}, resolution:{value:new THREE.Vector2(window.innerWidth,window.innerHeight)}, center:{value:new THREE.Vector2(0.5,0.5)}, radius:{value:0.25}, strength:{value:0.14} };
+      var uniforms = { time:{value:0}, resolution:{value:new THREE.Vector2(window.innerWidth,window.innerHeight)}, center:{value:new THREE.Vector2(0.5,0.5)}, radius:{value:0.25}, strength:{value:0.14}, tDiffuse:{value:null}, hasTexture:{value:0.0} };
 
       var mat = new THREE.ShaderMaterial({ transparent:true, uniforms:uniforms, vertexShader: 'varying vec2 vUv; void main(){vUv=uv; gl_Position=vec4(position,1.0);}', fragmentShader: `
         varying vec2 vUv;
         uniform float time; uniform vec2 resolution; uniform vec2 center; uniform float radius; uniform float strength;
+        uniform sampler2D tDiffuse; uniform float hasTexture;
+        
         void main(){
           vec2 uv = vUv;
           vec2 d = uv - center; float dist = length(d);
-          if(dist < radius){ float pct = (radius - dist)/radius; float disp = pow(pct,1.2) * strength; uv += normalize(d) * disp; }
-          // chromatic offset
-          float r = texture2D(gl_FragCoord.xy==gl_FragCoord.xy?vec2(0.0):uv, uv).r; // no-op to silence linter placeholder
-          vec4 col = vec4(1.0);
-          float mask = smoothstep(radius, radius*0.9, dist);
-          gl_FragColor = vec4(col.rgb, (1.0 - mask) * 0.6);
+          vec2 distortedUv = uv;
+          
+          if(dist < radius){ 
+            float pct = (radius - dist)/radius; 
+            float disp = pow(pct,1.2) * strength; 
+            distortedUv -= normalize(d) * disp; 
+          }
+          
+          if (hasTexture > 0.5) {
+             // Chromatic aberration
+             float r = texture2D(tDiffuse, distortedUv + vec2(0.002, 0.0)).r;
+             float g = texture2D(tDiffuse, distortedUv).g;
+             float b = texture2D(tDiffuse, distortedUv - vec2(0.002, 0.0)).b;
+             gl_FragColor = vec4(r, g, b, 1.0);
+          } else {
+             float mask = smoothstep(radius, radius*0.8, dist);
+             gl_FragColor = vec4(1.0, 1.0, 1.0, mask * 0.3);
+          }
         }
       ` });
 
       var quad = new THREE.Mesh(new THREE.PlaneGeometry(2,2), mat); scene.add(quad);
       function onResize(){ renderer.setSize(window.innerWidth, window.innerHeight); uniforms.resolution.value.set(window.innerWidth, window.innerHeight);} window.addEventListener('resize', onResize, {passive:true});
-      var t=0; function animate(){ requestAnimationFrame(animate); t+=0.016; uniforms.time.value=t; renderer.render(scene,camera);} animate();
+      var t=0; function animate(){ requestAnimationFrame(animate); t+=0.016; uniforms.time.value=t; renderer.render(scene,camera);} 
+      
+      if (window.OverlayCommon && OverlayCommon.loadBackgroundTexture) {
+        OverlayCommon.loadBackgroundTexture().then(function(tex){
+          if(tex) { uniforms.tDiffuse.value = tex; uniforms.hasTexture.value = 1.0; }
+          animate();
+        });
+      } else {
+        animate();
+      }
     })();
   </script>
 </body>

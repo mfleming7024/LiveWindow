@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>html,body{margin:0;padding:0;height:100%;background:transparent;overflow:hidden}canvas{display:block;}</style>
+</head>
+<body>
+  <div id="overlay-root"></div>
+  <script src="/overlays/vendor/three.min.js"></script>
+  <script src="/overlays/overlay-common.js"></script>
+  <script>
+    (function(){
+      // Kaleidoscope Distortion - Radial symmetry and mirroring
+      var container=document.getElementById('overlay-root'); 
+      var renderer=new THREE.WebGLRenderer({alpha:true}); 
+      renderer.setSize(window.innerWidth,window.innerHeight); 
+      container.appendChild(renderer.domElement);
+      
+      var scene=new THREE.Scene(); 
+      var camera=new THREE.OrthographicCamera(-1,1,1,-1,0,1);
+      
+      var uniforms={
+        time:{value:0},
+        resolution:{value:new THREE.Vector2(window.innerWidth,window.innerHeight)},
+        segments:{value:6.0}, 
+        tDiffuse:{value:null}, 
+        hasTexture:{value:0.0}
+      };
+      
+      var frag=`
+        varying vec2 vUv; 
+        uniform float time; 
+        uniform float segments;
+        uniform sampler2D tDiffuse; 
+        uniform float hasTexture;
+        
+        const float PI = 3.14159265359;
+
+        void main(){ 
+          vec2 uv = vUv - 0.5;
+          
+          // Convert to polar
+          float r = length(uv);
+          float a = atan(uv.y, uv.x);
+          
+          // Rotate slowly
+          a += time * 0.2;
+          
+          // Kaleidoscope logic
+          float segmentAngle = 2.0 * PI / segments;
+          a = mod(a, segmentAngle);
+          a = abs(a - segmentAngle/2.0); // Mirror
+          
+          // Convert back to cartesian
+          vec2 distortedUv = vec2(cos(a), sin(a)) * r;
+          
+          // Add some zoom/pan movement
+          distortedUv += 0.5 + vec2(sin(time*0.5)*0.1, cos(time*0.3)*0.1);
+          
+          if (hasTexture > 0.5) {
+            gl_FragColor = texture2D(tDiffuse, distortedUv);
+          } else {
+            // Fallback pattern
+            float c = sin(distortedUv.x * 20.0) * sin(distortedUv.y * 20.0);
+            gl_FragColor = vec4(vec3(c), 0.55); 
+          }
+        }
+      `;
+      
+      var mat=new THREE.ShaderMaterial({
+        transparent:true,
+        uniforms:uniforms,
+        vertexShader:'varying vec2 vUv; void main(){vUv=uv; gl_Position=vec4(position,1.0);}',
+        fragmentShader:frag
+      }); 
+      
+      scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),mat)); 
+      
+      window.addEventListener('resize', function(){ 
+        renderer.setSize(window.innerWidth,window.innerHeight); 
+        uniforms.resolution.value.set(window.innerWidth,window.innerHeight);
+      }, {passive:true}); 
+      
+      var t=0; 
+      function animate(){ 
+        requestAnimationFrame(animate); 
+        t+=0.016; 
+        uniforms.time.value=t; 
+        renderer.render(scene,camera);
+      } 
+      
+      if (window.OverlayCommon && OverlayCommon.loadBackgroundTexture) {
+        OverlayCommon.loadBackgroundTexture().then(function(tex){
+          if(tex) { 
+            tex.wrapS = THREE.MirroredRepeatWrapping;
+            tex.wrapT = THREE.MirroredRepeatWrapping;
+            uniforms.tDiffuse.value = tex; 
+            uniforms.hasTexture.value = 1.0; 
+          }
+          animate();
+        });
+      } else {
+        animate();
+      }
+    })();
+  </script>
+</body>
+</html>

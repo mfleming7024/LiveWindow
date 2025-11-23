@@ -6,42 +6,42 @@ angular.module('liveWindowApp')
             overlay: null,
             windowPane: false
         };
-        
+
         var rightDisplay = {
             type: null,
             content: null,
             overlay: null,
             windowPane: false
         };
-        
+
         var isRemoteControlled = false;
         var images = []; // Will be loaded dynamically
-        
+
         // Listen for remote state updates
         $rootScope.$on('websocket:stateUpdate', function (event, data) {
             console.log('Applying remote state update:', data);
             isRemoteControlled = true;
-            
+
             leftDisplay = data.leftDisplay || { type: null, content: null, overlay: null, windowPane: false };
             rightDisplay = data.rightDisplay || { type: null, content: null, overlay: null, windowPane: false };
-            
+
             $rootScope.$apply();
             isRemoteControlled = false;
         });
-        
+
         // Load images dynamically from server
         function loadImages() {
-            $http.get('/api/images').then(function(response) {
+            $http.get('/api/images').then(function (response) {
                 images = response.data;
                 console.log('Loaded', images.length, 'images dynamically from filesystem');
                 $rootScope.$broadcast('imagesLoaded', images);
-            }).catch(function(error) {
+            }).catch(function (error) {
                 console.error('Failed to load images from server:', error);
                 images = [];
                 $rootScope.$broadcast('imagesLoadError', error);
             });
         }
-        
+
         var overlays = [
             // Original overlays
             { name: 'Cave Fireflies', path: 'overlays/cave-fireflies.html', emoji: '✨', description: 'Tiny glowing fireflies dancing in the darkness' },
@@ -71,45 +71,56 @@ angular.module('liveWindowApp')
         overlays.push({ name: 'Whirlpool', path: 'overlays/distortion-whirlpool.html', emoji: '🕳️', description: 'A stronger whirlpool-like center distortion with rotational flow' });
         overlays.push({ name: 'Wave Grid', path: 'overlays/distortion-wave-grid.html', emoji: '〰️', description: 'Sine-wave distortions applied across a grid — good for energy fields' });
         overlays.push({ name: 'Fire Flames', path: 'overlays/fire-flames.html', emoji: '🔥', description: 'Flickering flames rising from the bottom with realistic color shifting and flicker effects' });
-        
+        overlays.push({ name: 'Glitch Distortion', path: 'overlays/distortion-glitch.html', emoji: '👾', description: 'Digital corruption with blocky displacement and RGB splitting' });
+        overlays.push({ name: 'Kaleidoscope', path: 'overlays/distortion-kaleidoscope.html', emoji: '💠', description: 'Mesmerizing 6-segment radial mirror effect' });
+        overlays.push({ name: 'Chromatic Aberration', path: 'overlays/distortion-chromatic.html', emoji: '🌈', description: 'Lens effect where colors separate near the edges with a subtle pulse' });
+
+        // Color Tweaking Overlays
+        overlays.push({ name: 'Hue Shift', path: 'overlays/color-hue-shift.html', emoji: '🎨', description: 'Cycles the colors of the background through the spectrum' });
+        overlays.push({ name: 'Vintage Film', path: 'overlays/color-vintage.html', emoji: '🎞️', description: 'Sepia tone, vignette, and film grain for an old movie look' });
+        overlays.push({ name: 'Night Vision', path: 'overlays/color-night-vision.html', emoji: '🟢', description: 'Green tint, scanlines, and noise simulating night vision goggles' });
+        overlays.push({ name: 'Cyberpunk Neon', path: 'overlays/color-cyberpunk.html', emoji: '🌃', description: 'High contrast with pink/cyan color grading' });
+        overlays.push({ name: 'Noir', path: 'overlays/color-noir.html', emoji: '🎬', description: 'Dramatic high-contrast black and white' });
+        overlays.push({ name: 'Duotone', path: 'overlays/color-duotone.html', emoji: '🟣', description: 'Maps brightness to a deep blue and hot pink gradient' });
+
         return {
             // Getters
-            getLeftDisplay: function() {
+            getLeftDisplay: function () {
                 return leftDisplay;
             },
-            
-            getRightDisplay: function() {
+
+            getRightDisplay: function () {
                 return rightDisplay;
             },
-            
-            getImages: function() {
+
+            getImages: function () {
                 return images;
             },
-            
-            getLeftImages: function() {
-                return images.filter(function(image) {
+
+            getLeftImages: function () {
+                return images.filter(function (image) {
                     return image.path.includes('-left');
                 });
             },
-            
-            getRightImages: function() {
-                return images.filter(function(image) {
+
+            getRightImages: function () {
+                return images.filter(function (image) {
                     return image.path.includes('-right');
                 });
             },
-            
+
             // Get themes for unified control
-            getThemes: function() {
+            getThemes: function () {
                 var themes = [];
                 var leftImages = this.getLeftImages();
-                
-                leftImages.forEach(function(leftImage) {
+
+                leftImages.forEach(function (leftImage) {
                     var themeName = leftImage.name.replace('-left', '');
                     var rightImagePath = leftImage.path.replace('-left', '-right');
-                    var rightImage = images.find(function(img) {
+                    var rightImage = images.find(function (img) {
                         return img.path === rightImagePath;
                     });
-                    
+
                     if (rightImage) {
                         themes.push({
                             name: themeName,
@@ -119,81 +130,81 @@ angular.module('liveWindowApp')
                         });
                     }
                 });
-                
+
                 return themes;
             },
-            
-            getOverlays: function() {
+
+            getOverlays: function () {
                 return overlays;
             },
-            
+
             // Utility method to refresh image list
-            refreshImages: function() {
+            refreshImages: function () {
                 loadImages();
             },
-            
+
             // Unified theme setters
-            setTheme: function(theme) {
+            setTheme: function (theme) {
                 this.setLeftContent('image', theme.leftPath);
                 this.setRightContent('image', theme.rightPath);
             },
-            
+
             // Unified overlay setters
-            setBothOverlays: function(overlayPath) {
+            setBothOverlays: function (overlayPath) {
                 this.setLeftOverlay(overlayPath);
                 this.setRightOverlay(overlayPath);
             },
-            
-            clearBothOverlays: function() {
+
+            clearBothOverlays: function () {
                 this.clearLeftOverlay();
                 this.clearRightOverlay();
             },
-            
+
             // Unified window pane toggle
-            toggleBothWindowPanes: function() {
+            toggleBothWindowPanes: function () {
                 var newState = !leftDisplay.windowPane || !rightDisplay.windowPane;
                 leftDisplay.windowPane = newState;
                 rightDisplay.windowPane = newState;
-                
+
                 if (!isRemoteControlled) {
-                    this.broadcastChange('updateWindowPane', { 
-                        side: 'left', 
-                        windowPane: newState 
+                    this.broadcastChange('updateWindowPane', {
+                        side: 'left',
+                        windowPane: newState
                     });
-                    this.broadcastChange('updateWindowPane', { 
-                        side: 'right', 
-                        windowPane: newState 
+                    this.broadcastChange('updateWindowPane', {
+                        side: 'right',
+                        windowPane: newState
                     });
                 }
             },
-            
+
             // Unified clear
-            clearBoth: function() {
+            clearBoth: function () {
                 this.clearLeft();
                 this.clearRight();
             },
-            
+
             // Check if theme is active
-            isThemeActive: function(theme) {
+            isThemeActive: function (theme) {
                 return leftDisplay.type === 'image' && leftDisplay.content === theme.leftPath &&
-                       rightDisplay.type === 'image' && rightDisplay.content === theme.rightPath;
+                    rightDisplay.type === 'image' && rightDisplay.content === theme.rightPath;
             },
-            
+
             // Check if overlay is active on both displays
-            isOverlayActiveOnBoth: function(overlayPath) {
+            isOverlayActiveOnBoth: function (overlayPath) {
                 return leftDisplay.overlay === overlayPath && rightDisplay.overlay === overlayPath;
             },
-            
+
             // Check if window panes are active on both displays
-            areWindowPanesActive: function() {
+            areWindowPanesActive: function () {
                 return leftDisplay.windowPane && rightDisplay.windowPane;
             },
 
             // Display setters
-            setLeftContent: function(type, content) {
+            setLeftContent: function (type, content) {
                 leftDisplay.type = type;
                 leftDisplay.content = content;
-                
+
                 // Broadcast change if not from remote
                 if (!isRemoteControlled) {
                     this.broadcastChange('updateDisplay', {
@@ -203,11 +214,11 @@ angular.module('liveWindowApp')
                     });
                 }
             },
-            
-            setRightContent: function(type, content) {
+
+            setRightContent: function (type, content) {
                 rightDisplay.type = type;
                 rightDisplay.content = content;
-                
+
                 // Broadcast change if not from remote
                 if (!isRemoteControlled) {
                     this.broadcastChange('updateDisplay', {
@@ -217,11 +228,11 @@ angular.module('liveWindowApp')
                     });
                 }
             },
-            
+
             // Overlay setters
-            setLeftOverlay: function(overlayPath) {
+            setLeftOverlay: function (overlayPath) {
                 leftDisplay.overlay = overlayPath;
-                
+
                 // Broadcast change if not from remote
                 if (!isRemoteControlled) {
                     this.broadcastChange('updateOverlay', {
@@ -230,10 +241,10 @@ angular.module('liveWindowApp')
                     });
                 }
             },
-            
-            setRightOverlay: function(overlayPath) {
+
+            setRightOverlay: function (overlayPath) {
                 rightDisplay.overlay = overlayPath;
-                
+
                 // Broadcast change if not from remote
                 if (!isRemoteControlled) {
                     this.broadcastChange('updateOverlay', {
@@ -242,85 +253,85 @@ angular.module('liveWindowApp')
                     });
                 }
             },
-            
-            clearLeftOverlay: function() {
+
+            clearLeftOverlay: function () {
                 leftDisplay.overlay = null;
-                
+
                 if (!isRemoteControlled) {
                     this.broadcastChange('clearOverlay', { side: 'left' });
                 }
             },
-            
-            clearRightOverlay: function() {
+
+            clearRightOverlay: function () {
                 rightDisplay.overlay = null;
-                
+
                 if (!isRemoteControlled) {
                     this.broadcastChange('clearOverlay', { side: 'right' });
                 }
             },
-            
+
             // Window pane controls
-            toggleLeftWindowPane: function() {
+            toggleLeftWindowPane: function () {
                 leftDisplay.windowPane = !leftDisplay.windowPane;
-                
+
                 if (!isRemoteControlled) {
-                    this.broadcastChange('updateWindowPane', { 
-                        side: 'left', 
-                        windowPane: leftDisplay.windowPane 
+                    this.broadcastChange('updateWindowPane', {
+                        side: 'left',
+                        windowPane: leftDisplay.windowPane
                     });
                 }
             },
-            
-            toggleRightWindowPane: function() {
+
+            toggleRightWindowPane: function () {
                 rightDisplay.windowPane = !rightDisplay.windowPane;
-                
+
                 if (!isRemoteControlled) {
-                    this.broadcastChange('updateWindowPane', { 
-                        side: 'right', 
-                        windowPane: rightDisplay.windowPane 
+                    this.broadcastChange('updateWindowPane', {
+                        side: 'right',
+                        windowPane: rightDisplay.windowPane
                     });
                 }
             },
-            
+
             // Clear functions
-            clearLeft: function() {
+            clearLeft: function () {
                 leftDisplay.type = null;
                 leftDisplay.content = null;
                 leftDisplay.overlay = null;
                 leftDisplay.windowPane = false;
-                
+
                 if (!isRemoteControlled) {
                     this.broadcastChange('clearDisplay', { side: 'left' });
                 }
             },
-            
-            clearRight: function() {
+
+            clearRight: function () {
                 rightDisplay.type = null;
                 rightDisplay.content = null;
                 rightDisplay.overlay = null;
                 rightDisplay.windowPane = false;
-                
+
                 if (!isRemoteControlled) {
                     this.broadcastChange('clearDisplay', { side: 'right' });
                 }
             },
-            
+
             // Initialize
-            initializeDisplays: function() {
+            initializeDisplays: function () {
                 // Load images dynamically
                 loadImages();
-                
+
                 // Set default content if needed
                 if (!leftDisplay.type && !rightDisplay.type) {
                     // Start with blank displays
                 }
-                
+
                 // Initialize WebSocket connection
                 this.initWebSocket();
             },
-            
+
             // WebSocket helper methods
-            initWebSocket: function() {
+            initWebSocket: function () {
                 // Lazy load WebSocket service to avoid circular dependencies
                 try {
                     var WebSocketService = $injector.get('WebSocketService');
@@ -329,8 +340,8 @@ angular.module('liveWindowApp')
                     console.log('WebSocket service not available, running in standalone mode');
                 }
             },
-            
-            broadcastChange: function(action, data) {
+
+            broadcastChange: function (action, data) {
                 // Lazy load WebSocket service
                 try {
                     var WebSocketService = $injector.get('WebSocketService');

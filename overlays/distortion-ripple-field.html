@@ -7,17 +7,46 @@
 <body>
   <div id="overlay-root"></div>
   <script src="/overlays/vendor/three.min.js"></script>
+  <script src="/overlays/overlay-common.js"></script>
   <script>
     (function(){
       // Ripple Field - many small radial ripples
       var container=document.getElementById('overlay-root'); var renderer=new THREE.WebGLRenderer({alpha:true}); renderer.setSize(window.innerWidth,window.innerHeight); container.appendChild(renderer.domElement);
       var scene=new THREE.Scene(); var camera=new THREE.OrthographicCamera(-1,1,1,-1,0,1);
-      var uniforms={time:{value:0},resolution:{value:new THREE.Vector2(window.innerWidth,window.innerHeight)},density:{value:12.0},strength:{value:0.02}};
+      var uniforms={time:{value:0},resolution:{value:new THREE.Vector2(window.innerWidth,window.innerHeight)},density:{value:12.0},strength:{value:0.02}, tDiffuse:{value:null}, hasTexture:{value:0.0}};
       var frag=`
         varying vec2 vUv; uniform float time; uniform float density; uniform float strength;
-        void main(){ vec2 uv=vUv; float accum=0.0; for(float i=0.0;i<12.0;i++){ float fi = i+1.0; vec2 p = vec2(fract(sin(fi*12.9898)*43758.5453), fract(cos(fi*78.233)*43758.5453)); p = p*0.8 + 0.1; float r = length(uv - p); accum += sin((r*40.0) - time*6.0) * smoothstep(0.6,0.0,r); } accum *= strength; gl_FragColor = vec4(1.0,1.0,1.0, clamp(accum*0.2+0.2, 0.0, 0.8)); }
+        uniform sampler2D tDiffuse; uniform float hasTexture;
+        void main(){ 
+          vec2 uv=vUv; 
+          float accum=0.0; 
+          for(float i=0.0;i<12.0;i++){ 
+            float fi = i+1.0; 
+            vec2 p = vec2(fract(sin(fi*12.9898)*43758.5453), fract(cos(fi*78.233)*43758.5453)); 
+            p = p*0.8 + 0.1; 
+            float r = length(uv - p); 
+            accum += sin((r*40.0) - time*6.0) * smoothstep(0.6,0.0,r); 
+          } 
+          
+          if (hasTexture > 0.5) {
+            vec2 distortedUv = uv + (accum * strength);
+            gl_FragColor = texture2D(tDiffuse, distortedUv);
+          } else {
+            accum *= strength; 
+            gl_FragColor = vec4(1.0,1.0,1.0, clamp(accum*0.2+0.2, 0.0, 0.8)); 
+          }
+        }
       `;
-      var mat=new THREE.ShaderMaterial({transparent:true,uniforms:uniforms,vertexShader:'varying vec2 vUv; void main(){vUv=uv; gl_Position=vec4(position,1.0);}',fragmentShader:frag}); scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),mat)); window.addEventListener('resize', function(){ renderer.setSize(window.innerWidth,window.innerHeight); uniforms.resolution.value.set(window.innerWidth,window.innerHeight);}, {passive:true}); var t=0; function animate(){ requestAnimationFrame(animate); t+=0.016; uniforms.time.value=t; renderer.render(scene,camera);} animate();
+      var mat=new THREE.ShaderMaterial({transparent:true,uniforms:uniforms,vertexShader:'varying vec2 vUv; void main(){vUv=uv; gl_Position=vec4(position,1.0);}',fragmentShader:frag}); scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),mat)); window.addEventListener('resize', function(){ renderer.setSize(window.innerWidth,window.innerHeight); uniforms.resolution.value.set(window.innerWidth,window.innerHeight);}, {passive:true}); var t=0; function animate(){ requestAnimationFrame(animate); t+=0.016; uniforms.time.value=t; renderer.render(scene,camera);} 
+      
+      if (window.OverlayCommon && OverlayCommon.loadBackgroundTexture) {
+        OverlayCommon.loadBackgroundTexture().then(function(tex){
+          if(tex) { uniforms.tDiffuse.value = tex; uniforms.hasTexture.value = 1.0; }
+          animate();
+        });
+      } else {
+        animate();
+      }
     })();
   </script>
 </body>

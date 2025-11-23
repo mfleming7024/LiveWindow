@@ -1,0 +1,117 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>html,body{margin:0;padding:0;height:100%;background:transparent;overflow:hidden}canvas{display:block;}</style>
+</head>
+<body>
+  <div id="overlay-root"></div>
+  <script src="/overlays/vendor/three.min.js"></script>
+  <script src="/overlays/overlay-common.js"></script>
+  <script>
+    (function(){
+      // Vintage Film - Sepia, vignette, and grain
+      var container=document.getElementById('overlay-root'); 
+      var renderer=new THREE.WebGLRenderer({alpha:true}); 
+      renderer.setSize(window.innerWidth,window.innerHeight); 
+      container.appendChild(renderer.domElement);
+      
+      var scene=new THREE.Scene(); 
+      var camera=new THREE.OrthographicCamera(-1,1,1,-1,0,1);
+      
+      var uniforms={
+        time:{value:0},
+        resolution:{value:new THREE.Vector2(window.innerWidth,window.innerHeight)},
+        sepiaStrength:{value:0.8}, 
+        tDiffuse:{value:null}, 
+        hasTexture:{value:0.0}
+      };
+      
+      var frag=`
+        varying vec2 vUv; 
+        uniform float time; 
+        uniform float sepiaStrength;
+        uniform sampler2D tDiffuse; 
+        uniform float hasTexture;
+
+        float rand(vec2 co){
+            return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+        }
+
+        void main(){ 
+          vec2 uv = vUv;
+          
+          vec4 color = vec4(1.0);
+          if (hasTexture > 0.5) {
+            color = texture2D(tDiffuse, uv);
+          } else {
+            // Fallback
+            color = vec4(vec3(0.5), 1.0);
+          }
+          
+          // Sepia
+          vec3 sepiaColor;
+          sepiaColor.r = dot(color.rgb, vec3(0.393, 0.769, 0.189));
+          sepiaColor.g = dot(color.rgb, vec3(0.349, 0.686, 0.168));
+          sepiaColor.b = dot(color.rgb, vec3(0.272, 0.534, 0.131));
+          
+          vec3 finalColor = mix(color.rgb, sepiaColor, sepiaStrength);
+          
+          // Vignette
+          vec2 dist = uv - 0.5;
+          float vignette = 1.0 - dot(dist, dist) * 1.5;
+          finalColor *= smoothstep(0.0, 1.0, vignette);
+          
+          // Film Grain
+          float grain = rand(uv + time) * 0.1;
+          finalColor += grain;
+          
+          // Scratches (occasional)
+          if (rand(vec2(time)) > 0.95) {
+             float scratchPos = rand(vec2(time * 0.5));
+             if (abs(uv.x - scratchPos) < 0.002) {
+               finalColor += 0.2;
+             }
+          }
+
+          gl_FragColor = vec4(finalColor, color.a);
+        }
+      `;
+      
+      var mat=new THREE.ShaderMaterial({
+        transparent:true,
+        uniforms:uniforms,
+        vertexShader:'varying vec2 vUv; void main(){vUv=uv; gl_Position=vec4(position,1.0);}',
+        fragmentShader:frag
+      }); 
+      
+      scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),mat)); 
+      
+      window.addEventListener('resize', function(){ 
+        renderer.setSize(window.innerWidth,window.innerHeight); 
+        uniforms.resolution.value.set(window.innerWidth,window.innerHeight);
+      }, {passive:true}); 
+      
+      var t=0; 
+      function animate(){ 
+        requestAnimationFrame(animate); 
+        t+=0.016; 
+        uniforms.time.value=t; 
+        renderer.render(scene,camera);
+      } 
+      
+      if (window.OverlayCommon && OverlayCommon.loadBackgroundTexture) {
+        OverlayCommon.loadBackgroundTexture().then(function(tex){
+          if(tex) { 
+            uniforms.tDiffuse.value = tex; 
+            uniforms.hasTexture.value = 1.0; 
+          }
+          animate();
+        });
+      } else {
+        animate();
+      }
+    })();
+  </script>
+</body>
+</html>

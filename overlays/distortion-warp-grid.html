@@ -7,17 +7,39 @@
 <body>
   <div id="overlay-root"></div>
   <script src="/overlays/vendor/three.min.js"></script>
+  <script src="/overlays/overlay-common.js"></script>
   <script>
     (function(){
       // Warp Grid - grid-based UV displacement
       var container=document.getElementById('overlay-root'); var renderer=new THREE.WebGLRenderer({alpha:true}); renderer.setSize(window.innerWidth,window.innerHeight); container.appendChild(renderer.domElement);
       var scene=new THREE.Scene(); var camera=new THREE.OrthographicCamera(-1,1,1,-1,0,1);
-      var uniforms={time:{value:0},resolution:{value:new THREE.Vector2(window.innerWidth,window.innerHeight)},scale:{value:8.0},strength:{value:0.02}};
+      var uniforms={time:{value:0},resolution:{value:new THREE.Vector2(window.innerWidth,window.innerHeight)},scale:{value:8.0},strength:{value:0.02}, tDiffuse:{value:null}, hasTexture:{value:0.0}};
       var frag=`
         varying vec2 vUv; uniform float time; uniform float scale; uniform float strength;
-        void main(){ vec2 uv=vUv; vec2 g = fract(uv*scale)-0.5; uv += (sin(time*1.5 + g.x*10.0) * 0.5 + cos(time + g.y*8.0)*0.5)*strength; float mask = 1.0; gl_FragColor = vec4(1.0,1.0,1.0, mask*0.5);} 
+        uniform sampler2D tDiffuse; uniform float hasTexture;
+        void main(){ 
+          vec2 uv=vUv; 
+          vec2 g = fract(uv*scale)-0.5; 
+          vec2 distortedUv = uv + (sin(time*1.5 + g.x*10.0) * 0.5 + cos(time + g.y*8.0)*0.5)*strength; 
+          
+          if (hasTexture > 0.5) {
+            gl_FragColor = texture2D(tDiffuse, distortedUv);
+          } else {
+            float mask = 1.0; 
+            gl_FragColor = vec4(1.0,1.0,1.0, mask*0.5);
+          }
+        } 
       `;
-      var mat=new THREE.ShaderMaterial({transparent:true,uniforms:uniforms,vertexShader:'varying vec2 vUv; void main(){vUv=uv; gl_Position=vec4(position,1.0);}',fragmentShader:frag}); scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),mat)); window.addEventListener('resize', function(){ renderer.setSize(window.innerWidth,window.innerHeight); uniforms.resolution.value.set(window.innerWidth,window.innerHeight);}, {passive:true}); var t=0; function animate(){ requestAnimationFrame(animate); t+=0.016; uniforms.time.value=t; renderer.render(scene,camera);} animate();
+      var mat=new THREE.ShaderMaterial({transparent:true,uniforms:uniforms,vertexShader:'varying vec2 vUv; void main(){vUv=uv; gl_Position=vec4(position,1.0);}',fragmentShader:frag}); scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),mat)); window.addEventListener('resize', function(){ renderer.setSize(window.innerWidth,window.innerHeight); uniforms.resolution.value.set(window.innerWidth,window.innerHeight);}, {passive:true}); var t=0; function animate(){ requestAnimationFrame(animate); t+=0.016; uniforms.time.value=t; renderer.render(scene,camera);} 
+      
+      if (window.OverlayCommon && OverlayCommon.loadBackgroundTexture) {
+        OverlayCommon.loadBackgroundTexture().then(function(tex){
+          if(tex) { uniforms.tDiffuse.value = tex; uniforms.hasTexture.value = 1.0; }
+          animate();
+        });
+      } else {
+        animate();
+      }
     })();
   </script>
 </body>

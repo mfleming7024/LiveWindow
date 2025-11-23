@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>html,body{margin:0;padding:0;height:100%;background:transparent;overflow:hidden}canvas{display:block;}</style>
+</head>
+<body>
+  <div id="overlay-root"></div>
+  <script src="/overlays/vendor/three.min.js"></script>
+  <script src="/overlays/overlay-common.js"></script>
+  <script>
+    (function(){
+      // Cyberpunk - High contrast, pink/cyan tinting
+      var container=document.getElementById('overlay-root'); 
+      var renderer=new THREE.WebGLRenderer({alpha:true}); 
+      renderer.setSize(window.innerWidth,window.innerHeight); 
+      container.appendChild(renderer.domElement);
+      
+      var scene=new THREE.Scene(); 
+      var camera=new THREE.OrthographicCamera(-1,1,1,-1,0,1);
+      
+      var uniforms={
+        time:{value:0},
+        resolution:{value:new THREE.Vector2(window.innerWidth,window.innerHeight)},
+        tDiffuse:{value:null}, 
+        hasTexture:{value:0.0}
+      };
+      
+      var frag=`
+        varying vec2 vUv; 
+        uniform float time; 
+        uniform sampler2D tDiffuse; 
+        uniform float hasTexture;
+
+        void main(){ 
+          vec2 uv = vUv;
+          
+          vec4 color = vec4(1.0);
+          if (hasTexture > 0.5) {
+            color = texture2D(tDiffuse, uv);
+          } else {
+            color = vec4(vec3(0.5), 1.0);
+          }
+          
+          // Boost contrast
+          vec3 c = color.rgb;
+          c = (c - 0.5) * 1.5 + 0.5;
+          
+          // Color grading: Push shadows to blue/purple, highlights to pink/cyan
+          vec3 shadow = vec3(0.2, 0.0, 0.4); // Deep purple
+          vec3 highlight = vec3(0.0, 1.0, 1.0); // Cyan
+          
+          float lum = dot(c, vec3(0.299, 0.587, 0.114));
+          
+          vec3 graded = mix(shadow, highlight, lum);
+          
+          // Mix original with graded based on luminance to keep some original detail
+          vec3 finalColor = mix(c, graded, 0.4);
+          
+          // Add subtle scanline
+          finalColor *= 0.9 + 0.1 * sin(uv.y * 500.0 + time * 5.0);
+
+          gl_FragColor = vec4(finalColor, color.a);
+        }
+      `;
+      
+      var mat=new THREE.ShaderMaterial({
+        transparent:true,
+        uniforms:uniforms,
+        vertexShader:'varying vec2 vUv; void main(){vUv=uv; gl_Position=vec4(position,1.0);}',
+        fragmentShader:frag
+      }); 
+      
+      scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),mat)); 
+      
+      window.addEventListener('resize', function(){ 
+        renderer.setSize(window.innerWidth,window.innerHeight); 
+        uniforms.resolution.value.set(window.innerWidth,window.innerHeight);
+      }, {passive:true}); 
+      
+      var t=0; 
+      function animate(){ 
+        requestAnimationFrame(animate); 
+        t+=0.016; 
+        uniforms.time.value=t; 
+        renderer.render(scene,camera);
+      } 
+      
+      if (window.OverlayCommon && OverlayCommon.loadBackgroundTexture) {
+        OverlayCommon.loadBackgroundTexture().then(function(tex){
+          if(tex) { 
+            uniforms.tDiffuse.value = tex; 
+            uniforms.hasTexture.value = 1.0; 
+          }
+          animate();
+        });
+      } else {
+        animate();
+      }
+    })();
+  </script>
+</body>
+</html>

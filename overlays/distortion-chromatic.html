@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>html,body{margin:0;padding:0;height:100%;background:transparent;overflow:hidden}canvas{display:block;}</style>
+</head>
+<body>
+  <div id="overlay-root"></div>
+  <script src="/overlays/vendor/three.min.js"></script>
+  <script src="/overlays/overlay-common.js"></script>
+  <script>
+    (function(){
+      // Chromatic Aberration - RGB channel splitting with lens distortion
+      var container=document.getElementById('overlay-root'); 
+      var renderer=new THREE.WebGLRenderer({alpha:true}); 
+      renderer.setSize(window.innerWidth,window.innerHeight); 
+      container.appendChild(renderer.domElement);
+      
+      var scene=new THREE.Scene(); 
+      var camera=new THREE.OrthographicCamera(-1,1,1,-1,0,1);
+      
+      var uniforms={
+        time:{value:0},
+        resolution:{value:new THREE.Vector2(window.innerWidth,window.innerHeight)},
+        strength:{value:0.02}, 
+        tDiffuse:{value:null}, 
+        hasTexture:{value:0.0}
+      };
+      
+      var frag=`
+        varying vec2 vUv; 
+        uniform float time; 
+        uniform float strength;
+        uniform sampler2D tDiffuse; 
+        uniform float hasTexture;
+
+        void main(){ 
+          vec2 uv = vUv;
+          vec2 dist = uv - 0.5;
+          
+          // Calculate offset based on distance from center (lens effect)
+          // Pulse the strength slightly over time
+          float currentStrength = strength * (1.0 + 0.5 * sin(time * 2.0));
+          vec2 offset = dist * currentStrength * length(dist);
+          
+          if (hasTexture > 0.5) {
+            float r = texture2D(tDiffuse, uv - offset).r;
+            float g = texture2D(tDiffuse, uv).g;
+            float b = texture2D(tDiffuse, uv + offset).b;
+            gl_FragColor = vec4(r, g, b, 1.0);
+          } else {
+            // Fallback visualization
+            float r = smoothstep(0.4, 0.5, length(uv - 0.5 - offset));
+            float g = smoothstep(0.4, 0.5, length(uv - 0.5));
+            float b = smoothstep(0.4, 0.5, length(uv - 0.5 + offset));
+            gl_FragColor = vec4(r, g, b, 0.55); 
+          }
+        }
+      `;
+      
+      var mat=new THREE.ShaderMaterial({
+        transparent:true,
+        uniforms:uniforms,
+        vertexShader:'varying vec2 vUv; void main(){vUv=uv; gl_Position=vec4(position,1.0);}',
+        fragmentShader:frag
+      }); 
+      
+      scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),mat)); 
+      
+      window.addEventListener('resize', function(){ 
+        renderer.setSize(window.innerWidth,window.innerHeight); 
+        uniforms.resolution.value.set(window.innerWidth,window.innerHeight);
+      }, {passive:true}); 
+      
+      var t=0; 
+      function animate(){ 
+        requestAnimationFrame(animate); 
+        t+=0.016; 
+        uniforms.time.value=t; 
+        renderer.render(scene,camera);
+      } 
+      
+      if (window.OverlayCommon && OverlayCommon.loadBackgroundTexture) {
+        OverlayCommon.loadBackgroundTexture().then(function(tex){
+          if(tex) { 
+            uniforms.tDiffuse.value = tex; 
+            uniforms.hasTexture.value = 1.0; 
+          }
+          animate();
+        });
+      } else {
+        animate();
+      }
+    })();
+  </script>
+</body>
+</html>

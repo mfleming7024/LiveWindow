@@ -7,7 +7,7 @@ angular.module('liveWindowApp')
         var connect = function() {
             if (!socket) {
                 // Connect to the server (adjust URL as needed)
-                socket = io(window.location.origin);
+                socket = io(window.location.origin, { path: '/window/socket.io' });
                 
                 socket.on('connect', function() {
                     connected = true;

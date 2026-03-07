@@ -31,7 +31,7 @@ angular.module('liveWindowApp')
 
         // Load images dynamically from server
         function loadImages() {
-            $http.get('/api/images').then(function (response) {
+            $http.get('api/images').then(function (response) {
                 images = response.data;
                 console.log('Loaded', images.length, 'images dynamically from filesystem');
                 $rootScope.$broadcast('imagesLoaded', images);

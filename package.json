@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "build": "rsync -av --exclude='node_modules' --exclude='dist' ./ dist/",
+    "build": "rsync -av --exclude={'node_modules','dist','.git'} ./ dist/",
     "deploy": "npm run build && scp -r dist/* mikel@206.81.5.116:/var/www/livewindow/html"
   },
   "dependencies": {

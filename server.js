@@ -13,7 +13,11 @@ const io = socketIo(server, {
     }
 });
 
-// Serve static files
+// Serve static files w/ caching                                                                                                                                                 │
+app.use('/images', express.static(path.join(__dirname, 'images'), { maxAge: '7d' }));                                                                                              │
+app.use('/css', express.static(path.join(__dirname, 'css'), { maxAge: '1d' }));                                                                                                    │
+app.use('/js', express.static(path.join(__dirname, 'js'), { maxAge: '1d' }));                                                                                                      │
+app.use('/overlays', express.static(path.join(__dirname, 'overlays'), { maxAge: '1d' }));
 app.use(express.static(path.join(__dirname)));
 
 // API endpoint to get available images

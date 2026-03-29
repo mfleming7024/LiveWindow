@@ -27,7 +27,7 @@
   // Prefer a local vendor three file if present, otherwise fall back to CDN
   function loadThree() {
     if (window.THREE) return Promise.resolve();
-    var local = 'overlays/vendor/three.min.js';
+    var local = 'vendor/three.min.js';
     // Try loading local file first
     return loadScript(local).catch(function () {
       // Fallback to CDN
@@ -55,10 +55,10 @@
     // Ensure THREE is loaded
     return loadThree().then(function () {
       return new Promise(function (resolve) {
-        // Fix: Ensure path is absolute if it's a relative path (doesn't start with / or http)
+        // Resolve bg path relative to the overlays directory (one level up)
         var bgPath = params.bg;
         if (bgPath && !bgPath.startsWith('/') && !bgPath.startsWith('http')) {
-          bgPath = '/' + bgPath;
+          bgPath = '../' + bgPath;
         }
 
         new THREE.TextureLoader().load(bgPath, function (tex) {

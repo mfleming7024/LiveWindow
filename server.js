@@ -76,7 +76,8 @@ app.get('/api/images', (req, res) => {
 // Store current display state
 let displayState = {
     leftDisplay: { type: null, content: null, overlay: null, windowPane: false },
-    rightDisplay: { type: null, content: null, overlay: null, windowPane: false }
+    rightDisplay: { type: null, content: null, overlay: null, windowPane: false },
+    initiativeTracker: { visible: false, combatants: [] }
 };
 
 // Socket.IO connection handling
@@ -152,6 +153,13 @@ io.on('connection', (socket) => {
             displayState.rightDisplay.windowPane = data.windowPane;
         }
         
+        io.emit('stateUpdate', displayState);
+    });
+    
+    // Handle initiative updates
+    socket.on('updateInitiative', (data) => {
+        console.log('Initiative update received:', data);
+        displayState.initiativeTracker = data;
         io.emit('stateUpdate', displayState);
     });
     

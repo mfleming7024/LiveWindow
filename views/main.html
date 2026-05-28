@@ -8,6 +8,14 @@
     
     <div class="display-content">
         <div class="display-half display-left">
+            <!-- Initiative Tracker Overlay (Left) -->
+            <div class="initiative-tracker-display" ng-if="initiativeTracker.visible && initiativeTracker.combatants.length > 0">
+                <div class="tracker-row" ng-repeat="combatant in initiativeTracker.combatants">
+                    <div class="tracker-init">{{combatant.init}}</div>
+                    <div class="tracker-name">{{combatant.name}}</div>
+                </div>
+            </div>
+
             <div class="content-display">
                 <div ng-if="!leftDisplay.type" class="placeholder">
                     <!-- Blank display -->
@@ -27,6 +35,14 @@
         </div>
         
         <div class="display-half display-right">
+            <!-- Initiative Tracker Overlay (Right) -->
+            <div class="initiative-tracker-display" ng-if="initiativeTracker.visible && initiativeTracker.combatants.length > 0">
+                <div class="tracker-row" ng-repeat="combatant in initiativeTracker.combatants">
+                    <div class="tracker-init">{{combatant.init}}</div>
+                    <div class="tracker-name">{{combatant.name}}</div>
+                </div>
+            </div>
+
             <div class="content-display">
                 <div ng-if="!rightDisplay.type" class="placeholder">
                     <!-- Blank display -->

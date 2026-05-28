@@ -89,6 +89,13 @@ angular.module('liveWindowApp')
                 }
             },
             
+            // Send initiative tracker update
+            updateInitiative: function(initiativeState) {
+                if (socket && connected) {
+                    socket.emit('updateInitiative', initiativeState);
+                }
+            },
+            
             // Get connection status
             getConnectionStatus: function() {
                 return {

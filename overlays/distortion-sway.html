@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>html,body{margin:0;padding:0;height:100%;background:transparent;overflow:hidden}canvas{display:block;}</style>
+</head>
+<body>
+  <div id="overlay-root"></div>
+  <script src="vendor/three.min.js"></script>
+  <script src="overlay-common.js"></script>
+  <script>
+    (function(){
+      // Sway Overlay - Gently rotates and bobs the background image
+      var container = document.getElementById('overlay-root');
+      var renderer = new THREE.WebGLRenderer({ alpha:true, antialias:true });
+      renderer.setPixelRatio(window.devicePixelRatio || 1);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setClearColor(0x000000, 0);
+      container.appendChild(renderer.domElement);
+
+      var scene = new THREE.Scene();
+      var camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+      var material = new THREE.MeshBasicMaterial({
+        transparent: true,
+        map: null,
+        opacity: 1.0
+      });
+
+      // Scale up slightly to avoid showing edges during rotation/movement
+      var mesh = new THREE.Mesh(new THREE.PlaneGeometry(2.2, 2.2), material);
+      scene.add(mesh);
+
+      function onResize(){
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+      window.addEventListener('resize', onResize, { passive: true });
+
+      var t = 0;
+      // Sway parameters
+      var rotFreq = 0.4;
+      var rotAmp = 0.02; // ~1.1 degrees
+      var bobFreq = 0.7;
+      var bobAmp = 0.03;
+
+      function animate(){
+        requestAnimationFrame(animate);
+        t += 0.016;
+
+        // Apply gentle sway (roll)
+        mesh.rotation.z = Math.sin(t * rotFreq) * rotAmp;
+        
+        // Apply gentle vertical bobbing
+        mesh.position.y = Math.cos(t * bobFreq) * bobAmp;
+        
+        // Optional: slight horizontal drift
+        mesh.position.x = Math.sin(t * rotFreq * 0.5) * 0.02;
+
+        renderer.render(scene, camera);
+      } 
+      
+      if (window.OverlayCommon && OverlayCommon.loadBackgroundTexture) {
+        OverlayCommon.loadBackgroundTexture().then(function(tex){
+          if(tex) {
+            material.map = tex;
+            material.needsUpdate = true;
+            animate();
+          } else {
+            // If no texture, maybe just don't show anything or show a placeholder
+            // For now, we'll just not start the animation or start it with a blank material
+            animate();
+          }
+        });
+      } else {
+        animate();
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -49,8 +49,8 @@
                      ng-class="{'active': isThemeActive(theme)}"
                      ng-click="setTheme(theme)">
                     <div class="theme-preview">
-                        <img ng-src="{{theme.leftPath}}" alt="{{theme.name}} left" class="preview-left" />
-                        <img ng-src="{{theme.rightPath}}" alt="{{theme.name}} right" class="preview-right" />
+                        <img ng-src="{{theme.leftThumb}}" alt="{{theme.name}} left" class="preview-left" />
+                        <img ng-src="{{theme.rightThumb}}" alt="{{theme.name}} right" class="preview-right" />
                     </div>
                     <div class="name">{{theme.displayName}}</div>
                 </div>
@@ -78,6 +78,33 @@
                         ng-click="toggleBothWindowPanes()">
                     {{areWindowPanesActive() ? '✓ Window Panes ON' : 'Window Panes OFF'}}
                 </button>
+            </div>
+
+            <h3 style="margin-top: 30px;">Initiative Tracker</h3>
+            <div class="controls-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                <div class="initiative-input-group" style="display: flex; gap: 10px; align-items: center;">
+                    <input type="text" ng-model="newCombatant.name" placeholder="Name" class="form-control" style="flex: 2; padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 4px;">
+                    <input type="number" ng-model="newCombatant.init" placeholder="Init" class="form-control" style="flex: 1; padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 4px;">
+                    <button class="btn btn-sm" ng-click="addCombatant()">Add</button>
+                </div>
+            </div>
+            
+            <div class="controls-grid" style="margin-top: 15px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));">
+                <button class="btn btn-sm" ng-click="sortInitiative()">Sort High-to-Low</button>
+                <button class="btn btn-sm" ng-class="{'btn-active': initiativeTracker.visible}" ng-click="toggleInitiativeVisibility()">
+                    {{initiativeTracker.visible ? 'Hide Tracker' : 'Show Tracker'}}
+                </button>
+                <button class="btn btn-sm" ng-click="clearInitiative()">Clear All</button>
+            </div>
+
+            <div class="initiative-list" style="margin-top: 15px; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px;" ng-if="initiativeTracker.combatants.length > 0">
+                <div ng-repeat="combatant in initiativeTracker.combatants" style="display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <div style="display: flex; gap: 15px;">
+                        <span style="font-weight: bold; width: 30px;">{{combatant.init}}</span>
+                        <span>{{combatant.name}}</span>
+                    </div>
+                    <button class="btn btn-sm btn-hide" ng-click="removeCombatant($index)" style="padding: 2px 8px; background: rgba(255,50,50,0.2);">×</button>
+                </div>
             </div>
         </div>
     </div>

@@ -5,6 +5,8 @@ angular.module('liveWindowApp')
         $scope.overlays = DisplayService.getOverlays();
         $scope.leftDisplay = DisplayService.getLeftDisplay();
         $scope.rightDisplay = DisplayService.getRightDisplay();
+        $scope.initiativeTracker = DisplayService.getInitiativeTracker();
+        $scope.newCombatant = { name: '', init: null };
         $scope.connectionStatus = null;
         
         // Listen for images loaded event to refresh themes
@@ -90,4 +92,39 @@ angular.module('liveWindowApp')
         $scope.areWindowPanesActive = function() {
             return DisplayService.areWindowPanesActive();
         };
+
+        // Initiative Tracker Controls
+        $scope.addCombatant = function() {
+            if ($scope.newCombatant.name && $scope.newCombatant.init !== null) {
+                DisplayService.addCombatant($scope.newCombatant.name, $scope.newCombatant.init);
+                $scope.newCombatant.name = '';
+                $scope.newCombatant.init = null;
+            }
+        };
+
+        $scope.removeCombatant = function(index) {
+            DisplayService.removeCombatant(index);
+        };
+
+        $scope.sortInitiative = function() {
+            DisplayService.sortInitiative();
+        };
+
+        $scope.toggleInitiativeVisibility = function() {
+            DisplayService.toggleInitiativeVisibility();
+        };
+
+        $scope.clearInitiative = function() {
+            DisplayService.clearInitiative();
+        };
+
+        // Watch for initiative tracker updates from the service
+        $scope.$watch(function() {
+            return DisplayService.getInitiativeTracker();
+        }, function(newVal) {
+            $scope.initiativeTracker = newVal;
+        }, true);
+
+        // Initialize displays
+        DisplayService.initializeDisplays();
     }]);

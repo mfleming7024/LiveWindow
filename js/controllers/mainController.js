@@ -2,6 +2,7 @@ angular.module('liveWindowApp')
     .controller('MainController', ['$scope', '$location', 'DisplayService', function ($scope, $location, DisplayService) {
         $scope.leftDisplay = DisplayService.getLeftDisplay();
         $scope.rightDisplay = DisplayService.getRightDisplay();
+        $scope.initiativeTracker = DisplayService.getInitiativeTracker();
         $scope.editButtonHidden = false; // Track if edit button is hidden
 
         // Navigation function
@@ -35,6 +36,12 @@ angular.module('liveWindowApp')
             return DisplayService.getRightDisplay();
         }, function (newVal) {
             $scope.rightDisplay = newVal;
+        }, true);
+
+        $scope.$watch(function () {
+            return DisplayService.getInitiativeTracker();
+        }, function (newVal) {
+            $scope.initiativeTracker = newVal;
         }, true);
 
         // Initialize displays

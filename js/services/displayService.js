@@ -14,8 +14,14 @@ angular.module('liveWindowApp')
             windowPane: false
         };
 
+        var initiativeTracker = {
+            visible: false,
+            combatants: []
+        };
+
         var isRemoteControlled = false;
         var images = []; // Will be loaded dynamically
+        var isLoading = false;
 
         // Listen for remote state updates
         $rootScope.$on('websocket:stateUpdate', function (event, data) {
@@ -24,6 +30,9 @@ angular.module('liveWindowApp')
 
             leftDisplay = data.leftDisplay || { type: null, content: null, overlay: null, windowPane: false };
             rightDisplay = data.rightDisplay || { type: null, content: null, overlay: null, windowPane: false };
+            if (data.initiativeTracker) {
+                initiativeTracker = data.initiativeTracker;
+            }
 
             $rootScope.$apply();
             isRemoteControlled = false;
@@ -31,13 +40,18 @@ angular.module('liveWindowApp')
 
         // Load images dynamically from server
         function loadImages() {
+            if (isLoading) return;
+            isLoading = true;
+
             $http.get('api/images').then(function (response) {
                 images = response.data;
+                isLoading = false;
                 console.log('Loaded', images.length, 'images dynamically from filesystem');
                 $rootScope.$broadcast('imagesLoaded', images);
             }).catch(function (error) {
                 console.error('Failed to load images from server:', error);
                 images = [];
+                isLoading = false;
                 $rootScope.$broadcast('imagesLoadError', error);
             });
         }
@@ -53,7 +67,8 @@ angular.module('liveWindowApp')
             { name: 'Swirling Leaves', path: 'overlays/swirling-leaves.html', emoji: '🍂', description: 'Autumn leaves spinning and falling in multiple patterns' },
             // Custom overlays
             { name: 'Shadow Tendrils', path: 'overlays/shadow-tendrils.html', emoji: '🕸️', description: 'Ethereal shadow tendrils flowing across the display' },
-            { name: 'Aurora', path: 'overlays/aurora.html', emoji: '🌌', description: 'Translucent aurora effect (reds, purples, greens) across the top 30% of the screen' }
+            { name: 'Aurora', path: 'overlays/aurora.html', emoji: '🌌', description: 'Translucent aurora effect (reds, purples, greens) across the top 30% of the screen' },
+            { name: 'Ocean Sway', path: 'overlays/distortion-sway.html', emoji: '⛵', description: 'A gentle rocking motion as if the image is on a ship at sea' }
         ];
 
         // Add new three.js overlays for DND themed effects
@@ -85,6 +100,10 @@ angular.module('liveWindowApp')
 
         return {
             // Getters
+            getInitiativeTracker: function () {
+                return initiativeTracker;
+            },
+
             getLeftDisplay: function () {
                 return leftDisplay;
             },
@@ -126,6 +145,8 @@ angular.module('liveWindowApp')
                             name: themeName,
                             leftPath: leftImage.path,
                             rightPath: rightImage.path,
+                            leftThumb: leftImage.path.replace('images/', 'images/thumbnails/'),
+                            rightThumb: rightImage.path.replace('images/', 'images/thumbnails/'),
                             displayName: themeName.charAt(0).toUpperCase() + themeName.slice(1).replace(/[-_]/g, ' ')
                         });
                     }
@@ -316,10 +337,50 @@ angular.module('liveWindowApp')
                 }
             },
 
+            // Initiative Tracker methods
+            addCombatant: function (name, init) {
+                initiativeTracker.combatants.push({ name: name, init: Number(init) });
+                if (!isRemoteControlled) {
+                    this.broadcastChange('updateInitiative');
+                }
+            },
+
+            removeCombatant: function (index) {
+                initiativeTracker.combatants.splice(index, 1);
+                if (!isRemoteControlled) {
+                    this.broadcastChange('updateInitiative');
+                }
+            },
+
+            sortInitiative: function () {
+                initiativeTracker.combatants.sort(function (a, b) {
+                    return b.init - a.init;
+                });
+                if (!isRemoteControlled) {
+                    this.broadcastChange('updateInitiative');
+                }
+            },
+
+            toggleInitiativeVisibility: function () {
+                initiativeTracker.visible = !initiativeTracker.visible;
+                if (!isRemoteControlled) {
+                    this.broadcastChange('updateInitiative');
+                }
+            },
+
+            clearInitiative: function () {
+                initiativeTracker.combatants = [];
+                if (!isRemoteControlled) {
+                    this.broadcastChange('updateInitiative');
+                }
+            },
+
             // Initialize
             initializeDisplays: function () {
-                // Load images dynamically
-                loadImages();
+                // Load images dynamically if not already loaded
+                if (images.length === 0) {
+                    loadImages();
+                }
 
                 // Set default content if needed
                 if (!leftDisplay.type && !rightDisplay.type) {
@@ -356,6 +417,8 @@ angular.module('liveWindowApp')
                             WebSocketService.clearOverlay(data.side);
                         } else if (action === 'updateWindowPane') {
                             WebSocketService.updateWindowPane(data.side, data.windowPane);
+                        } else if (action === 'updateInitiative') {
+                            WebSocketService.updateInitiative(initiativeTracker);
                         }
                     }
                 } catch (e) {

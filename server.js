@@ -7,9 +7,28 @@ const fs = require('fs');
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
+    path: '/window/socket.io',
     cors: {
         origin: "*",
         methods: ["GET", "POST"]
+    }
+});
+
+// Proxy for D&D Beyond Character Data
+app.get('/api/character/:id', async (req, res) => {
+    const characterId = req.params.id;
+    const url = `https://character-service.dndbeyond.com/character/v5/character/${characterId}`;
+    
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            return res.status(response.status).json({ error: 'Failed to fetch from D&D Beyond' });
+        }
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        console.error('Proxy error:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 

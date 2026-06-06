@@ -6,7 +6,29 @@ angular.module('liveWindowApp')
         $scope.leftDisplay = DisplayService.getLeftDisplay();
         $scope.rightDisplay = DisplayService.getRightDisplay();
         $scope.initiativeTracker = DisplayService.getInitiativeTracker();
-        $scope.newCombatant = { name: '', init: null };
+        $scope.newCombatant = { name: '', init: null, dbId: null };
+        
+        $scope.players = [
+            { id: "142137149", name: "Silas Rook" },
+            { id: "143192353", name: "Coda" },
+            { id: "142330441", name: "Pip" },
+            { id: "142145157", name: "Sigvar Valgrim" }
+        ];
+
+        $scope.onPlayerSelect = function() {
+            if ($scope.newCombatant.dbId) {
+                const player = $scope.players.find(p => p.id === $scope.newCombatant.dbId);
+                if (player) {
+                    $scope.newCombatant.name = player.name;
+                }
+            }
+        };
+
+        $scope.isPlayerInTracker = function(playerId) {
+            if (!$scope.initiativeTracker || !$scope.initiativeTracker.combatants) return false;
+            return $scope.initiativeTracker.combatants.some(c => c.dbId === playerId);
+        };
+
         $scope.connectionStatus = null;
         
         // Listen for images loaded event to refresh themes
@@ -96,10 +118,15 @@ angular.module('liveWindowApp')
         // Initiative Tracker Controls
         $scope.addCombatant = function() {
             if ($scope.newCombatant.name && $scope.newCombatant.init !== null) {
-                DisplayService.addCombatant($scope.newCombatant.name, $scope.newCombatant.init);
+                DisplayService.addCombatant($scope.newCombatant.name, $scope.newCombatant.init, $scope.newCombatant.dbId);
                 $scope.newCombatant.name = '';
                 $scope.newCombatant.init = null;
+                $scope.newCombatant.dbId = null;
             }
+        };
+
+        $scope.syncCharacterData = function() {
+            DisplayService.syncCharacterData();
         };
 
         $scope.removeCombatant = function(index) {

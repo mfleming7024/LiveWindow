@@ -787,4 +787,80 @@ body, html {
 
 .tracker-name {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.tracker-stats {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.tracker-hp-container {
+    flex: 1;
+    height: 6px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 3px;
+    overflow: hidden;
+    min-width: 100px;
+}
+
+.tracker-hp-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #ff4b2b, #ff416c);
+    transition: width 0.5s ease-in-out;
+}
+
+.hp-bloodied {
+    color: #f5a623;
+}
+
+.hp-critical {
+    color: #e03e3e;
+}
+
+.tracker-slots {
+    display: flex;
+    gap: 4px;
+}
+
+.slot-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4facfe;
+    box-shadow: 0 0 5px #00f2fe;
+}
+
+.slot-dot.used {
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: none;
+}
+
+.tracker-conditions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.condition-badge {
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 10px;
+    background: rgba(255, 100, 0, 0.3);
+    border: 1px solid rgba(255, 100, 0, 0.5);
+    color: #ffaa00;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.tracker-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    object-fit: cover;
 }

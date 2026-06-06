@@ -12,7 +12,30 @@
             <div class="initiative-tracker-display" ng-if="initiativeTracker.visible && initiativeTracker.combatants.length > 0">
                 <div class="tracker-row" ng-repeat="combatant in initiativeTracker.combatants">
                     <div class="tracker-init">{{combatant.init}}</div>
-                    <div class="tracker-name">{{combatant.name}}</div>
+                    <img ng-if="combatant.avatarUrl" ng-src="{{combatant.avatarUrl}}" class="tracker-avatar">
+                    <div class="tracker-name">
+                        <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 16px;">
+                            <span>{{combatant.name}}</span>
+                            <span ng-if="combatant.health" style="font-size: 0.6em; opacity: 0.7;" ng-class="{'hp-critical': combatant.health.percentage < 25, 'hp-bloodied': combatant.health.percentage >= 25 && combatant.health.percentage <= 50}">{{combatant.health.current}} / {{combatant.health.max}}</span>
+                        </div>
+                        
+                        <!-- Health Bar -->
+                        <div class="tracker-hp-container" ng-if="combatant.health">
+                            <div class="tracker-hp-bar" ng-style="{'width': combatant.health.percentage + '%'}"></div>
+                        </div>
+
+                        <!-- Slots and Conditions -->
+                        <div class="tracker-stats">
+                            <div class="tracker-slots" ng-if="combatant.spellSlots">
+                                <div ng-repeat="slot in combatant.spellSlots" style="display: flex; gap: 2px;">
+                                    <div class="slot-dot" ng-repeat="n in [].constructor(slot.max) track by $index" ng-class="{'used': $index < slot.used}"></div>
+                                </div>
+                            </div>
+                            <div class="tracker-conditions" ng-if="combatant.conditions.length > 0">
+                                <div class="condition-badge" ng-repeat="cond in combatant.conditions">{{cond.name}}</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -39,7 +62,30 @@
             <div class="initiative-tracker-display" ng-if="initiativeTracker.visible && initiativeTracker.combatants.length > 0">
                 <div class="tracker-row" ng-repeat="combatant in initiativeTracker.combatants">
                     <div class="tracker-init">{{combatant.init}}</div>
-                    <div class="tracker-name">{{combatant.name}}</div>
+                    <img ng-if="combatant.avatarUrl" ng-src="{{combatant.avatarUrl}}" class="tracker-avatar">
+                    <div class="tracker-name">
+                        <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 16px;">
+                            <span>{{combatant.name}}</span>
+                            <span ng-if="combatant.health" style="font-size: 0.6em; opacity: 0.7;" ng-class="{'hp-critical': combatant.health.percentage < 25, 'hp-bloodied': combatant.health.percentage >= 25 && combatant.health.percentage <= 50}">{{combatant.health.current}} / {{combatant.health.max}}</span>
+                        </div>
+                        
+                        <!-- Health Bar -->
+                        <div class="tracker-hp-container" ng-if="combatant.health">
+                            <div class="tracker-hp-bar" ng-style="{'width': combatant.health.percentage + '%'}"></div>
+                        </div>
+
+                        <!-- Slots and Conditions -->
+                        <div class="tracker-stats">
+                            <div class="tracker-slots" ng-if="combatant.spellSlots">
+                                <div ng-repeat="slot in combatant.spellSlots" style="display: flex; gap: 2px;">
+                                    <div class="slot-dot" ng-repeat="n in [].constructor(slot.max) track by $index" ng-class="{'used': $index < slot.used}"></div>
+                                </div>
+                            </div>
+                            <div class="tracker-conditions" ng-if="combatant.conditions.length > 0">
+                                <div class="condition-badge" ng-repeat="cond in combatant.conditions">{{cond.name}}</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

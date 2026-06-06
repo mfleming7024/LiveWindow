@@ -82,15 +82,20 @@
 
             <h3 style="margin-top: 30px;">Initiative Tracker</h3>
             <div class="controls-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
-                <div class="initiative-input-group" style="display: flex; gap: 10px; align-items: center;">
-                    <input type="text" ng-model="newCombatant.name" placeholder="Name" class="form-control" style="flex: 2; padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 4px;">
-                    <input type="number" ng-model="newCombatant.init" placeholder="Init" class="form-control" style="flex: 1; padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 4px;">
+                <div class="initiative-input-group" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <input type="text" ng-model="newCombatant.name" placeholder="Name" class="form-control" style="flex: 2; min-width: 150px; padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 4px;">
+                    <input type="number" ng-model="newCombatant.init" placeholder="Init" class="form-control" style="flex: 1; min-width: 80px; padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 4px;">
+                    
+                    <select ng-model="newCombatant.dbId" ng-change="onPlayerSelect()" class="form-control" style="flex: 1; min-width: 150px; padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 4px;">
+                        <option value="">Manual (NPC)</option>
+                        <option ng-repeat="player in players" ng-if="!isPlayerInTracker(player.id)" value="{{player.id}}">{{player.name}}</option>
+                    </select>
+
                     <button class="btn btn-sm" ng-click="addCombatant()">Add</button>
                 </div>
             </div>
             
-            <div class="controls-grid" style="margin-top: 15px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));">
-                <button class="btn btn-sm" ng-click="sortInitiative()">Sort High-to-Low</button>
+            <div class="controls-grid" style="margin-top: 15px; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));">
                 <button class="btn btn-sm" ng-class="{'btn-active': initiativeTracker.visible}" ng-click="toggleInitiativeVisibility()">
                     {{initiativeTracker.visible ? 'Hide Tracker' : 'Show Tracker'}}
                 </button>
@@ -99,9 +104,23 @@
 
             <div class="initiative-list" style="margin-top: 15px; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px;" ng-if="initiativeTracker.combatants.length > 0">
                 <div ng-repeat="combatant in initiativeTracker.combatants" style="display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                    <div style="display: flex; gap: 15px;">
+                    <div style="display: flex; gap: 15px; align-items: center; flex: 1;">
                         <span style="font-weight: bold; width: 30px;">{{combatant.init}}</span>
-                        <span>{{combatant.name}}</span>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <img ng-if="combatant.avatarUrl" ng-src="{{combatant.avatarUrl}}" style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3);">
+                            <div style="display: flex; flex-direction: column;">
+                                <span style="font-size: 0.9em;">{{combatant.name}}</span>
+                                <div ng-if="combatant.health" style="font-size: 0.7em; color: #aaa;">
+                                    HP: {{combatant.health.current}}/{{combatant.health.max}}
+                                    <span ng-if="combatant.health.temp > 0">(+{{combatant.health.temp}} Temp)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div ng-if="combatant.spellSlots" style="display: flex; gap: 5px; margin-left: auto; padding-right: 20px;">
+                            <div ng-repeat="slot in combatant.spellSlots" title="Level {{slot.level}} Slots" style="font-size: 0.7em; background: rgba(100, 100, 255, 0.2); padding: 2px 4px; border-radius: 3px;">
+                                L{{slot.level}}: {{slot.max - slot.used}}/{{slot.max}}
+                            </div>
+                        </div>
                     </div>
                     <button class="btn btn-sm btn-hide" ng-click="removeCombatant($index)" style="padding: 2px 8px; background: rgba(255,50,50,0.2);">×</button>
                 </div>

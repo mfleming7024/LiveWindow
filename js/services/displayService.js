@@ -1,5 +1,5 @@
 angular.module('liveWindowApp')
-    .service('DisplayService', ['$rootScope', '$injector', '$http', function ($rootScope, $injector, $http) {
+    .service('DisplayService', ['$rootScope', '$injector', '$http', 'CharacterDataService', function ($rootScope, $injector, $http, CharacterDataService) {
         var leftDisplay = {
             type: null,
             content: null,
@@ -19,9 +19,27 @@ angular.module('liveWindowApp')
             combatants: []
         };
 
+        var playerCharacterIds = ["142137149", "143192353", "142330441", "142145157"];
+
         var isRemoteControlled = false;
         var images = []; // Will be loaded dynamically
         var isLoading = false;
+        var syncInterval = null;
+
+        // Auto-sync every 60 seconds
+        function startAutoSync() {
+            if (syncInterval) return;
+            syncInterval = setInterval(function() {
+                // Only sync if there are combatants with DB IDs and the tracker is visible
+                if (initiativeTracker.visible && initiativeTracker.combatants.some(c => c.dbId)) {
+                    console.log('Auto-syncing character data...');
+                    // We can't use 'this' here as it's a private function
+                    // The service methods are defined in the return object below
+                    var service = $injector.get('DisplayService');
+                    service.syncCharacterData();
+                }
+            }, 60000);
+        }
 
         // Listen for remote state updates
         $rootScope.$on('websocket:stateUpdate', function (event, data) {
@@ -338,8 +356,52 @@ angular.module('liveWindowApp')
             },
 
             // Initiative Tracker methods
-            addCombatant: function (name, init) {
-                initiativeTracker.combatants.push({ name: name, init: Number(init) });
+            getPlayerCharacterIds: function() {
+                return playerCharacterIds;
+            },
+
+            syncCharacterData: function() {
+                var self = this;
+                var idsToSync = initiativeTracker.combatants
+                    .filter(c => c.dbId)
+                    .map(c => c.dbId);
+
+                if (idsToSync.length === 0) return;
+
+                CharacterDataService.getMultipleCharacters(idsToSync).then(results => {
+                    results.forEach(charData => {
+                        var combatant = initiativeTracker.combatants.find(c => c.dbId === charData.id.toString());
+                        if (combatant) {
+                            combatant.name = charData.name;
+                            combatant.health = charData.health;
+                            combatant.spellSlots = charData.spellSlots;
+                            combatant.conditions = charData.conditions;
+                            combatant.avatarUrl = charData.avatarUrl;
+                        }
+                    });
+                    
+                    if (!isRemoteControlled) {
+                        self.broadcastChange('updateInitiative');
+                    }
+                });
+            },
+
+            addCombatant: function (name, init, dbId) {
+                var combatant = { 
+                    name: name, 
+                    init: Number(init),
+                    dbId: dbId || null
+                };
+                
+                initiativeTracker.combatants.push(combatant);
+                
+                // Auto-sort highest to lowest
+                this.sortInitiative();
+                
+                if (dbId) {
+                    this.syncCharacterData();
+                }
+
                 if (!isRemoteControlled) {
                     this.broadcastChange('updateInitiative');
                 }
@@ -381,6 +443,9 @@ angular.module('liveWindowApp')
                 if (images.length === 0) {
                     loadImages();
                 }
+
+                // Start the D&D Beyond background sync
+                startAutoSync();
 
                 // Set default content if needed
                 if (!leftDisplay.type && !rightDisplay.type) {

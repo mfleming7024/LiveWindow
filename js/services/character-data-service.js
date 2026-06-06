@@ -76,7 +76,6 @@ angular.module('liveWindowApp')
                 frameUrl: data.decorations ? data.decorations.frameAvatarUrl : null,
                 health: this.calculateHealth(data),
                 conditions: this.extractConditions(data),
-                concentration: this.extractConcentration(data),
                 spellSlots: this.extractSpellSlots(data),
                 classes: data.classes.map(c => ({
                     name: c.definition.name,
@@ -84,32 +83,6 @@ angular.module('liveWindowApp')
                     subclass: c.subclassDefinition ? c.subclassDefinition.name : null
                 }))
             };
-        };
-
-        this.extractConcentration = function (data) {
-            // DDB tracks active spells with an "active" flag on the spell entry.
-            // We need to check all potential spell sources.
-            const sources = [
-                ...(data.classSpells || []),
-                ...(data.raceSpells || []),
-                ...(data.featSpells || []),
-                ...(data.itemSpells || [])
-            ];
-
-            for (const source of sources) {
-                // Some sources (like classSpells) have a nested 'spells' array
-                const spells = source.spells ? source.spells : [source];
-                
-                for (const s of spells) {
-                    if (s.active && s.definition && s.definition.concentration) {
-                        return {
-                            name: s.definition.name,
-                            timestamp: Date.now() // For potential UI animations
-                        };
-                    }
-                }
-            }
-            return null;
         };
 
         this.calculateHealth = function (data) {

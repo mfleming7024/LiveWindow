@@ -31,8 +31,7 @@
                                     <div class="slot-dot" ng-repeat="n in [].constructor(slot.max) track by $index" ng-class="{'used': $index < slot.used}"></div>
                                 </div>
                             </div>
-                            <div class="tracker-conditions">
-                                <div class="concentration-badge" ng-if="combatant.concentration">CONCENTRATING: {{combatant.concentration.name}}</div>
+                            <div class="tracker-conditions" ng-if="combatant.conditions.length > 0">
                                 <div class="condition-badge" ng-repeat="cond in combatant.conditions">{{cond.name}}</div>
                             </div>
                         </div>
@@ -82,8 +81,7 @@
                                     <div class="slot-dot" ng-repeat="n in [].constructor(slot.max) track by $index" ng-class="{'used': $index < slot.used}"></div>
                                 </div>
                             </div>
-                            <div class="tracker-conditions">
-                                <div class="concentration-badge" ng-if="combatant.concentration">CONCENTRATING: {{combatant.concentration.name}}</div>
+                            <div class="tracker-conditions" ng-if="combatant.conditions.length > 0">
                                 <div class="condition-badge" ng-repeat="cond in combatant.conditions">{{cond.name}}</div>
                             </div>
                         </div>

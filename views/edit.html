@@ -109,7 +109,7 @@
                         <div style="display: flex; align-items: center; gap: 10px;">
                             <img ng-if="combatant.avatarUrl" ng-src="{{combatant.avatarUrl}}" style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3);">
                             <div style="display: flex; flex-direction: column;">
-                                <span style="font-size: 0.9em;">{{combatant.name}} <span ng-if="combatant.concentration" title="Concentrating on {{combatant.concentration.name}}">🧠</span></span>
+                                <span style="font-size: 0.9em;">{{combatant.name}}</span>
                                 <div ng-if="combatant.health" style="font-size: 0.7em; color: #aaa;">
                                     HP: {{combatant.health.current}}/{{combatant.health.max}}
                                     <span ng-if="combatant.health.temp > 0">(+{{combatant.health.temp}} Temp)</span>

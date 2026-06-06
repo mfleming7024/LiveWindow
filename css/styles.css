@@ -857,6 +857,32 @@ body, html {
     font-weight: bold;
 }
 
+.concentration-badge {
+    background: rgba(100, 200, 255, 0.2);
+    color: #80dfff;
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: bold;
+    border: 1px solid rgba(100, 200, 255, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    animation: concentration-pulse 3s infinite ease-in-out;
+}
+
+.concentration-badge::before {
+    content: '🧠';
+    font-size: 11px;
+}
+
+@keyframes concentration-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(100, 200, 255, 0); border-color: rgba(100, 200, 255, 0.4); }
+    50% { box-shadow: 0 0 8px 0 rgba(100, 200, 255, 0.3); border-color: rgba(100, 200, 255, 0.8); }
+    100% { box-shadow: 0 0 0 0 rgba(100, 200, 255, 0); border-color: rgba(100, 200, 255, 0.4); }
+}
+
 .tracker-avatar {
     width: 32px;
     height: 32px;

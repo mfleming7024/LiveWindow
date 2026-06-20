@@ -12,7 +12,8 @@ angular.module('liveWindowApp')
             { id: "142137149", name: "Silas Rook" },
             { id: "143192353", name: "Coda" },
             { id: "142330441", name: "Pip" },
-            { id: "142145157", name: "Sigvar Valgrim" }
+            { id: "142145157", name: "Sigvar Valgrim" },
+            { id: "165819563", name: "Tiff" }
         ];
 
         $scope.onPlayerSelect = function() {

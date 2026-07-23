@@ -19,7 +19,7 @@ angular.module('liveWindowApp')
             combatants: []
         };
 
-        var playerCharacterIds = ["142137149", "143192353", "142330441", "142145157"];
+        var playerCharacterIds = ["142137149", "143192353", "142330441", "168665310"];
 
         var isRemoteControlled = false;
         var images = []; // Will be loaded dynamically
@@ -29,7 +29,7 @@ angular.module('liveWindowApp')
         // Auto-sync every 60 seconds
         function startAutoSync() {
             if (syncInterval) return;
-            syncInterval = setInterval(function() {
+            syncInterval = setInterval(function () {
                 // Only sync if there are combatants with DB IDs and the tracker is visible
                 if (initiativeTracker.visible && initiativeTracker.combatants.some(c => c.dbId)) {
                     console.log('Auto-syncing character data...');
@@ -356,11 +356,11 @@ angular.module('liveWindowApp')
             },
 
             // Initiative Tracker methods
-            getPlayerCharacterIds: function() {
+            getPlayerCharacterIds: function () {
                 return playerCharacterIds;
             },
 
-            syncCharacterData: function() {
+            syncCharacterData: function () {
                 var self = this;
                 var idsToSync = initiativeTracker.combatants
                     .filter(c => c.dbId)
@@ -379,7 +379,7 @@ angular.module('liveWindowApp')
                             combatant.avatarUrl = charData.avatarUrl;
                         }
                     });
-                    
+
                     if (!isRemoteControlled) {
                         self.broadcastChange('updateInitiative');
                     }
@@ -387,17 +387,17 @@ angular.module('liveWindowApp')
             },
 
             addCombatant: function (name, init, dbId) {
-                var combatant = { 
-                    name: name, 
+                var combatant = {
+                    name: name,
                     init: Number(init),
                     dbId: dbId || null
                 };
-                
+
                 initiativeTracker.combatants.push(combatant);
-                
+
                 // Auto-sort highest to lowest
                 this.sortInitiative();
-                
+
                 if (dbId) {
                     this.syncCharacterData();
                 }

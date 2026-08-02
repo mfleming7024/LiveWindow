@@ -36,6 +36,10 @@ LiveWindow is an AngularJS-based web application designed for controlling conten
 - **WebSocketService**: Handles real-time communication
 - **Responsive UI**: Optimized for various screen sizes and orientations
 
+### 📖 Developer Documentation & Overlay System
+For detailed technical specifications on building visual overlays, background texture pass-through, overlay registration (`js/services/displayService.js`), and generating theme thumbnails via `npm run thumbnails`, see [GEMINI.md](file:///Users/Michael/Desktop/projects/LiveWindow/GEMINI.md).
+
+
 ## 🚀 Getting Started
 
 ### Prerequisites

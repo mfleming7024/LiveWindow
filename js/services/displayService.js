@@ -19,7 +19,7 @@ angular.module('liveWindowApp')
             combatants: []
         };
 
-        var playerCharacterIds = ["142137149", "143192353", "142330441", "168665310"];
+        var playerCharacterIds = ["142137149", "143192353", "142330441", "168665310", "142145157"];
 
         var isRemoteControlled = false;
         var images = []; // Will be loaded dynamically

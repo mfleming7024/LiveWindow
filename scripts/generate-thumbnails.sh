@@ -16,7 +16,8 @@ else
 fi
 
 count=0
-for img in images/*.png; do
+for img in images/*.png images/*.jpg images/*.jpeg images/*.webp; do
+    [ -e "$img" ] || continue
     # Skip files already in thumbnails directory or system files
     filename=$(basename "$img")
     thumb="images/thumbnails/$filename"
